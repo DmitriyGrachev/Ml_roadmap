@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from roadmap_tools.catalog import Catalog, CatalogError, CatalogItem
+from roadmap_tools.catalog import Catalog, CatalogError, CatalogItem, _is_relative_catalog_path
 
 VALID_ITEM = """
 [[items]]
@@ -24,6 +24,21 @@ def make_valid_module(root: Path) -> None:
     module = root / "modules" / "01_python_core" / "02_collections"
     module.mkdir(parents=True)
     (module / "README.md").write_text("# Collections\n", encoding="utf-8")
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [
+        ("modules/01_python_core/02_collections/README.md", True),
+        (r"\ProjectsDirectory\AIML\_road\README.md", False),
+        ("C:README.md", False),
+        ("C:/ProjectsDirectory/AIML/_road/README.md", False),
+    ],
+)
+def test_relative_catalog_path_classification_rejects_windows_anchors_on_every_host(
+    value: str, expected: bool
+) -> None:
+    assert _is_relative_catalog_path(value) is expected
 
 
 def test_load_returns_immutable_resolved_catalog_item(tmp_path: Path) -> None:

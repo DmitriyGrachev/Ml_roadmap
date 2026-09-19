@@ -6,7 +6,7 @@ import tomllib
 from collections.abc import Mapping
 from dataclasses import dataclass
 from difflib import get_close_matches
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from types import MappingProxyType
 from typing import Literal, cast
 
@@ -134,16 +134,21 @@ def _parse_tests(
 
 
 def _resolve_path(repository_root: Path, identifier: str, field: str, value: str) -> Path:
-    path = Path(value)
-    if path.anchor:
+    if not _is_relative_catalog_path(value):
         raise CatalogError(identifier, field, f"path must be relative: {value!r}")
 
+    path = Path(value)
     resolved_path = (repository_root / path).resolve()
     if not resolved_path.is_relative_to(repository_root):
         raise CatalogError(identifier, field, f"path escapes repository root: {value!r}")
     if not resolved_path.exists():
         raise CatalogError(identifier, field, f"path does not exist: {value!r}")
     return resolved_path
+
+
+def _is_relative_catalog_path(value: str) -> bool:
+    """Return whether metadata is relative in both native and Windows path forms."""
+    return not Path(value).anchor and not PureWindowsPath(value).anchor
 
 
 def _resolve_catalog_path(repository_root: Path, catalog_path: Path | None) -> Path:
