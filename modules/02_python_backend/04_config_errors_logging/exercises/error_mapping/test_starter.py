@@ -1,3 +1,4 @@
+import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
@@ -17,6 +18,10 @@ def create_client() -> tuple[FastAPI, TestClient]:
     @app.post("/conflict")
     def conflict() -> None:
         raise starter.PaymentConflict
+
+    @app.get("/unexpected")
+    def unexpected() -> None:
+        raise ValueError("unexpected application failure")
 
     return app, TestClient(app)
 
@@ -49,3 +54,14 @@ def test_conflict_uses_documented_fallback_request_id() -> None:
         "message": "Payment conflicts with the current state",
         "request_id": "request-id-not-provided",
     }
+
+
+def test_unrelated_exceptions_propagate_from_test_client() -> None:
+    app, client = create_client()
+    assert Exception not in app.exception_handlers
+
+    try:
+        with pytest.raises(ValueError, match="unexpected application failure"):
+            client.get("/unexpected")
+    finally:
+        app.dependency_overrides.clear()

@@ -87,10 +87,16 @@ async def test_empty_gateway_list_returns_no_quotes() -> None:
 
 
 @pytest.mark.asyncio
-async def test_gateway_exceptions_and_cancellation_propagate() -> None:
+async def test_gateway_exception_propagates() -> None:
     request = starter.QuoteRequest(currency="GBP", amount=Decimal("3.00"))
 
     with pytest.raises(ValueError, match="GBP is unavailable"):
         await fetch_quotes([RaisingGateway()], request)
+
+
+@pytest.mark.asyncio
+async def test_gateway_cancellation_propagates() -> None:
+    request = starter.QuoteRequest(currency="GBP", amount=Decimal("3.00"))
+
     with pytest.raises(asyncio.CancelledError):
         await fetch_quotes([CancelledGateway()], request)

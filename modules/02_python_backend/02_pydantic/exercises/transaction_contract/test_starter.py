@@ -14,7 +14,28 @@ def validate(payload: dict[str, object]) -> starter.TransactionCreate:
     return cast(starter.TransactionCreate, exercise_call(starter.validate_transaction, payload))
 
 
-def test_valid_transaction_preserves_decimal_and_exposes_schema_example() -> None:
+@pytest.mark.parametrize("currency", ["USD", "EUR", "GBP", "MDL"])
+def test_valid_transaction_preserves_decimal_and_serializes_exact_json(currency: str) -> None:
+    transaction = validate(
+        {
+            "amount": "12.50",
+            "currency": currency,
+            "merchant": "Library Cafe",
+            "timestamp": "2026-09-19T10:15:00Z",
+        }
+    )
+
+    assert transaction.amount == Decimal("12.50")
+    assert isinstance(transaction.amount, Decimal)
+    assert transaction.model_dump(mode="json") == {
+        "amount": "12.50",
+        "currency": currency,
+        "merchant": "Library Cafe",
+        "timestamp": "2026-09-19T10:15:00Z",
+    }
+
+
+def test_transaction_schema_exposes_documented_example() -> None:
     transaction = validate(
         {
             "amount": "12.50",
@@ -24,9 +45,6 @@ def test_valid_transaction_preserves_decimal_and_exposes_schema_example() -> Non
         }
     )
 
-    assert transaction.amount == Decimal("12.50")
-    assert transaction.currency == "USD"
-    assert transaction.merchant == "Library Cafe"
     assert transaction.timestamp == datetime(2026, 9, 19, 10, 15, tzinfo=UTC)
     assert transaction.model_json_schema()["examples"] == [
         {
@@ -61,6 +79,12 @@ def test_currency_is_normalized_to_uppercase() -> None:
             "timestamp": "2026-09-19T10:15:00Z",
         },
         {
+            "amount": "-0.01",
+            "currency": "USD",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00Z",
+        },
+        {
             "amount": "1.00",
             "currency": "RON",
             "merchant": "Market",
@@ -86,7 +110,14 @@ def test_currency_is_normalized_to_uppercase() -> None:
             "account_number": "never accepted",
         },
     ],
-    ids=["non-positive", "unknown-currency", "blank-merchant", "naive-time", "extra-field"],
+    ids=[
+        "zero-amount",
+        "negative-amount",
+        "unknown-currency",
+        "blank-merchant",
+        "naive-time",
+        "extra-field",
+    ],
 )
 def test_invalid_transaction_is_a_real_validation_error(payload: dict[str, object]) -> None:
     with pytest.raises(ValidationError):
