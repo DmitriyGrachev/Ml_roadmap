@@ -1,6 +1,8 @@
 from fastapi.testclient import TestClient
 
 from support_api.app import create_app
+from support_api.models import TicketCreate
+from support_api.service import TicketService
 
 
 def test_health_reports_ok() -> None:
@@ -48,6 +50,23 @@ def test_missing_ticket_returns_stable_error_payload() -> None:
     }
 
 
+def test_falsey_injected_service_keeps_its_seeded_ticket() -> None:
+    class FalseyTicketService(TicketService):
+        def __bool__(self) -> bool:
+            return False
+
+    service = FalseyTicketService()
+    seeded_ticket = service.create(
+        TicketCreate(subject="Existing ticket", description="Created before the app."),
+    )
+    client = TestClient(create_app(service))
+
+    response = client.get(f"/tickets/{seeded_ticket.id}")
+
+    assert response.status_code == 200
+    assert response.json() == seeded_ticket.model_dump()
+
+
 def test_application_instances_keep_ticket_state_independent() -> None:
     first_client = TestClient(create_app())
     second_client = TestClient(create_app())
@@ -58,5 +77,9 @@ def test_application_instances_keep_ticket_state_independent() -> None:
     )
 
     assert created.status_code == 201
-    response = second_client.get(f"/tickets/{created.json()['id']}")
-    assert response.status_code == 404
+    ticket_id = created.json()["id"]
+    first_response = first_client.get(f"/tickets/{ticket_id}")
+    second_response = second_client.get(f"/tickets/{ticket_id}")
+
+    assert first_response.status_code == 200
+    assert second_response.status_code == 404

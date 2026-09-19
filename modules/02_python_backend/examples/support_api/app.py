@@ -8,7 +8,7 @@ from .service import TicketNotFound, TicketService
 def create_app(service: TicketService | None = None) -> FastAPI:
     """Compose a fresh FastAPI application with an instance-owned ticket store."""
 
-    ticket_service = service or TicketService()
+    ticket_service = service if service is not None else TicketService()
     app = FastAPI(title="Support ticket example")
     router = APIRouter()
 
