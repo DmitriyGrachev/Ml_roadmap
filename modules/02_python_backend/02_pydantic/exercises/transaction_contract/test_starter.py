@@ -1,0 +1,93 @@
+from datetime import UTC, datetime
+from decimal import Decimal
+from typing import cast
+
+import pytest
+from pydantic import ValidationError
+
+from roadmap_tools import exercise_call  # type: ignore[import-untyped]
+
+from . import starter
+
+
+def validate(payload: dict[str, object]) -> starter.TransactionCreate:
+    return cast(starter.TransactionCreate, exercise_call(starter.validate_transaction, payload))
+
+
+def test_valid_transaction_preserves_decimal_and_exposes_schema_example() -> None:
+    transaction = validate(
+        {
+            "amount": "12.50",
+            "currency": "USD",
+            "merchant": "Library Cafe",
+            "timestamp": "2026-09-19T10:15:00Z",
+        }
+    )
+
+    assert transaction.amount == Decimal("12.50")
+    assert transaction.currency == "USD"
+    assert transaction.merchant == "Library Cafe"
+    assert transaction.timestamp == datetime(2026, 9, 19, 10, 15, tzinfo=UTC)
+    assert transaction.model_json_schema()["examples"] == [
+        {
+            "amount": "12.50",
+            "currency": "USD",
+            "merchant": "Library Cafe",
+            "timestamp": "2026-09-19T10:15:00Z",
+        }
+    ]
+
+
+def test_currency_is_normalized_to_uppercase() -> None:
+    transaction = validate(
+        {
+            "amount": "1.00",
+            "currency": "mDl",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00+00:00",
+        }
+    )
+
+    assert transaction.currency == "MDL"
+
+
+@pytest.mark.parametrize(
+    "payload",
+    [
+        {
+            "amount": "0",
+            "currency": "USD",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00Z",
+        },
+        {
+            "amount": "1.00",
+            "currency": "RON",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00Z",
+        },
+        {
+            "amount": "1.00",
+            "currency": "USD",
+            "merchant": "  ",
+            "timestamp": "2026-09-19T10:15:00Z",
+        },
+        {
+            "amount": "1.00",
+            "currency": "USD",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00",
+        },
+        {
+            "amount": "1.00",
+            "currency": "USD",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00Z",
+            "account_number": "never accepted",
+        },
+    ],
+    ids=["non-positive", "unknown-currency", "blank-merchant", "naive-time", "extra-field"],
+)
+def test_invalid_transaction_is_a_real_validation_error(payload: dict[str, object]) -> None:
+    with pytest.raises(ValidationError):
+        validate(payload)
