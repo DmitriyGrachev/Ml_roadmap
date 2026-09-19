@@ -72,6 +72,11 @@ class Catalog:
         except KeyError as exc:
             raise CatalogError(identifier, "id", "unknown identifier") from exc
 
+    @property
+    def items(self) -> tuple[CatalogItem, ...]:
+        """Return catalog items in their source order."""
+        return tuple(self._items_by_identifier.values())
+
     def suggest(self, identifier: str) -> tuple[str, ...]:
         """Return up to three close curriculum identifier matches."""
         return tuple(get_close_matches(identifier, self._items_by_identifier.keys(), n=3))

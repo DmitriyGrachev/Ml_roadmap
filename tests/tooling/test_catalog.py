@@ -44,6 +44,21 @@ def test_load_returns_immutable_resolved_catalog_item(tmp_path: Path) -> None:
         item.title = "Changed"  # type: ignore[misc]
 
 
+def test_items_preserves_toml_catalog_order(tmp_path: Path) -> None:
+    make_valid_module(tmp_path)
+    write_catalog(
+        tmp_path,
+        VALID_ITEM + VALID_ITEM.replace('id = "python-collections"', 'id = "python-functions"'),
+    )
+
+    catalog = Catalog.load(tmp_path)
+
+    assert tuple(item.identifier for item in catalog.items) == (
+        "python-collections",
+        "python-functions",
+    )
+
+
 def test_load_rejects_duplicate_identifier_with_identifier_field(tmp_path: Path) -> None:
     make_valid_module(tmp_path)
     write_catalog(tmp_path, VALID_ITEM + VALID_ITEM)
