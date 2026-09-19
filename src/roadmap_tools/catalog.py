@@ -44,7 +44,7 @@ class Catalog:
     def load(cls, repository_root: Path, catalog_path: Path | None = None) -> Catalog:
         """Load and validate a curriculum catalog relative to *repository_root*."""
         root = repository_root.resolve()
-        source = (catalog_path if catalog_path is not None else root / "curriculum.toml").resolve()
+        source = _resolve_catalog_path(root, catalog_path)
 
         try:
             with source.open("rb") as catalog_file:
@@ -123,9 +123,21 @@ def _parse_tests(
 
 
 def _resolve_path(repository_root: Path, identifier: str, field: str, value: str) -> Path:
-    resolved_path = (repository_root / Path(value)).resolve()
+    path = Path(value)
+    if path.is_absolute():
+        raise CatalogError(identifier, field, f"path must be relative: {value!r}")
+
+    resolved_path = (repository_root / path).resolve()
     if not resolved_path.is_relative_to(repository_root):
         raise CatalogError(identifier, field, f"path escapes repository root: {value!r}")
     if not resolved_path.exists():
         raise CatalogError(identifier, field, f"path does not exist: {value!r}")
+    return resolved_path
+
+
+def _resolve_catalog_path(repository_root: Path, catalog_path: Path | None) -> Path:
+    path = Path("curriculum.toml") if catalog_path is None else catalog_path
+    resolved_path = (path if path.is_absolute() else repository_root / path).resolve()
+    if not resolved_path.is_relative_to(repository_root):
+        raise CatalogError("<catalog>", "catalog_path", "path escapes repository root")
     return resolved_path
