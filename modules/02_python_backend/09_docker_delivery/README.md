@@ -1,0 +1,45 @@
+# 09 — Docker runtime packaging
+
+## Goal
+
+Package a completed API for a reproducible runtime without making Docker part of the inner development loop.
+
+## Java mental model
+
+| Spring | Python and FastAPI |
+| --- | --- |
+| A layered image packages a Boot application. | A Dockerfile installs locked Python dependencies and starts an ASGI app. |
+| Compose can provide local services. | Compose can provide an opt-in local PostgreSQL dependency. |
+
+**Non-equivalence:** a Python container does not produce an executable JAR; the ASGI module is selected at runtime.
+
+## Python model
+
+Use a supported slim Python image, install `uv`, sync from the lock file without development dependencies, and run as a non-root user. Keep the app module configurable rather than hard-coded.
+
+## Key concepts
+
+- locked dependencies
+- non-root runtime user
+- ASGI server command
+- local-only PostgreSQL compose service
+
+## Example
+
+The later `Dockerfile.example` documents an application module placeholder and a runtime command; it is not needed to run the support API tests.
+
+## Exercises
+
+Review the deployment examples after the persistence exercises, and never place credentials in an image or committed Compose file.
+
+## Self-check
+
+1. Why sync without development dependencies?
+2. Why run as a non-root user?
+3. What selects the ASGI application?
+4. Which service is local-learning only?
+5. Why keep secrets outside an image?
+
+## Done when
+
+You can explain how the image stays reproducible and why Docker remains optional for this module.
