@@ -61,13 +61,20 @@ def test_items_preserves_toml_catalog_order(tmp_path: Path) -> None:
 
 def test_load_rejects_duplicate_identifier_with_identifier_field(tmp_path: Path) -> None:
     make_valid_module(tmp_path)
-    write_catalog(tmp_path, VALID_ITEM + VALID_ITEM)
+    write_catalog(
+        tmp_path,
+        VALID_ITEM + VALID_ITEM.replace('title = "Collections"', 'title = "Duplicate Collections"'),
+    )
 
     with pytest.raises(CatalogError) as raised:
         Catalog.load(tmp_path)
 
     assert raised.value.identifier == "python-collections"
     assert raised.value.field == "id"
+    assert "record 1" in str(raised.value)
+    assert "Collections" in str(raised.value)
+    assert "record 2" in str(raised.value)
+    assert "Duplicate Collections" in str(raised.value)
 
 
 @pytest.mark.parametrize(
@@ -184,6 +191,32 @@ def test_load_rejects_path_escaping_repository_root(tmp_path: Path, field: str, 
     assert raised.value.field == field
 
 
+def test_load_rejects_path_resolved_through_symlink_outside_repository_root(tmp_path: Path) -> None:
+    repository_root = tmp_path / "repository"
+    repository_root.mkdir()
+    make_valid_module(repository_root)
+    outside = tmp_path / "outside"
+    outside.mkdir()
+    (outside / "README.md").write_text("# Outside\n", encoding="utf-8")
+    escape_link = repository_root / "modules" / "escape"
+    try:
+        escape_link.symlink_to(outside, target_is_directory=True)
+    except OSError as exc:
+        pytest.skip(f"directory symlinks are unavailable without elevation: {exc}")
+    write_catalog(
+        repository_root,
+        VALID_ITEM.replace(
+            "modules/01_python_core/02_collections/README.md", "modules/escape/README.md"
+        ),
+    )
+
+    with pytest.raises(CatalogError, match="path escapes repository root") as raised:
+        Catalog.load(repository_root)
+
+    assert raised.value.identifier == "python-collections"
+    assert raised.value.field == "readme"
+
+
 @pytest.mark.parametrize("field", ["readme", "tests"])
 def test_load_rejects_absolute_item_path_even_when_inside_repository_root(
     tmp_path: Path, field: str
@@ -203,6 +236,29 @@ def test_load_rejects_absolute_item_path_even_when_inside_repository_root(
     write_catalog(tmp_path, body)
 
     with pytest.raises(CatalogError) as raised:
+        Catalog.load(tmp_path)
+
+    assert raised.value.identifier == "python-collections"
+    assert raised.value.field == field
+
+
+@pytest.mark.parametrize("field", ["readme", "tests"])
+@pytest.mark.parametrize("path_value", [r"\ProjectsDirectory\AIML\_road\README.md", "C:README.md"])
+def test_load_rejects_rooted_and_drive_relative_windows_item_paths(
+    tmp_path: Path, field: str, path_value: str
+) -> None:
+    make_valid_module(tmp_path)
+    toml_value = path_value.replace("\\", "\\\\")
+    if field == "readme":
+        body = VALID_ITEM.replace("modules/01_python_core/02_collections/README.md", toml_value)
+    else:
+        body = VALID_ITEM.replace(
+            'tests = ["modules/01_python_core/02_collections"]',
+            f'tests = ["{toml_value}"]',
+        )
+    write_catalog(tmp_path, body)
+
+    with pytest.raises(CatalogError, match="path must be relative") as raised:
         Catalog.load(tmp_path)
 
     assert raised.value.identifier == "python-collections"

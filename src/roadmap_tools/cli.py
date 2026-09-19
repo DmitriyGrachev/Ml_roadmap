@@ -37,7 +37,7 @@ def _main(argv: Sequence[str], repository_root: Path, run_process: ProcessRunner
         catalog = Catalog.load(root)
     except CatalogError as exc:
         print(f"Unable to load curriculum catalog: {exc}")
-        return 1
+        return 2
 
     if arguments.command == "list":
         return _list_items(catalog)

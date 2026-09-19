@@ -56,14 +56,20 @@ class Catalog:
         if not isinstance(records, list):
             raise CatalogError("<catalog>", "items", "expected an array of item records")
 
-        items: dict[str, CatalogItem] = {}
-        for record in records:
+        items: dict[str, tuple[int, CatalogItem]] = {}
+        for record_index, record in enumerate(records, start=1):
             item = _parse_item(record, root)
             if item.identifier in items:
-                raise CatalogError(item.identifier, "id", "duplicate identifier")
-            items[item.identifier] = item
+                first_index, first_item = items[item.identifier]
+                detail = (
+                    f"duplicate identifier in record {first_index} "
+                    f"(title={first_item.title!r}, readme={str(first_item.readme)!r}) and "
+                    f"record {record_index} (title={item.title!r}, readme={str(item.readme)!r})"
+                )
+                raise CatalogError(item.identifier, "id", detail)
+            items[item.identifier] = (record_index, item)
 
-        return cls(MappingProxyType(items))
+        return cls(MappingProxyType({identifier: item for identifier, (_, item) in items.items()}))
 
     def get(self, identifier: str) -> CatalogItem:
         """Return the item identified by *identifier*."""
@@ -129,7 +135,7 @@ def _parse_tests(
 
 def _resolve_path(repository_root: Path, identifier: str, field: str, value: str) -> Path:
     path = Path(value)
-    if path.is_absolute():
+    if path.anchor:
         raise CatalogError(identifier, field, f"path must be relative: {value!r}")
 
     resolved_path = (repository_root / path).resolve()

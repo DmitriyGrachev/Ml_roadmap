@@ -130,3 +130,25 @@ def test_preserves_pytest_exit_code(tmp_path: Path) -> None:
     exit_code = _main(["test", "python-first"], root, lambda command: 5)
 
     assert exit_code == 5
+
+
+def test_rejects_escaping_catalog_path_without_running_tests(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    root = make_repository(tmp_path)
+    (root / "curriculum.toml").write_text(
+        """
+[[items]]
+id = "python-first"
+title = "First Python lesson"
+kind = "lesson"
+readme = "../outside/README.md"
+tests = ["tests/first_test.py"]
+""",
+        encoding="utf-8",
+    )
+
+    exit_code = _main(["test", "python-first"], root, unexpected_runner)
+
+    assert exit_code == 2
+    assert "Unable to load curriculum catalog" in capsys.readouterr().out

@@ -2,7 +2,7 @@ from collections.abc import Callable
 
 import pytest
 
-from roadmap_tools.exercise import exercise_call
+from roadmap_tools import exercise_call
 
 
 def test_exercise_call_returns_completed_value() -> None:
