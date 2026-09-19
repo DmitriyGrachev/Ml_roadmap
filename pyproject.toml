@@ -1,0 +1,61 @@
+[build-system]
+requires = ["uv_build>=0.12.16,<0.13"]
+build-backend = "uv_build"
+
+[project]
+name = "ai-engineer-roadmap"
+version = "0.1.0"
+description = "Reproducible exercises for an AI engineering learning roadmap."
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "pydantic",
+    "pydantic-settings",
+    "sqlalchemy",
+    "psycopg[binary]",
+    "httpx",
+    "numpy",
+    "pandas",
+]
+
+[dependency-groups]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "ruff",
+    "mypy",
+    "jupyterlab",
+    "ipykernel",
+    "nbformat",
+    "pandas-stubs",
+]
+
+[tool.uv.build-backend]
+module-name = "roadmap_tools"
+
+[tool.pytest.ini_options]
+testpaths = ["tests", "modules", "projects"]
+xfail_strict = true
+markers = [
+    "student_exercise: marks a student starter exercise as expected incomplete",
+    "postgres: marks tests that require PostgreSQL",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "PT"]
+ignore = ["UP047"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/tooling/test_exercise.py" = ["E731"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+exclude = [
+    "(^|/).*\\.ipynb$",
+    "(^|/)review_fixtures/",
+]
