@@ -6,6 +6,7 @@ import runpy
 import subprocess
 import sys
 from collections.abc import Awaitable, Callable, Iterator
+from contextlib import suppress
 from pathlib import Path
 from typing import Any, cast
 
@@ -94,6 +95,17 @@ def test_decorator_example_reports_elapsed_time_with_an_injected_clock() -> None
     assert reports == ["count_words took 0.250s"]
 
 
+def test_decorator_example_main_uses_a_deterministic_timing_demo(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    namespace = load_example(MODULE_ROOT / "08_decorators" / "example.py")
+    main = cast(Callable[[], None], namespace["main"])
+
+    main()
+
+    assert capsys.readouterr().out == "3 words; demo_parse_document took 0.125s\n"
+
+
 def test_async_example_starts_all_calls_before_controlled_release_and_keeps_input_order() -> None:
     namespace = load_example(MODULE_ROOT / "10_asyncio" / "example.py")
     metadata_fetcher = Callable[[str], Awaitable[str]]
@@ -119,15 +131,21 @@ def test_async_example_starts_all_calls_before_controlled_release_and_keeps_inpu
             return f"{topic}:ready"
 
         gather_task = asyncio.ensure_future(collect_metadata(topics, fetch))
-        await all_started.wait()
-        assert started == set(topics)
-        assert gather_task.done() is False
+        try:
+            await asyncio.wait_for(all_started.wait(), timeout=1.0)
+            assert started == set(topics)
+            assert gather_task.done() is False
 
-        for topic in ("support", "risk", "compliance"):
-            releases[topic].set()
-            await completions[topic].wait()
+            for topic in ("support", "risk", "compliance"):
+                releases[topic].set()
+                await completions[topic].wait()
 
-        return await gather_task, completed
+            return await gather_task, completed
+        except BaseException:
+            gather_task.cancel()
+            with suppress(asyncio.CancelledError, Exception):
+                await gather_task
+            raise
 
     result, completion_order = asyncio.run(run_scenario())
 

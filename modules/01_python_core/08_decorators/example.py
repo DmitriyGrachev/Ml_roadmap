@@ -31,7 +31,15 @@ def parse_document(text: str) -> int:
 
 
 def main() -> None:
-    print(parse_document("terms and conditions"))
+    readings = iter((20.0, 20.125))
+    reports: list[str] = []
+
+    @timed(clock=lambda: next(readings), reporter=reports.append)
+    def demo_parse_document(text: str) -> int:
+        return len(text.split())
+
+    word_count = demo_parse_document("terms and conditions")
+    print(f"{word_count} words; {reports[0]}")
 
 
 if __name__ == "__main__":

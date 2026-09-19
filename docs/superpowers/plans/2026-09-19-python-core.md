@@ -84,7 +84,7 @@ Run: `uv run pytest modules/01_python_core/tests/test_examples.py -q`
 
 Run: `uv run ruff check modules/01_python_core`
 
-Run: `uv run mypy modules/01_python_core --exclude 'exercises/.*/broken.py'`
+Run: `uv run mypy -p modules.01_python_core --exclude 'debugging/.*/broken.py' --exclude 'code_review/.*/review_me.py'`
 
 Expected: all example checks pass.
 
@@ -169,7 +169,7 @@ Run: `uv run pytest modules/01_python_core/02_collections/exercises -q -rx`
 
 Run: `uv run ruff check modules/01_python_core/02_collections`
 
-Run: `uv run mypy modules/01_python_core/02_collections`
+Run: `uv run mypy -p modules.01_python_core.02_collections --exclude 'debugging/.*/broken.py' --exclude 'code_review/.*/review_me.py'`
 
 Commit with message `feat: add first-sprint collection exercises`.
 
@@ -231,7 +231,7 @@ Run: `uv run pytest modules/01_python_core/03_functions/exercises modules/01_pyt
 
 Run: `uv run ruff check modules/01_python_core/03_functions modules/01_python_core/04_typing`
 
-Run: `uv run mypy modules/01_python_core/03_functions modules/01_python_core/04_typing`
+Run: `uv run mypy -p modules.01_python_core.03_functions -p modules.01_python_core.04_typing --exclude 'debugging/.*/broken.py' --exclude 'code_review/.*/review_me.py'`
 
 - [ ] **Step 5: Commit**
 
@@ -342,7 +342,7 @@ Run: `uv run ruff check modules/01_python_core`
 
 Run: `uv run ruff format --check modules/01_python_core`
 
-Run: `uv run mypy modules/01_python_core --exclude 'debugging/.*/broken.py' --exclude 'code_review/.*/review_me.py'`
+Run: `uv run mypy -p modules.01_python_core --exclude 'debugging/.*/broken.py' --exclude 'code_review/.*/review_me.py'`
 
 Expected: passing examples and characterization tests, visible expected-incomplete student tests, and no unexpected failure.
 
