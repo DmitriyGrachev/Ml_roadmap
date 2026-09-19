@@ -24,6 +24,13 @@ Run a lesson from the repository root:
 uv run python modules/03_data_foundations/01_numpy/example.py
 ```
 
+From the repository root, type-check the complete module with its numeric lesson
+directories using package mode:
+
+```powershell
+uv run mypy -p modules.03_data_foundations --exclude 'notebooks'
+```
+
 ## Exercises
 
 Exercises arrive alongside their lessons. Keep examples as reference for mechanics, not as implementations to copy into a starter boundary.
@@ -38,4 +45,5 @@ Exercises arrive alongside their lessons. Keep examples as reference for mechani
 
 ## Done when
 
-You can explain the purpose of each lesson and run its deterministic example without changing tracked data.
+You can explain the purpose of each lesson, run its deterministic example, and pass the
+documented package-mode type check without changing tracked data.
