@@ -18,7 +18,7 @@ Async helps when work spends time waiting on I/O. CPU-heavy work still needs an 
 
 ## Example
 
-Run `uv run python example.py` to concurrently collect deterministic mocked LLM metadata.
+Run `uv run python modules/01_python_core/10_asyncio/example.py` to concurrently collect deterministic mocked LLM metadata.
 
 ## Exercises
 

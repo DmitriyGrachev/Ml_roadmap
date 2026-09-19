@@ -18,7 +18,7 @@ Use unpacking to name positional data, slicing to select ranges, and comprehensi
 
 ## Example
 
-Run `uv run python example.py` to summarize document-language metadata with a set and dictionary.
+Run `uv run python modules/01_python_core/02_collections/example.py` to summarize document-language metadata with a set and dictionary.
 
 ## Exercises
 

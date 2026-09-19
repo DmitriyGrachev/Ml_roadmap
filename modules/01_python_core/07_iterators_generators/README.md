@@ -18,7 +18,7 @@ Generator expressions and generator functions defer work until iteration. Materi
 
 ## Example
 
-Run `uv run python example.py` to stream two document-processing log lines.
+Run `uv run python modules/01_python_core/07_iterators_generators/example.py` to stream two document-processing log lines.
 
 ## Exercises
 

@@ -18,7 +18,7 @@ Use `@dataclass` for data-focused objects, composition for collaborating behavio
 
 ## Example
 
-Run `uv run python example.py` to create a frozen ledger entry with a decimal amount.
+Run `uv run python modules/01_python_core/05_data_modeling/example.py` to create a frozen ledger entry with a decimal amount.
 
 ## Exercises
 

@@ -1,14 +1,18 @@
 """Smoke tests for the standalone Module 01 teaching examples."""
 
 import asyncio
+import re
 import runpy
-from collections.abc import Callable, Iterator
+import subprocess
+import sys
+from collections.abc import Awaitable, Callable, Iterator
 from pathlib import Path
 from typing import Any, cast
 
 import pytest
 
 MODULE_ROOT = Path(__file__).parents[1]
+REPOSITORY_ROOT = MODULE_ROOT.parents[1]
 EXAMPLE_PATHS = [
     MODULE_ROOT / lesson / "example.py"
     for lesson in (
@@ -71,10 +75,85 @@ def test_decorator_example_preserves_the_wrapped_name() -> None:
     assert parse_document.__name__ == "parse_document"
 
 
-def test_async_example_gather_preserves_request_order() -> None:
+def test_decorator_example_reports_elapsed_time_with_an_injected_clock() -> None:
+    namespace = load_example(MODULE_ROOT / "08_decorators" / "example.py")
+    timed = cast(Callable[..., Any], namespace["timed"])
+    readings = iter((10.0, 10.25))
+    reports: list[str] = []
+
+    def count_words(text: str) -> int:
+        return len(text.split())
+
+    measured_count = cast(
+        Callable[[str], int],
+        timed(clock=lambda: next(readings), reporter=reports.append)(count_words),
+    )
+
+    assert measured_count("terms and conditions") == 3
+    assert measured_count.__name__ == "count_words"
+    assert reports == ["count_words took 0.250s"]
+
+
+def test_async_example_starts_all_calls_before_controlled_release_and_keeps_input_order() -> None:
     namespace = load_example(MODULE_ROOT / "10_asyncio" / "example.py")
-    collect_metadata = cast(Callable[[list[str]], Any], namespace["collect_metadata"])
+    metadata_fetcher = Callable[[str], Awaitable[str]]
+    collect_metadata = cast(
+        Callable[[list[str], metadata_fetcher], Awaitable[list[str]]], namespace["collect_metadata"]
+    )
 
-    result = asyncio.run(collect_metadata(["risk", "compliance", "support"]))
+    async def run_scenario() -> tuple[list[str], list[str]]:
+        topics = ["risk", "compliance", "support"]
+        started: set[str] = set()
+        completed: list[str] = []
+        all_started = asyncio.Event()
+        releases = {topic: asyncio.Event() for topic in topics}
+        completions = {topic: asyncio.Event() for topic in topics}
 
+        async def fetch(topic: str) -> str:
+            started.add(topic)
+            if len(started) == len(topics):
+                all_started.set()
+            await releases[topic].wait()
+            completed.append(topic)
+            completions[topic].set()
+            return f"{topic}:ready"
+
+        gather_task = asyncio.ensure_future(collect_metadata(topics, fetch))
+        await all_started.wait()
+        assert started == set(topics)
+        assert gather_task.done() is False
+
+        for topic in ("support", "risk", "compliance"):
+            releases[topic].set()
+            await completions[topic].wait()
+
+        return await gather_task, completed
+
+    result, completion_order = asyncio.run(run_scenario())
+
+    assert completion_order == ["support", "risk", "compliance"]
     assert result == ["risk:ready", "compliance:ready", "support:ready"]
+
+
+@pytest.mark.parametrize("example_path", EXAMPLE_PATHS, ids=lambda path: path.parent.name)
+def test_lesson_readme_example_commands_resolve_from_repository_root(example_path: Path) -> None:
+    readme = example_path.with_name("README.md")
+    commands = re.findall(r"`uv run python ([^`\s]+)`", readme.read_text(encoding="utf-8"))
+
+    assert commands
+    for command_path in commands:
+        assert (REPOSITORY_ROOT / command_path).resolve() == example_path.resolve()
+
+
+def test_testing_example_runs_real_parameterized_pytest_cases() -> None:
+    example_path = MODULE_ROOT / "09_testing" / "example.py"
+
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest", str(example_path), "-q"],
+        capture_output=True,
+        check=False,
+        text=True,
+    )
+
+    assert result.returncode == 0, result.stdout + result.stderr
+    assert "passed" in result.stdout

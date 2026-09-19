@@ -18,7 +18,7 @@ Use `is` for singleton checks such as `value is None`; use `==` for values. Empt
 
 ## Example
 
-Run `uv run python example.py` to compare two equal but distinct support-ticket tag lists.
+Run `uv run python modules/01_python_core/01_object_model/example.py` to compare two equal but distinct support-ticket tag lists.
 
 ## Exercises
 

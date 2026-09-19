@@ -18,7 +18,7 @@ Use `ParamSpec` when a generic decorator preserves arbitrary parameters. Keep re
 
 ## Example
 
-Run `uv run python example.py` to time a document parser while retaining its original name.
+Run `uv run python modules/01_python_core/08_decorators/example.py` to time a document parser while retaining its original name.
 
 ## Exercises
 

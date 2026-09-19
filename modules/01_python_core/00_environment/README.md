@@ -18,7 +18,7 @@ The interpreter version, isolated environment, and working directory are part of
 
 ## Example
 
-Run `uv run python example.py` to print stable interpreter facts.
+Run `uv run python modules/01_python_core/00_environment/example.py` to print stable interpreter facts.
 
 ## Exercises
 
@@ -34,4 +34,4 @@ No coding exercise in this reading lesson; verify your setup before continuing.
 
 ## Done when
 
-`uv run python example.py` and the module example tests run from the repository root.
+`uv run python modules/01_python_core/00_environment/example.py` and the module example tests run from the repository root.

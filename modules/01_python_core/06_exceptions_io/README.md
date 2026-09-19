@@ -14,11 +14,11 @@ Catch only errors you can handle, let unexpected problems remain visible, and us
 
 ## Key concepts
 
-Context managers guarantee cleanup around a block. For file replacement, write a temporary file near the destination and replace only after successful serialization.
+Context managers guarantee cleanup around a block. For CSV, open files with `newline=""`, use `csv.DictReader` or `DictWriter`, and validate required headers before processing rows. For replacement, write a temporary file near the destination and replace only after successful serialization.
 
 ## Example
 
-Run `uv run python example.py` to export a small JSON document inside a temporary directory.
+Run `uv run python modules/01_python_core/06_exceptions_io/example.py` to export a small JSON document inside a temporary directory.
 
 ## Exercises
 
@@ -31,6 +31,7 @@ Later practice asks for an atomic JSON export with explicit error behavior.
 3. Why use `Path`?
 4. What makes an export atomic?
 5. When should an exception propagate?
+6. Why does CSV file opening use `newline=""`?
 
 ## Done when
 

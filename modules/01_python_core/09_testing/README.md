@@ -18,7 +18,7 @@ Assert real outcomes and use mocks at external or slow boundaries. `pytest.raise
 
 ## Example
 
-Run `uv run python example.py` to see a currency rule whose cases fit naturally in a parametrized test.
+Run `uv run python modules/01_python_core/09_testing/example.py` to see a currency rule whose cases fit naturally in a parametrized test.
 
 ## Exercises
 
