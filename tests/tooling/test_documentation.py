@@ -66,15 +66,29 @@ FUTURE_MODULES = (
     "08_production_ai",
 )
 MARKDOWN_LINK = re.compile(r"(?<!!)\[[^]]*\]\(([^)]+)\)")
+FENCED_CODE_BLOCK = re.compile(r"^```[^\n]*\n(.*?)^```[ \t]*$", re.MULTILINE | re.DOTALL)
 CHECKLIST_ENTRY = re.compile(r"^- \[[ ~x]\] ([a-z0-9-]+)$", re.MULTILINE)
 
 
 def test_root_readme_exposes_every_learning_command() -> None:
-    """Removing a supported workflow command must make its discovery fail."""
+    """A supported command must stay discoverable as an executable command line."""
     readme = ROOT_README.read_text(encoding="utf-8")
+    fenced_commands = _fenced_command_lines(readme)
 
     for command in REQUIRED_COMMANDS:
-        assert command in readme
+        assert command in fenced_commands
+
+
+def test_fenced_command_lines_ignore_inline_command_mentions() -> None:
+    """Narrative mentions of a command cannot satisfy the executable-command contract."""
+    document = (
+        "Use `uv run pytest` for repository health.\n\n"
+        "```powershell\n"
+        "  uv run ruff check .  \n"
+        "```\n"
+    )
+
+    assert _fenced_command_lines(document) == ("uv run ruff check .",)
 
 
 def test_shared_documentation_relative_links_resolve() -> None:
@@ -124,3 +138,13 @@ def _relative_markdown_targets(document: Path) -> tuple[Path, ...]:
         if target and "://" not in target and not target.startswith(("#", "/", "mailto:")):
             targets.append(Path(target))
     return tuple(targets)
+
+
+def _fenced_command_lines(document: str) -> tuple[str, ...]:
+    """Return non-empty, stripped lines from Markdown fenced code blocks."""
+    return tuple(
+        line.strip()
+        for block in FENCED_CODE_BLOCK.findall(document)
+        for line in block.splitlines()
+        if line.strip()
+    )

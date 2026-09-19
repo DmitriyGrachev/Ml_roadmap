@@ -2,7 +2,7 @@
 
 ## 1. Install prerequisites
 
-Install Python 3.12 or newer and `uv` on Windows. Open PowerShell in the repository root, `C:\ProjectsDirectory\AIML\_road`; commands in this guide assume that working directory.
+Install Python 3.12 or newer and `uv` on Windows. Open PowerShell in the repository root (for example, `C:\path\to\AIML\_road`); commands in this guide assume that working directory.
 
 ## 2. Create the shared environment
 

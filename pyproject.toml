@@ -55,6 +55,7 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "PT"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
+files = ["src", "scripts", "tests/tooling"]
 exclude = [
     "(^|/).*\\.ipynb$",
     "(^|/)review_fixtures/",

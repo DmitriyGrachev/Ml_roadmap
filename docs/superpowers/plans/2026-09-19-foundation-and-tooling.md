@@ -99,9 +99,7 @@ import pytest
 T = TypeVar("T")
 
 
-def exercise_call(
-    operation: Callable[..., T], /, *args: object, **kwargs: object
-) -> T:
+def exercise_call(operation: Callable[..., T], /, *args: object, **kwargs: object) -> T:
     try:
         return operation(*args, **kwargs)
     except NotImplementedError as exc:

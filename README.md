@@ -12,7 +12,7 @@ Use the planned first coding path as inline code: `modules/01_python_core/02_col
 
 ## Windows-first start
 
-Open PowerShell at the repository root (`C:\ProjectsDirectory\AIML\_road`), then synchronize the single project environment:
+Open PowerShell at the repository root (for example, `C:\path\to\AIML\_road`), then synchronize the single project environment:
 
 ```powershell
 uv sync --all-groups
