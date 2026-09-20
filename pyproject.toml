@@ -35,6 +35,7 @@ dev = [
 module-name = "roadmap_tools"
 
 [tool.pytest.ini_options]
+addopts = ["--import-mode=importlib"]
 testpaths = ["tests", "modules", "projects"]
 xfail_strict = true
 markers = [
@@ -56,7 +57,22 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "PT"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["."]
+mypy_path = [
+    "src",
+    "projects/banking_ai_lab",
+    "modules/02_python_backend/examples",
+]
+packages = [
+    "roadmap_tools",
+    "modules.01_python_core",
+    "modules.02_python_backend",
+    "modules.03_data_foundations",
+    "banking_ai_lab",
+    "support_api",
+    "projects.banking_ai_lab.tests",
+    "scripts",
+    "tests",
+]
 exclude = [
     "(^|/).*\\.ipynb$",
     "(^|/)review_fixtures/",
