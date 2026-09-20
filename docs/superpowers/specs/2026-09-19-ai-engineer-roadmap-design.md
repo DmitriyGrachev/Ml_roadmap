@@ -227,7 +227,7 @@ uv run mypy
 - Minimum Python version: 3.12.
 - Project management: `uv` with a committed lock file.
 - Runtime libraries: FastAPI, Pydantic, Pydantic Settings, SQLAlchemy, PostgreSQL driver, NumPy, and Pandas.
-- Development libraries: pytest, pytest-asyncio, HTTPX, Ruff, mypy, JupyterLab, and notebook support required by the checked-in notebooks.
+- Development libraries: pytest, pytest-asyncio, HTTPX2, Ruff, mypy, JupyterLab, and notebook support required by the checked-in notebooks.
 - Packaging: standard `pyproject.toml` with a small `src/roadmap_tools` package.
 - Formatting and linting: Ruff.
 - Static type checking: mypy over repository tooling, runnable examples, backend code, and typed starter modules. Notebook cells and intentionally broken debugging inputs are excluded explicitly.

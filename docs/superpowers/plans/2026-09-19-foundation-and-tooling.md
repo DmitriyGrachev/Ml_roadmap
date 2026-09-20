@@ -80,7 +80,7 @@ Expected: collection fails because `roadmap_tools` does not exist.
 
 - [ ] **Step 3: Add project metadata and dependencies**
 
-Create a PEP 621 `pyproject.toml` named `ai-engineer-roadmap`, requiring Python `>=3.12`, using the `uv_build` backend, and declaring runtime dependencies for FastAPI, Pydantic, Pydantic Settings, SQLAlchemy, psycopg binary, HTTPX, NumPy, and Pandas. Add a `dev` dependency group containing pytest, pytest-asyncio, Ruff, mypy, JupyterLab, ipykernel, nbformat, and pandas typing stubs when available for the resolved interpreter.
+Create a PEP 621 `pyproject.toml` named `ai-engineer-roadmap`, requiring Python `>=3.12`, using the `uv_build` backend, and declaring runtime dependencies for FastAPI, Pydantic, Pydantic Settings, SQLAlchemy, psycopg binary, HTTPX2, NumPy, and Pandas. Add a `dev` dependency group containing pytest, pytest-asyncio, Ruff, mypy, JupyterLab, ipykernel, nbformat, and pandas typing stubs when available for the resolved interpreter.
 
 Configure pytest with `testpaths = ["tests", "modules", "projects"]`, `xfail_strict = true`, and the `student_exercise` and `postgres` markers. Configure Ruff for Python 3.12 with an 100-character line length and enable `E`, `F`, `I`, `B`, `UP`, `SIM`, `RUF`, and `PT`. Configure mypy with Python 3.12, strict checks, and explicit exclusions for notebook JSON and intentionally broken review fixtures.
 

@@ -17,6 +17,10 @@ Describe API inputs and outputs with Pydantic 2 models so validation happens at 
 
 Use `BaseModel`, `Field`, `ConfigDict`, and typed values such as `Decimal` and timezone-aware `datetime`. Declare a response model to avoid returning accidental fields.
 
+Validation location is part of an HTTP contract. A field validator reports an error at, for example,
+`["body", "amount"]`; a model-level validator normally reports it at `["body"]`. Use field
+validation for independent field rules and reserve model validation for relationships between fields.
+
 ## Key concepts
 
 - request versus response schemas
@@ -26,7 +30,9 @@ Use `BaseModel`, `Field`, `ConfigDict`, and typed values such as `Decimal` and t
 
 ## Example
 
-`TicketCreate` rejects an empty support subject before `TicketService.create` runs.
+`TicketCreate` rejects an empty support subject before `TicketService.create` runs. The transaction
+exercise also sends invalid input through a real FastAPI route so its 422 body must identify each
+invalid field, not merely the request body as a whole.
 
 ## Exercises
 
@@ -40,7 +46,9 @@ currency, merchant, timestamp, and unexpected fields without persisting a paymen
 3. What does a response model protect?
 4. Why reject a naive timestamp?
 5. When should extra fields be forbidden?
+6. Why can a model-level validation error be less useful to an API client?
 
 ## Done when
 
-You can distinguish request validation from domain rules and inspect a Pydantic-generated schema.
+You can distinguish request validation from domain rules, inspect a Pydantic-generated schema, and
+trace a Pydantic error location into FastAPI's `detail[].loc` response.

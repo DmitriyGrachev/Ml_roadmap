@@ -6,7 +6,7 @@
 
 **Architecture:** One Python 3.12+ project uses a shared `uv` environment and a small `roadmap_tools` package for catalog and exercise-test behavior. Curriculum content is isolated by module, while the Banking AI Lab supplies a single domain thread across Python, backend, and data work. Implementation runs in dependency-ordered waves so independent curriculum modules can be built and reviewed in parallel.
 
-**Tech Stack:** Python 3.12+, uv, pytest, pytest-asyncio, Ruff, mypy, FastAPI, Pydantic, Pydantic Settings, SQLAlchemy 2.x, psycopg, HTTPX, NumPy, Pandas, JupyterLab, nbformat
+**Tech Stack:** Python 3.12+, uv, pytest, pytest-asyncio, Ruff, mypy, FastAPI, Pydantic, Pydantic Settings, SQLAlchemy 2.x, psycopg, HTTPX2, NumPy, Pandas, JupyterLab, nbformat
 
 **Spec:** `docs/superpowers/specs/2026-09-19-ai-engineer-roadmap-design.md`
 

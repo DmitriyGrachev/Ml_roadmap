@@ -13,7 +13,7 @@ dependencies = [
     "pydantic-settings",
     "sqlalchemy",
     "psycopg[binary]",
-    "httpx",
+    "httpx2",
     "numpy",
     "pandas",
     "uvicorn[standard]",
@@ -56,8 +56,10 @@ select = ["E", "F", "I", "B", "UP", "SIM", "RUF", "PT"]
 [tool.mypy]
 python_version = "3.12"
 strict = true
-files = ["src", "scripts", "tests/tooling"]
+files = ["."]
 exclude = [
     "(^|/).*\\.ipynb$",
     "(^|/)review_fixtures/",
+    "(^|/)review_me\\.py$",
+    "(^|/)debugging/.*/broken\\.py$",
 ]

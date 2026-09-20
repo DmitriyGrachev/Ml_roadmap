@@ -2,6 +2,8 @@ from datetime import UTC, datetime
 from decimal import Decimal
 
 import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from pydantic import ValidationError
 
 from roadmap_tools import exercise_call
@@ -11,6 +13,24 @@ from . import starter
 
 def validate(payload: dict[str, object]) -> starter.TransactionCreate:
     return exercise_call(starter.validate_transaction, payload)
+
+
+def transaction_client() -> TestClient:
+    validate(
+        {
+            "amount": "1.00",
+            "currency": "USD",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00Z",
+        }
+    )
+    app = FastAPI()
+
+    @app.post("/transactions")
+    def create_transaction(transaction: starter.TransactionCreate) -> dict[str, bool]:
+        return {"accepted": bool(transaction)}
+
+    return TestClient(app)
 
 
 @pytest.mark.parametrize("currency", ["USD", "EUR", "GBP", "MDL"])
@@ -121,3 +141,23 @@ def test_currency_is_normalized_to_uppercase() -> None:
 def test_invalid_transaction_is_a_real_validation_error(payload: dict[str, object]) -> None:
     with pytest.raises(ValidationError):
         validate(payload)
+
+
+def test_http_422_identifies_every_invalid_field() -> None:
+    response = transaction_client().post(
+        "/transactions",
+        json={
+            "amount": "0",
+            "currency": "RON",
+            "merchant": "Market",
+            "timestamp": "2026-09-19T10:15:00",
+        },
+    )
+
+    assert response.status_code == 422
+    locations = {tuple(error["loc"]) for error in response.json()["detail"]}
+    assert locations >= {
+        ("body", "amount"),
+        ("body", "currency"),
+        ("body", "timestamp"),
+    }

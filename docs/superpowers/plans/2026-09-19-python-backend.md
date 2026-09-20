@@ -6,7 +6,7 @@
 
 **Architecture:** Nine lessons introduce one backend concern at a time. A small working support-ticket example demonstrates framework mechanics without revealing banking-project solutions; exercises use payment contracts and explicit composition. SQLite proves generic persistence behavior, while PostgreSQL checks are opt-in and clearly marked.
 
-**Tech Stack:** Python 3.12+, FastAPI, Pydantic 2, Pydantic Settings, SQLAlchemy 2.x, psycopg 3, HTTPX, pytest, pytest-asyncio
+**Tech Stack:** Python 3.12+, FastAPI, Pydantic 2, Pydantic Settings, SQLAlchemy 2.x, psycopg 3, HTTPX2, pytest, pytest-asyncio
 
 **Spec:** `docs/superpowers/specs/2026-09-19-ai-engineer-roadmap-design.md`
 
@@ -68,7 +68,7 @@ Use an application factory, `APIRouter`, Pydantic request/response models, an ex
 
 - [ ] **Step 4: Write lesson READMEs**
 
-Each lesson uses the shared headings and a two-column Spring-to-Python comparison. Cover `@RestController`/`APIRouter`, request validation/Pydantic, Spring DI/explicit construction plus `Depends`, `@ControllerAdvice`/exception handlers, async I/O, JPA/SQLAlchemy unit-of-work semantics, PostgreSQL boundaries, pytest/HTTPX, and Docker runtime packaging. Every comparison includes at least one non-equivalence statement.
+Each lesson uses the shared headings and a two-column Spring-to-Python comparison. Cover `@RestController`/`APIRouter`, request validation/Pydantic, Spring DI/explicit construction plus `Depends`, `@ControllerAdvice`/exception handlers, async I/O, JPA/SQLAlchemy unit-of-work semantics, PostgreSQL boundaries, pytest/HTTPX2, and Docker runtime packaging. Every comparison includes at least one non-equivalence statement.
 
 - [ ] **Step 5: Run scoped checks and commit**
 

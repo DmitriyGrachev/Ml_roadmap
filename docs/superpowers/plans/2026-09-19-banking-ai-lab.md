@@ -6,7 +6,7 @@
 
 **Architecture:** Complete infrastructure supplies deterministic data, domain contracts, application construction, fixtures, and health checks. Each stage exposes one typed student boundary guarded by acceptance tests through `exercise_call`. The package lives entirely under `projects/banking_ai_lab` and uses explicit composition between API, service, analytics, and persistence concerns.
 
-**Tech Stack:** Python 3.12+, Pydantic 2, FastAPI, SQLAlchemy 2.x, psycopg 3, Pandas, NumPy, pytest, HTTPX, Jupyter
+**Tech Stack:** Python 3.12+, Pydantic 2, FastAPI, SQLAlchemy 2.x, psycopg 3, Pandas, NumPy, pytest, HTTPX2, Jupyter
 
 **Spec:** `docs/superpowers/specs/2026-09-19-ai-engineer-roadmap-design.md`
 

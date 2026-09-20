@@ -26,7 +26,11 @@ Use `async def` only when the endpoint awaits asynchronous I/O. Start independen
 
 ## Example
 
-An async support integration can await two independent status calls; a CPU-heavy summarizer belongs outside the request event loop.
+The runnable support API exposes `GET /provider-statuses` as an actual `async def` route. Its
+application factory receives status providers explicitly, and the route awaits the provider fan-out
+in [`provider_status.py`](../examples/support_api/provider_status.py). The endpoint test proves both
+providers start before the first resumes and that the HTTP response preserves configured order. A
+CPU-heavy summarizer still belongs outside the request event loop.
 
 ## Exercises
 
@@ -40,7 +44,9 @@ rather than fragile timing thresholds.
 3. When should `gather` be used?
 4. How should cancellation behave?
 5. Does async make CPU work parallel?
+6. Where does the support endpoint compose its provider boundary?
 
 ## Done when
 
-You can name the I/O boundary for every async operation in an endpoint.
+You can trace a real async endpoint through its fan-out function and name the I/O boundary for every
+awaited operation.
