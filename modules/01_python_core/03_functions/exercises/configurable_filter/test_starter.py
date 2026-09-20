@@ -85,6 +85,34 @@ def test_filter_composes_the_optional_predicate() -> None:
 
 
 @pytest.mark.student_exercise
+def test_true_custom_predicate_does_not_override_the_minimum() -> None:
+    def always_true(_row: TransactionRow) -> bool:
+        return True
+
+    transaction_filter = exercise_call(
+        make_transaction_filter,
+        minimum=Decimal("25.00"),
+        predicate=always_true,
+    )
+
+    assert exercise_call(transaction_filter, transaction(amount="24.99")) is False
+
+
+@pytest.mark.student_exercise
+def test_true_custom_predicate_does_not_override_allowed_currencies() -> None:
+    def always_true(_row: TransactionRow) -> bool:
+        return True
+
+    transaction_filter = exercise_call(
+        make_transaction_filter,
+        currencies=frozenset({"USD"}),
+        predicate=always_true,
+    )
+
+    assert exercise_call(transaction_filter, transaction(currency="EUR")) is False
+
+
+@pytest.mark.student_exercise
 def test_filter_captures_an_immutable_currency_configuration() -> None:
     mutable_currencies = {"USD"}
     configured_currencies = cast(frozenset[str], mutable_currencies)

@@ -69,7 +69,8 @@ def test_authorize_payment_accepts_a_structural_processor_and_delegates_once() -
     result = exercise_call(authorize_payment, structural_processor, candidate_payment)
 
     assert result is expected
-    assert processor.calls == [candidate_payment]
+    assert len(processor.calls) == 1
+    assert processor.calls[0] is candidate_payment
 
 
 @pytest.mark.student_exercise
@@ -83,7 +84,8 @@ def test_authorize_payment_propagates_the_same_domain_exception() -> None:
         exercise_call(authorize_payment, structural_processor, candidate_payment)
 
     assert raised.value is error
-    assert processor.calls == [candidate_payment]
+    assert len(processor.calls) == 1
+    assert processor.calls[0] is candidate_payment
 
 
 @pytest.mark.parametrize(

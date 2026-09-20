@@ -37,11 +37,13 @@ def test_combine_responses_uses_one_based_indexes_and_preserves_order() -> None:
     first = response("ref-001")
     second = response("ref-002", status="retry")
 
-    assert exercise_call(
+    combined = exercise_call(
         combine_provider_responses,
         ["stripe", "adyen"],
         [first, second],
-    ) == [
+    )
+
+    assert combined == [
         exercise_call(
             IndexedProviderResponse,
             index=1,
@@ -55,6 +57,8 @@ def test_combine_responses_uses_one_based_indexes_and_preserves_order() -> None:
             response=second,
         ),
     ]
+    assert combined[0].response is first
+    assert combined[1].response is second
 
 
 @pytest.mark.student_exercise
