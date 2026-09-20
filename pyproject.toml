@@ -16,6 +16,7 @@ dependencies = [
     "httpx",
     "numpy",
     "pandas",
+    "uvicorn[standard]",
 ]
 
 [dependency-groups]
