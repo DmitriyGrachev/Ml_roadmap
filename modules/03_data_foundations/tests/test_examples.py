@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import importlib.util
 import sys
 from pathlib import Path
@@ -47,12 +48,51 @@ def test_each_example_has_a_deterministic_main(lesson: str) -> None:
     assert example.main() is None
 
 
-def test_numpy_example_broadcasts_currency_conversion() -> None:
+def test_numpy_example_broadcasts_sla_thresholds_into_a_boolean_matrix() -> None:
     example = load_example("01_numpy")
 
-    converted = example.convert_support_costs()
+    within_sla = example.compare_response_times_to_slas()
 
-    np.testing.assert_allclose(converted, np.array([[12.0, 9.0], [24.0, 18.0]]))
+    np.testing.assert_array_equal(
+        within_sla,
+        np.array(
+            [
+                [True, False, False, False],
+                [True, True, True, False],
+            ],
+            dtype=np.bool_,
+        ),
+    )
+
+
+def test_numpy_example_does_not_expose_the_payment_matrix_multiplication() -> None:
+    path = MODULE_ROOT / "01_numpy" / "example.py"
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    top_level_functions = {
+        node.name for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+    function = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.FunctionDef) and node.name == "compare_response_times_to_slas"
+    )
+    return_node = next(node for node in function.body if isinstance(node, ast.Return))
+    imported_multiplication = [
+        alias.name
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom) and node.module in {"numpy", "operator"}
+        for alias in node.names
+        if alias.name in {"multiply", "mul"}
+    ]
+
+    assert top_level_functions == {"compare_response_times_to_slas", "main"}
+    assert isinstance(return_node.value, ast.Compare)
+    assert not any(isinstance(node, ast.Mult) for node in ast.walk(tree))
+    assert not any(
+        isinstance(node, ast.Attribute) and node.attr in {"multiply", "mul", "__mul__"}
+        for node in ast.walk(tree)
+    )
+    assert not imported_multiplication
 
 
 def test_pandas_example_uses_named_groupby_aggregations() -> None:

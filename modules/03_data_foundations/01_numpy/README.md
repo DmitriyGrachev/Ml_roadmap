@@ -18,11 +18,11 @@ Indexing, boolean masks, `reshape`, axes, aggregation, broadcasting, dot product
 
 ## Example
 
-`example.py` converts a support-team cost matrix into two reporting currencies with a one-dimensional rate vector.
+`example.py` reshapes two support SLA thresholds into a column and broadcasts a comparison across four response times, producing a boolean compliance matrix.
 
 ## Exercises
 
-The later payment-matrix exercise asks you to apply the mechanics to different input data. Do not copy this example into it.
+The later payment-matrix exercise asks you to validate and scale a caller-provided amount matrix. It uses a different operation and shape contract from this fixed comparison example.
 
 ## Self-check
 

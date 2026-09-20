@@ -1,4 +1,4 @@
-"""Vectorize a small support-cost conversion without Python loops."""
+"""Broadcast support-response times across two SLA thresholds."""
 
 from __future__ import annotations
 
@@ -6,16 +6,16 @@ import numpy as np
 from numpy.typing import NDArray
 
 
-def convert_support_costs() -> NDArray[np.float64]:
-    """Convert two teams' USD support costs into EUR and GBP reporting values."""
-    costs_usd = np.array([[10.0, 10.0], [20.0, 20.0]], dtype=np.float64)
-    reporting_rates = np.array([1.2, 0.9], dtype=np.float64)
-    return costs_usd * reporting_rates
+def compare_response_times_to_slas() -> NDArray[np.bool_]:
+    """Return one compliance row per SLA without a Python loop."""
+    response_minutes = np.array([8.0, 18.0, 35.0, 70.0], dtype=np.float64)
+    sla_minutes = np.array([15.0, 45.0], dtype=np.float64)[:, np.newaxis]
+    return response_minutes <= sla_minutes
 
 
 def main() -> None:
-    """Print the deterministic broadcast conversion."""
-    print(convert_support_costs())
+    """Print the deterministic broadcast comparison."""
+    print(compare_response_times_to_slas())
 
 
 if __name__ == "__main__":
