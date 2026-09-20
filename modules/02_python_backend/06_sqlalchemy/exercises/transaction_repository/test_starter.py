@@ -171,7 +171,8 @@ def test_list_by_user_filters_and_orders_by_timestamp_then_id(
 
     assert [record.id for record in records] == ["tx-a", "tx-c", "tx-b"]
     assert all(record.user_id == "user-1" for record in records)
-    assert all(session.closed for session in sessions)
+    assert len(sessions) == 1
+    assert sessions[0].closed
 
 
 def test_add_rolls_back_integrity_error_closes_session_and_keeps_prior_data(
@@ -183,7 +184,8 @@ def test_add_rolls_back_integrity_error_closes_session_and_keeps_prior_data(
     with pytest.raises(IntegrityError):
         exercise_call(repo.add, transaction("duplicate", amount="99.00"))
 
-    failed_session = sessions[-1]
+    assert len(sessions) == 1
+    failed_session = sessions[0]
     assert failed_session.rollback_count >= 1
     assert failed_session.closed
     with Session(engine) as verification_session:

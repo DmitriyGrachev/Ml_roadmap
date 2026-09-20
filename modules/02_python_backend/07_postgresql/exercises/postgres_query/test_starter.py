@@ -73,6 +73,7 @@ def test_daily_totals_filter_utc_day_aggregate_in_sql_and_sort_by_currency(
             starter.CurrencyTotal(currency="GBP", total=Decimal("4.75")),
             starter.CurrencyTotal(currency="USD", total=Decimal("12.50")),
         ]
+        assert all(isinstance(item.total, Decimal) for item in totals)
         selects = [sql.upper() for sql in statements if sql.lstrip().upper().startswith("SELECT")]
         assert len(selects) == 1
         emitted_sql = selects[0]
