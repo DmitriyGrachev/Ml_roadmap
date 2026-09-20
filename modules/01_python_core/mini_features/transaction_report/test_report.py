@@ -308,6 +308,8 @@ def test_report_does_not_mutate_rows_or_nested_metadata() -> None:
             )
             for currency, case_id in (
                 ("eur", "lowercase-currency"),
+                ("EU", "short-currency"),
+                ("EURO", "long-currency"),
                 ("E1R", "non-letter-currency"),
                 ("ÉUR", "non-ascii-currency"),
                 (" EU", "whitespace-currency"),
