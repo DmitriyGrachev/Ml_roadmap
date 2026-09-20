@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, select, text
 from sqlalchemy.orm import Session
 from sqlalchemy.schema import CreateSchema, DropSchema
 
-from roadmap_tools import exercise_call  # type: ignore[import-untyped]
+from roadmap_tools import exercise_call
 
 from . import starter
 

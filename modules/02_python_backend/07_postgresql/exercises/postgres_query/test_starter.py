@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, event
 from sqlalchemy.engine import Connection
 from sqlalchemy.orm import Session
 
-from roadmap_tools import exercise_call  # type: ignore[import-untyped]
+from roadmap_tools import exercise_call
 
 from . import starter
 
@@ -54,6 +54,12 @@ def test_daily_totals_filter_utc_day_aggregate_in_sql_and_sort_by_currency(
                     record("usd-2", "2.50", "USD", datetime(2026, 9, 19, 23, 59, tzinfo=UTC)),
                     record("eur", "3.25", "EUR", datetime(2026, 9, 19, 8, 30, tzinfo=UTC)),
                     record("gbp", "4.75", "GBP", datetime(2026, 9, 19, 12, 0, tzinfo=UTC)),
+                    record(
+                        "previous",
+                        "100.00",
+                        "GBP",
+                        datetime(2026, 9, 18, 23, 59, tzinfo=UTC),
+                    ),
                     record("next", "200.00", "EUR", datetime(2026, 9, 20, 0, 0, tzinfo=UTC)),
                 ]
             )

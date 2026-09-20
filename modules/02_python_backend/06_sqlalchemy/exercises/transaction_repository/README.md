@@ -26,6 +26,7 @@ Intermediate.
 
 - Insert/get round trips preserve exact decimal values and return timezone-aware UTC timestamps.
 - Duplicate IDs propagate `IntegrityError` after rollback; a failed write does not remove prior data.
+- Database errors from `get` and `list_by_user` propagate unchanged after rollback.
 - Successful and failing operations close their sessions.
 - Invalid IDs, user IDs, currencies, amounts, and naive timestamps fail normally rather than becoming
   expected-incomplete results.

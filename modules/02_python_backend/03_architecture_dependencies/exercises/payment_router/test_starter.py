@@ -1,12 +1,11 @@
 from dataclasses import dataclass, field
 from decimal import Decimal
-from typing import cast
 
 import pytest
-from fastapi import APIRouter, FastAPI
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from roadmap_tools import exercise_call  # type: ignore[import-untyped]
+from roadmap_tools import exercise_call
 
 from . import starter
 
@@ -36,7 +35,7 @@ class FakePaymentService:
 
 def create_client(service: FakePaymentService) -> TestClient:
     app = FastAPI()
-    router = cast(APIRouter, exercise_call(starter.build_payment_router, service))
+    router = exercise_call(starter.build_payment_router, service)
     app.include_router(router)
     return TestClient(app)
 

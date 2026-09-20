@@ -23,3 +23,15 @@ def test_docker_build_context_excludes_local_and_secret_files() -> None:
     }
 
     assert {".git", ".venv", ".env", ".idea", "**/__pycache__", "*.db"} <= patterns
+
+
+def test_compose_example_binds_postgres_only_to_loopback() -> None:
+    compose = (
+        REPOSITORY_ROOT
+        / "modules"
+        / "02_python_backend"
+        / "09_docker_delivery"
+        / "compose.example.yaml"
+    ).read_text(encoding="utf-8")
+
+    assert '      - "127.0.0.1:5432:5432"' in compose.splitlines()

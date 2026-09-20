@@ -2,11 +2,10 @@ import asyncio
 from collections.abc import Awaitable
 from contextlib import suppress
 from decimal import Decimal
-from typing import cast
 
 import pytest
 
-from roadmap_tools import exercise_call  # type: ignore[import-untyped]
+from roadmap_tools import exercise_call
 
 from . import starter
 
@@ -14,10 +13,7 @@ from . import starter
 def start_fetch(
     gateways: list[starter.QuoteGateway], request: starter.QuoteRequest
 ) -> Awaitable[list[starter.Quote]]:
-    return cast(
-        Awaitable[list[starter.Quote]],
-        exercise_call(starter.fetch_provider_quotes, gateways, request),
-    )
+    return exercise_call(starter.fetch_provider_quotes, gateways, request)
 
 
 async def fetch_quotes(

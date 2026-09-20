@@ -26,7 +26,7 @@ Use a supported slim Python image, install `uv`, sync from the lock file without
 
 ## Example
 
-The later `Dockerfile.example` documents an application module placeholder and a runtime command; it is not needed to run the support API tests.
+The later `Dockerfile.example` documents an application module placeholder and a runtime command; it is not needed to run the support API tests. To use the nested Compose example from the repository root in PowerShell, first run `Copy-Item modules/02_python_backend/09_docker_delivery/compose.example.yaml compose.yaml`, then run `docker compose up -d postgres`. After the PostgreSQL checks, clean up with `docker compose down --volumes` followed by `Remove-Item compose.yaml`.
 
 ## Exercises
 

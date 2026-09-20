@@ -1,17 +1,16 @@
 from datetime import UTC, datetime
 from decimal import Decimal
-from typing import cast
 
 import pytest
 from pydantic import ValidationError
 
-from roadmap_tools import exercise_call  # type: ignore[import-untyped]
+from roadmap_tools import exercise_call
 
 from . import starter
 
 
 def validate(payload: dict[str, object]) -> starter.TransactionCreate:
-    return cast(starter.TransactionCreate, exercise_call(starter.validate_transaction, payload))
+    return exercise_call(starter.validate_transaction, payload)
 
 
 @pytest.mark.parametrize("currency", ["USD", "EUR", "GBP", "MDL"])

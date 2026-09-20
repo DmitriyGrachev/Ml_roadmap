@@ -26,7 +26,7 @@ Read `ROADMAP_POSTGRES_URL` only for opt-in checks. Keep generic repository beha
 
 ## Example
 
-When no URL is configured, a PostgreSQL test should skip with `Set ROADMAP_POSTGRES_URL and run: docker compose up -d postgres`.
+When no URL is configured, a PostgreSQL test should skip with `Set ROADMAP_POSTGRES_URL and run: docker compose up -d postgres`. Before running that exact command, use PowerShell from the repository root to copy the nested example with `Copy-Item modules/02_python_backend/09_docker_delivery/compose.example.yaml compose.yaml`. After the checks, run `docker compose down --volumes` and `Remove-Item compose.yaml`.
 
 ## Exercises
 

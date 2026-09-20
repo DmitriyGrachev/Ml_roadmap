@@ -39,8 +39,24 @@ Without PostgreSQL, the marked check skips with:
 
 `Set ROADMAP_POSTGRES_URL and run: docker compose up -d postgres`
 
-Set only `ROADMAP_POSTGRES_URL` to opt in. A configured but unreachable or invalid database is a real
-test failure, not a skip.
+The Compose example is nested with this lesson material, so the exact startup command works only
+after you copy it to the repository root. From the repository root, prepare and start PostgreSQL in
+PowerShell:
+
+```powershell
+Copy-Item modules/02_python_backend/09_docker_delivery/compose.example.yaml compose.yaml
+docker compose up -d postgres
+$env:ROADMAP_POSTGRES_URL = "postgresql+psycopg://roadmap:roadmap-local-only@localhost:5432/roadmap"
+```
+
+The copy step is mandatory. Set only `ROADMAP_POSTGRES_URL` to opt in. A configured but unreachable
+or invalid database is a real test failure, not a skip. After the PostgreSQL checks, clean up the
+local service and copied root file:
+
+```powershell
+docker compose down --volumes
+Remove-Item compose.yaml
+```
 
 ## Hints
 
