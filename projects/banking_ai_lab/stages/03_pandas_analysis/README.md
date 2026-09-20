@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-Complete Stages 01–02 and the Pandas data-loading, dtypes, grouping, sorting, categoricals, and
-datetime lessons. Understand that this stage explicitly converts domain `Decimal` amounts to a
-floating-point analysis boundary.
+Complete [Stage 02](../02_json_reports/README.md) after Stage 01, then review Pandas data loading,
+dtypes, grouping, sorting, categoricals, and datetime handling. Understand that this stage
+explicitly converts domain `Decimal` amounts to a floating-point analysis boundary.
 
 ## Goal
 

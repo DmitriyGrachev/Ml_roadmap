@@ -2,8 +2,9 @@
 
 ## Prerequisites
 
-Complete Stage 01 plus the iterators/generators and exceptions/I/O lessons. Review frozen
-dataclasses, one-shot iterables, exact `Decimal` arithmetic, UTF-8 JSON, and atomic file replacement.
+Complete [Stage 01](../01_csv_validation/README.md), then review iterators/generators and
+exceptions/I/O. Review frozen dataclasses, one-shot iterables, exact `Decimal` arithmetic, UTF-8
+JSON, and atomic file replacement.
 
 ## Goal
 

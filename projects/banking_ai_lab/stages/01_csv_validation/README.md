@@ -2,9 +2,9 @@
 
 ## Prerequisites
 
-Complete the Python collections, typing, data-modeling, and exceptions/I/O lessons. Be comfortable
-with `csv.DictReader`, Pydantic validation errors, immutable records, `Decimal`, UUIDs, and aware
-datetimes.
+Complete the repository [setup guide](../../../../docs/setup.md), then review Python collections,
+typing, data modeling, and exceptions/I/O. Be comfortable with `csv.DictReader`, Pydantic
+validation errors, immutable records, `Decimal`, UUIDs, and aware datetimes.
 
 ## Goal
 

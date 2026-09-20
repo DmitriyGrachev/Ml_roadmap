@@ -1,1 +1,6 @@
-items = []
+[[items]]
+id = "banking-ai-lab"
+title = "Banking AI Lab"
+kind = "project"
+readme = "projects/banking_ai_lab/README.md"
+tests = ["projects/banking_ai_lab"]

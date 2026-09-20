@@ -8,10 +8,10 @@ unfinished until you implement them and run its focused tests from the repositor
 | [01](stages/01_csv_validation/README.md) | Validate transaction CSV rows | Ready |
 | [02](stages/02_json_reports/README.md) | Build analytics and atomic JSON reports | Ready |
 | [03](stages/03_pandas_analysis/README.md) | Analyze transactions with Pandas | Ready |
-| 04 | Expose selected operations through FastAPI | Planned |
-| 05 | Persist transactions with PostgreSQL and SQLAlchemy | Planned |
-| 06 | Add API and database integration tests | Planned |
-| 07 | Explore transaction and fraud patterns in a notebook | Planned |
+| [04](stages/04_fastapi/README.md) | Expose selected operations through FastAPI | Ready |
+| [05](stages/05_postgresql/README.md) | Persist transactions with PostgreSQL and SQLAlchemy | Ready |
+| [06](stages/06_testing/README.md) | Add API and database integration tests | Ready |
+| [07](stages/07_exploratory_analysis/README.md) | Explore transaction and fraud patterns in a notebook | Ready |
 
 ## Working rules
 
