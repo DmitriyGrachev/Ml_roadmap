@@ -12,6 +12,8 @@ def parse_settlement(row: Sequence[str]) -> tuple[str, Decimal, str]:
     transaction_id, amount_text, currency = row
     if not isinstance(transaction_id, str) or not transaction_id.strip():
         raise ValueError("transaction ID must be a nonblank string")
+    if not isinstance(amount_text, str):
+        raise ValueError("amount must be valid decimal text")
     if not isinstance(currency, str) or not currency.strip():
         raise ValueError("currency must be a nonblank string")
 

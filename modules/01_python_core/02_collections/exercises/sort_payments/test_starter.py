@@ -36,16 +36,17 @@ def test_sort_payments_uses_amount_timestamp_and_id_keys() -> None:
 
 
 @pytest.mark.student_exercise
-def test_sort_payments_does_not_mutate_the_original_list() -> None:
+def test_sort_payments_preserves_every_field_in_caller_and_returned_rows() -> None:
     payments = [
         payment("pay-low", "1.00", "2026-09-19T09:00:00+00:00"),
         payment("pay-high", "2.00", "2026-09-19T09:00:00+00:00"),
     ]
-    original = payments.copy()
+    original = [row.copy() for row in payments]
 
-    exercise_call(sort_payments, payments)
+    result = exercise_call(sort_payments, payments)
 
     assert payments == original
+    assert result == [original[1], original[0]]
 
 
 @pytest.mark.student_exercise

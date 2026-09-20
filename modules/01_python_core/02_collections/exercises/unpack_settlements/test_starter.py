@@ -30,6 +30,18 @@ def test_parse_settlement_rejects_invalid_decimal_text() -> None:
         exercise_call(parse_settlement, ["txn-001", "not-an-amount", "EUR"])
 
 
+@pytest.mark.parametrize(
+    "amount",
+    [0.1, 1, True, Decimal("1.00")],
+    ids=["float", "int", "bool", "decimal"],
+)
+def test_parse_settlement_rejects_non_string_amounts(amount: object) -> None:
+    row = cast(list[str], ["txn-001", amount, "EUR"])
+
+    with pytest.raises(ValueError, match="decimal text"):
+        exercise_call(parse_settlement, row)
+
+
 @pytest.mark.parametrize("currency", ["", "   ", 42])
 def test_parse_settlement_rejects_invalid_currency(currency: object) -> None:
     row = cast(list[str], ["txn-001", "1.00", currency])
