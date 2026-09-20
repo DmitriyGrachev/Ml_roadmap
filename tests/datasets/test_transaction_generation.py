@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from types import ModuleType
-from uuid import UUID
+from uuid import UUID, uuid5
 
 import pytest
 
@@ -39,6 +39,7 @@ FORBIDDEN_PERSONAL_COLUMNS = {
     "phone",
     "address",
 }
+EXPECTED_NAMESPACE = UUID("912db270-32a0-55f6-a380-233fa83b061b")
 
 
 def load_generator() -> ModuleType:
@@ -78,9 +79,17 @@ def test_generated_transaction_records_are_typed_frozen_and_deterministic() -> N
 
     first = generator.generate_transactions(seed=17, count=8)
     second = generator.generate_transactions(seed=17, count=8)
+    different_seed = generator.generate_transactions(seed=18, count=8)
 
     assert first == second
+    assert different_seed != first
     assert len(first) == 8
+    assert {record.id for record in first} == {
+        str(uuid5(EXPECTED_NAMESPACE, f"17:{index}")) for index in range(8)
+    }
+    assert {record.id for record in different_seed} == {
+        str(uuid5(EXPECTED_NAMESPACE, f"18:{index}")) for index in range(8)
+    }
     record = first[0]
     assert isinstance(record.amount, Decimal)
     assert record.timestamp.utcoffset() == timedelta(0)
@@ -99,6 +108,9 @@ def test_writes_identical_bytes_to_two_clean_directories(tmp_path: Path) -> None
     generator = load_generator()
     first_directory = tmp_path / "first"
     second_directory = tmp_path / "second"
+    first_directory.mkdir()
+    sentinel = first_directory / "keep-me.txt"
+    sentinel.write_bytes(b"unrelated learner file\n")
 
     first_paths = generator.write_datasets(first_directory)
     second_paths = generator.write_datasets(second_directory)
@@ -111,6 +123,7 @@ def test_writes_identical_bytes_to_two_clean_directories(tmp_path: Path) -> None
     assert first_paths[1].read_bytes() == second_paths[1].read_bytes()
     assert b"\r\n" not in first_paths[0].read_bytes()
     assert b"\r\n" not in first_paths[1].read_bytes()
+    assert sentinel.read_bytes() == b"unrelated learner file\n"
 
 
 def test_checked_in_datasets_match_a_fresh_default_generation(tmp_path: Path) -> None:
@@ -157,10 +170,25 @@ def test_dirty_dataset_contains_each_documented_fault_independently(tmp_path: Pa
     rows_by_id: dict[str, list[dict[str, str]]] = {}
     for row in rows:
         rows_by_id.setdefault(row["id"], []).append(row)
-    assert any(
-        len(group) > 1 and len({tuple(row.items()) for row in group}) > 1
-        for group in rows_by_id.values()
-    )
+    exact_duplicate_ids = {
+        identifier
+        for identifier, group in rows_by_id.items()
+        if len(group) > 1 and len({tuple(row.items()) for row in group}) == 1
+    }
+    distinct_duplicate_ids = {
+        identifier
+        for identifier, group in rows_by_id.items()
+        if len(group) > 1 and len({tuple(row.items()) for row in group}) > 1
+    }
+    assert len(exact_duplicate_ids) == 1
+    assert len(distinct_duplicate_ids) == 1
+    assert exact_duplicate_ids.isdisjoint(distinct_duplicate_ids)
+    for identifier in distinct_duplicate_ids:
+        for row in rows_by_id[identifier]:
+            assert is_valid_amount(row["amount"])
+            assert is_valid_timestamp(row["timestamp"])
+            assert row["status"] in SUPPORTED_STATUSES
+            assert row["category"]
     assert any(count > 1 for count in Counter(raw_data_lines).values())
     assert any(
         not is_valid_amount(row["amount"])

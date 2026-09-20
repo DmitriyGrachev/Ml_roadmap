@@ -14,8 +14,12 @@ financial event.
 The schema is ordered as `id,user_id,amount,currency,merchant,category,timestamp,status,is_fraud`.
 Amounts are positive decimal strings with two places. Timestamps use aware UTC ISO 8601 values.
 Supported currencies are EUR, GBP, MDL, and USD; supported statuses are approved, declined, pending,
-and refunded. The fraud label is synthetic and intentionally rare. Its probability is modestly
-higher for selected synthetic risk conditions so later metrics exercises have a meaningful signal.
+and refunded. The `is_fraud` column uses lowercase `true` and `false`.
+
+The fraud label is synthetic and intentionally rare. Its generated probability is modestly higher
+for the synthetic `Harbor Crypto` merchant, amounts of at least 2,000, GBP/USD transactions, and
+declined status. These are learning-only correlations, not claims about real customers, merchants,
+currencies, or fraud behavior.
 
 ## Reproduce the files
 
@@ -27,5 +31,5 @@ uv run pytest tests/datasets/test_transaction_generation.py -q
 ```
 
 The generator uses a local seeded random source and UUID5 names derived only from the seed and row
-index. It writes stable UTF-8/LF CSV bytes on Windows, macOS, and Linux. Do not replace these files
-with exported production, personal, or private financial data.
+index. The repository's existing LF policy keeps its UTF-8 CSV bytes stable on Windows, macOS, and
+Linux. Do not replace these files with exported production, personal, or private financial data.
