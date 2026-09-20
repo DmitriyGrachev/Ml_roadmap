@@ -22,6 +22,4 @@ def attach_merchant_risk(transactions: pd.DataFrame, merchants: pd.DataFrame) ->
     missing_merchants = MERCHANT_COLUMNS.difference(merchants.columns)
     if missing_merchants:
         raise ValueError(f"merchants missing required columns: {sorted(missing_merchants)}")
-    if merchants["merchant_id"].duplicated().any():
-        raise ValueError("duplicate merchant keys are not allowed")
     raise NotImplementedError("Implement a cardinality-safe merchant risk join")

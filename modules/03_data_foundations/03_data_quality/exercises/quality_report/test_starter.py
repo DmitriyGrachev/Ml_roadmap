@@ -33,6 +33,29 @@ def test_reports_clean_transaction_data() -> None:
     )
 
 
+def test_accepts_timezone_aware_values_with_non_utc_offsets() -> None:
+    frame = pd.DataFrame(
+        {
+            "id": ["T-1", "T-2"],
+            "amount": [10.0, 20.0],
+            "timestamp": [
+                "2026-01-01T10:00:00+02:00",
+                pd.Timestamp("2026-01-02T10:00:00-04:00"),
+            ],
+        }
+    )
+
+    report = exercise_call(assess_transaction_quality, frame)
+
+    assert report == QualityReport(
+        missing_id_count=0,
+        duplicate_id_count=0,
+        invalid_amount_count=0,
+        invalid_timestamp_count=0,
+        unknown_category_count=0,
+    )
+
+
 def test_reports_overlapping_quality_defects_without_mutating_input() -> None:
     frame = pd.DataFrame(
         {
