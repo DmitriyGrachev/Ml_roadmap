@@ -106,6 +106,23 @@ def assert_valid_row(row: dict[str, str]) -> None:
     assert row["is_fraud"] in {"false", "true"}
 
 
+def assert_valid_row_except(row: dict[str, str], fault_field: str) -> None:
+    """Assert that a dirty-fixture row has exactly its named field-level fault."""
+    assert UUID(row["id"]).version == 5
+    assert re.fullmatch(r"user-\d{4}", row["user_id"])
+    if fault_field != "amount":
+        assert is_valid_amount(row["amount"])
+    assert row["currency"] in SUPPORTED_CURRENCIES
+    assert row["merchant"] in SUPPORTED_MERCHANTS
+    if fault_field != "category":
+        assert row["category"] in SUPPORTED_CATEGORIES
+    if fault_field != "timestamp":
+        assert is_valid_timestamp(row["timestamp"])
+    if fault_field != "status":
+        assert row["status"] in SUPPORTED_STATUSES
+    assert row["is_fraud"] in {"false", "true"}
+
+
 def test_generated_transaction_records_are_typed_frozen_and_deterministic() -> None:
     generator = load_generator()
 
@@ -246,34 +263,15 @@ def test_dirty_dataset_contains_each_documented_fault_independently(tmp_path: Pa
         for row in rows_by_id[identifier]:
             assert_valid_row(row)
     assert any(count > 1 for count in Counter(raw_data_lines).values())
-    assert any(
-        not is_valid_amount(row["amount"])
-        and is_valid_timestamp(row["timestamp"])
-        and row["status"] in SUPPORTED_STATUSES
-        and row["category"]
-        for row in rows
-    )
-    assert any(
-        is_valid_amount(row["amount"])
-        and not is_valid_timestamp(row["timestamp"])
-        and row["status"] in SUPPORTED_STATUSES
-        and row["category"]
-        for row in rows
-    )
-    assert any(
-        is_valid_amount(row["amount"])
-        and is_valid_timestamp(row["timestamp"])
-        and row["status"] not in SUPPORTED_STATUSES
-        and row["category"]
-        for row in rows
-    )
-    assert any(
-        is_valid_amount(row["amount"])
-        and is_valid_timestamp(row["timestamp"])
-        and row["status"] in SUPPORTED_STATUSES
-        and row["category"] == ""
-        for row in rows
-    )
+    fault_rows = {
+        "amount": [row for row in rows if not is_valid_amount(row["amount"])],
+        "timestamp": [row for row in rows if not is_valid_timestamp(row["timestamp"])],
+        "status": [row for row in rows if row["status"] not in SUPPORTED_STATUSES],
+        "category": [row for row in rows if row["category"] == ""],
+    }
+    assert all(len(matches) == 1 for matches in fault_rows.values())
+    for fault_field, [row] in fault_rows.items():
+        assert_valid_row_except(row, fault_field)
 
 
 def test_cli_writes_the_requested_seed_and_count(tmp_path: Path) -> None:
