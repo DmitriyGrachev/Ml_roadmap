@@ -74,13 +74,24 @@ def test_typing_example_uses_a_data_protocol_and_normalizes_values() -> None:
     assert normalize_labels(LabelsOnly()) == ("billing", "urgent")
 
     tree = ast.parse(path.read_text(encoding="utf-8"))
-    protocol_node = next(
+    protocol_nodes = [
         node
         for node in tree.body
         if isinstance(node, ast.ClassDef)
         and any(isinstance(base, ast.Name) and base.id == "Protocol" for base in node.bases)
-    )
+    ]
+    assert len(protocol_nodes) == 1
+    protocol_node = protocol_nodes[0]
     protocol_members = [node for node in protocol_node.body if isinstance(node, ast.FunctionDef)]
+    direct_method_delegates = [
+        node
+        for node in ast.walk(tree)
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+        and len(node.body) == 1
+        and isinstance(node.body[0], ast.Return)
+        and isinstance(node.body[0].value, ast.Call)
+        and isinstance(node.body[0].value.func, ast.Attribute)
+    ]
 
     assert protocol_members
     assert all(
@@ -90,6 +101,7 @@ def test_typing_example_uses_a_data_protocol_and_normalizes_values() -> None:
         )
         for node in protocol_members
     )
+    assert not direct_method_delegates
 
 
 def test_exception_example_reads_and_validates_json_without_an_atomic_export_template(
@@ -110,10 +122,11 @@ def test_exception_example_reads_and_validates_json_without_an_atomic_export_tem
         load_summary(summary)
 
     tree = ast.parse(source)
-    called_attributes = {
-        node.func.attr
-        for node in ast.walk(tree)
-        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+    top_level_functions = {
+        node.name for node in tree.body if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef))
+    }
+    referenced_attributes = {
+        node.attr for node in ast.walk(tree) if isinstance(node, ast.Attribute)
     }
     json_calls = {
         node.func.attr
@@ -123,10 +136,25 @@ def test_exception_example_reads_and_validates_json_without_an_atomic_export_tem
         and isinstance(node.func.value, ast.Name)
         and node.func.value.id == "json"
     }
+    direct_json_imports = [
+        node for node in tree.body if isinstance(node, ast.ImportFrom) and node.module == "json"
+    ]
+    replacement_imports = [
+        alias.name
+        for node in tree.body
+        if isinstance(node, ast.ImportFrom) and node.module in {"os", "pathlib"}
+        for alias in node.names
+        if alias.name in {"replace", "rename"}
+    ]
 
+    assert top_level_functions == {"load_summary", "main"}
     assert "load" in json_calls
     assert json_calls.isdisjoint({"dump", "dumps"})
-    assert called_attributes.isdisjoint({"replace", "with_suffix"})
+    assert not direct_json_imports
+    assert not replacement_imports
+    assert referenced_attributes.isdisjoint(
+        {"dump", "dumps", "replace", "rename", "with_name", "with_suffix"}
+    )
 
 
 def test_generator_example_returns_a_lazy_iterator() -> None:
