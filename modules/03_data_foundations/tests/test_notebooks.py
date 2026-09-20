@@ -198,6 +198,8 @@ def stored_identifier_names(tree: ast.Module) -> list[str]:
             name = node.attr
         elif isinstance(node, (ast.arg, ast.keyword)):
             name = node.arg
+        elif isinstance(node, ast.MatchMapping):
+            name = node.rest
         elif isinstance(node, (ast.ExceptHandler, ast.MatchAs, ast.MatchStar)):
             name = node.name
         elif isinstance(node, ast.Import):
@@ -229,6 +231,50 @@ def assignment_target_names(node: ast.AST) -> list[str]:
     ]
 
 
+def static_format_number_exceeds_limit(value: str) -> bool:
+    normalized = value.lstrip("0") or "0"
+    maximum = str(MAX_STATIC_STRING_LENGTH)
+    return len(normalized) > len(maximum) or (
+        len(normalized) == len(maximum) and normalized > maximum
+    )
+
+
+def fold_static_formatted_value(value: ast.FormattedValue) -> str | None:
+    if not isinstance(value.value, ast.Constant) or not isinstance(
+        value.value.value, (str, int, float, bool, type(None))
+    ):
+        return None
+
+    format_spec = ""
+    if value.format_spec is not None:
+        folded_format_spec = fold_static_string(value.format_spec)
+        if folded_format_spec is None:
+            return None
+        format_spec = folded_format_spec
+    if len(format_spec) > MAX_STATIC_STRING_LENGTH or any(
+        static_format_number_exceeds_limit(number) for number in re.findall(r"\d+", format_spec)
+    ):
+        raise AssertionError("static format specification exceeds the analysis limit")
+
+    if value.conversion == -1:
+        converted = value.value.value
+    elif value.conversion == ord("s"):
+        converted = str(value.value.value)
+    elif value.conversion == ord("r"):
+        converted = repr(value.value.value)
+    elif value.conversion == ord("a"):
+        converted = ascii(value.value.value)
+    else:
+        return None
+    try:
+        part = format(converted, format_spec)
+    except (TypeError, ValueError):
+        return None
+    if len(part) > MAX_STATIC_STRING_LENGTH:
+        raise AssertionError("static formatted value exceeds the analysis limit")
+    return part
+
+
 def fold_static_string(node: ast.AST) -> str | None:
     if isinstance(node, ast.Constant) and isinstance(node.value, str):
         return node.value
@@ -245,44 +291,93 @@ def fold_static_string(node: ast.AST) -> str | None:
         return None
 
     parts: list[str] = []
+    total_length = 0
     for value in node.values:
         if isinstance(value, ast.Constant) and isinstance(value.value, str):
             part = value.value
         elif isinstance(value, ast.FormattedValue):
-            if value.format_spec is not None and fold_static_string(value.format_spec) != "":
+            formatted = fold_static_formatted_value(value)
+            if formatted is None:
                 return None
-            if not isinstance(value.value, ast.Constant) or not isinstance(
-                value.value.value, (str, int, float, bool, type(None))
-            ):
-                return None
-            if value.conversion in {-1, ord("s")}:
-                part = str(value.value.value)
-            elif value.conversion == ord("r"):
-                part = repr(value.value.value)
-            elif value.conversion == ord("a"):
-                part = ascii(value.value.value)
-            else:
-                return None
+            part = formatted
         else:
             return None
         parts.append(part)
-        if sum(map(len, parts)) > MAX_STATIC_STRING_LENGTH:
-            return None
+        total_length += len(part)
+        if total_length > MAX_STATIC_STRING_LENGTH:
+            raise AssertionError("static f-string exceeds the analysis limit")
     return "".join(parts)
 
 
-def qualified_name(node: ast.AST) -> tuple[str, ...] | None:
+def guaranteed_static_string_prefix(node: ast.AST) -> str | None:
+    folded = fold_static_string(node)
+    if folded is not None:
+        return folded
+
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left = fold_static_string(node.left)
+        if left is None:
+            return None
+        right = guaranteed_static_string_prefix(node.right) or ""
+        prefix = left + right
+        return prefix if len(prefix) <= MAX_STATIC_STRING_LENGTH else None
+
+    if not isinstance(node, ast.JoinedStr):
+        return None
+
+    parts: list[str] = []
+    total_length = 0
+    for value in node.values:
+        if isinstance(value, ast.Constant) and isinstance(value.value, str):
+            part = value.value
+        elif isinstance(value, ast.FormattedValue):
+            formatted = fold_static_formatted_value(value)
+            if formatted is None:
+                break
+            part = formatted
+        else:
+            break
+        parts.append(part)
+        total_length += len(part)
+        if total_length > MAX_STATIC_STRING_LENGTH:
+            return None
+    return "".join(parts) or None
+
+
+def imported_name_aliases(tree: ast.Module) -> dict[str, tuple[str, ...]]:
+    aliases: dict[str, tuple[str, ...]] = {}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for imported in node.names:
+                qualified = tuple(imported.name.split("."))
+                bound_name = imported.asname or qualified[0]
+                aliases[bound_name] = qualified if imported.asname else (qualified[0],)
+        elif isinstance(node, ast.ImportFrom) and node.module is not None and node.level == 0:
+            module = tuple(node.module.split("."))
+            for imported in node.names:
+                if imported.name != "*":
+                    aliases[imported.asname or imported.name] = (*module, imported.name)
+    return aliases
+
+
+def qualified_name(
+    node: ast.AST,
+    aliases: dict[str, tuple[str, ...]],
+) -> tuple[str, ...] | None:
     if isinstance(node, ast.Name):
-        return (node.id,)
+        return aliases.get(node.id, (node.id,))
     if isinstance(node, ast.Attribute):
-        parent = qualified_name(node.value)
+        parent = qualified_name(node.value, aliases)
         if parent is not None:
             return (*parent, node.attr)
     return None
 
 
-def is_statically_absolute_path_call(node: ast.Call) -> bool:
-    function_name = qualified_name(node.func)
+def is_statically_absolute_path_call(
+    node: ast.Call,
+    aliases: dict[str, tuple[str, ...]],
+) -> bool:
+    function_name = qualified_name(node.func, aliases)
     if function_name is None or node.keywords:
         return False
 
@@ -297,18 +392,24 @@ def is_statically_absolute_path_call(node: ast.Call) -> bool:
     if not is_path_constructor and not is_join:
         return False
 
-    parts = [fold_static_string(argument) for argument in node.args]
-    static_parts = [part for part in parts if part is not None]
-    if any(
-        PurePosixPath(part).is_absolute() or PureWindowsPath(part).is_absolute()
-        for part in static_parts
-    ):
-        return True
-    if not parts or len(static_parts) != len(parts):
-        return False
-    return (
-        PurePosixPath(*static_parts).is_absolute() or PureWindowsPath(*static_parts).is_absolute()
-    )
+    static_run: list[str] = []
+    for argument in node.args:
+        part = fold_static_string(argument)
+        if part is None:
+            prefix = guaranteed_static_string_prefix(argument)
+            if prefix is not None:
+                static_run.append(prefix)
+                if (
+                    PurePosixPath(*static_run).is_absolute()
+                    or PureWindowsPath(*static_run).is_absolute()
+                ):
+                    return True
+            static_run.clear()
+            continue
+        static_run.append(part)
+        if PurePosixPath(*static_run).is_absolute() or PureWindowsPath(*static_run).is_absolute():
+            return True
+    return False
 
 
 def is_safe_prose_literal(
@@ -382,11 +483,16 @@ def assert_static_string_is_safe(
     assert ABSOLUTE_LOCAL_PATH.search(value) is None
 
 
-def assert_executable_code_has_no_sensitive_content(tree: ast.Module) -> None:
+def assert_executable_code_has_no_sensitive_content(
+    tree: ast.Module,
+    inherited_aliases: dict[str, tuple[str, ...]] | None = None,
+) -> None:
     for name in stored_identifier_names(tree):
         assert not is_sensitive_identifier(name)
 
     parents = parent_nodes(tree)
+    aliases = dict(inherited_aliases or {})
+    aliases.update(imported_name_aliases(tree))
     for node in ast.walk(tree):
         if isinstance(node, ast.Constant):
             if isinstance(node.value, bool):
@@ -405,14 +511,17 @@ def assert_executable_code_has_no_sensitive_content(tree: ast.Module) -> None:
             continue
 
         if isinstance(node, ast.Call):
-            assert not is_statically_absolute_path_call(node)
+            assert not is_statically_absolute_path_call(node, aliases)
 
 
 def assert_no_sensitive_content(notebook: NotebookNode) -> None:
+    aliases: dict[str, tuple[str, ...]] = {}
     for cell in notebook.cells:
         if cell.cell_type != "code":
             continue
-        assert_executable_code_has_no_sensitive_content(parse_code_cell(cell))
+        tree = parse_code_cell(cell)
+        aliases.update(imported_name_aliases(tree))
+        assert_executable_code_has_no_sensitive_content(tree, aliases)
 
 
 @pytest.mark.parametrize("name", NOTEBOOKS)
@@ -562,6 +671,9 @@ def test_warning_target_does_not_hide_sensitive_literal_signatures(unsafe_warnin
         'test_card = "4242 4242 " + "4242 4242"',
         "service_credential = f\"sk-proj-{'abcdefghijklmnopqrstuvwxyz0123456789'}\"",
         "service_credential = f\"{'sk-proj-' + 'abcdefghijklmnopqrstuvwxyz0123456789'}\"",
+        "contact = f\"{'learner':>7}@example.test\"",
+        "contact = f\"{'learner'!s:>7}@example.test\"",
+        "contact = f\"{'learner':>{7}}@example.test\"",
         'scratch = Path("/", "content", "private", "data.csv")',
         'scratch = PurePath("/", "content", "private", "data.csv")',
         'scratch = pathlib.PurePosixPath("/", "mnt", "data.csv")',
@@ -586,6 +698,7 @@ def test_privacy_contract_rejects_static_string_and_path_compositions(
         "import os as OPENAI_API_KEY",
         "from os import environ as SESSION_TOKEN",
         "from settings import AZURE_OPENAI_API_KEY",
+        "value = {}\nmatch value:\n    case {**SESSION_TOKEN}:\n        pass",
     ],
 )
 def test_privacy_contract_rejects_sensitive_import_and_exception_bindings(
@@ -607,7 +720,9 @@ def test_privacy_contract_accepts_relative_url_and_dynamic_compositions() -> Non
         'dynamic_relative_path = Path("datasets", runtime_name)\n'
         'documentation_url = "https://" + "example.test/data.csv"\n'
         'credential_label = "sk-proj-" + runtime_suffix\n'
-        'contact_label = f"{runtime_user}@example.test"\n'
+        'contact_label = f"{runtime_user:>7}@example.test"\n'
+        "dynamic_format_label = f\"{'learner':{runtime_width}}@example.test\"\n"
+        'numeric_label = f"{42:04d}"\n'
         'warning = "Never store " + "API keys or passwords in notebooks."\n'
         "try:\n"
         "    pass\n"
@@ -617,6 +732,104 @@ def test_privacy_contract_accepts_relative_url_and_dynamic_compositions() -> Non
     )
 
     assert_no_sensitive_content(notebook)
+
+
+def test_privacy_contract_rejects_unbounded_static_format_specs() -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    oversized_width = "9" * 5_000
+    notebook.cells[3].source += (
+        "\ncontact_label = f\"{'learner':>" + oversized_width + '}@example.test"'
+    )
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
+
+
+@pytest.mark.parametrize(
+    "unsafe_path",
+    [
+        'scratch = Path("C:", "\\\\Users", runtime_name)',
+        'scratch = PureWindowsPath("C:", "\\\\Users", runtime_name)',
+        'scratch = ntpath.join("C:", "\\\\Users", runtime_name)',
+        'scratch = os.path.join("C:", "\\\\Users", runtime_name)',
+        'scratch = Path("C:/" + runtime_name)',
+        'scratch = PureWindowsPath(f"C:/{runtime_name}")',
+        'scratch = ntpath.join("C:/" + runtime_name)',
+        'scratch = os.path.join(f"C:/{runtime_name}")',
+        'import pathlib as paths\nscratch = paths.Path("C:", "\\\\Users", runtime_name)',
+        'from pathlib import Path as P\nscratch = P("C:", "\\\\Users", runtime_name)',
+        "import ntpath as windows_paths\n"
+        'scratch = windows_paths.join("C:", "\\\\Users", runtime_name)',
+        'from ntpath import join as win_join\nscratch = win_join("C:", "\\\\Users", runtime_name)',
+        "import os as operating_system\n"
+        'scratch = operating_system.path.join("C:", "\\\\Users", runtime_name)',
+        "from os.path import join as path_join\n"
+        'scratch = path_join("C:", "\\\\Users", runtime_name)',
+    ],
+)
+def test_privacy_contract_rejects_static_windows_roots_with_dynamic_tails_and_aliases(
+    unsafe_path: str,
+) -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += f"\n{unsafe_path}"
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
+
+
+def test_privacy_contract_accepts_relative_and_dynamic_aliased_paths() -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += (
+        "\nimport pathlib as paths\n"
+        "from pathlib import Path as P\n"
+        "import ntpath as windows_paths\n"
+        "from ntpath import join as win_join\n"
+        "import os as operating_system\n"
+        "from os.path import join as path_join\n"
+        'paths.Path("datasets", runtime_name)\n'
+        'P(runtime_root, "transactions.csv")\n'
+        'windows_paths.join("datasets", runtime_name)\n'
+        'win_join(runtime_root, "transactions.csv")\n'
+        'operating_system.path.join("datasets", runtime_name)\n'
+        'path_join(runtime_root, "transactions.csv")\n'
+        'drive_relative_path = Path("C:", runtime_name)\n'
+        'unrelated_factory_path = paths_factory.Path("C:", "\\\\Users", runtime_name)'
+    )
+
+    assert_no_sensitive_content(notebook)
+
+
+@pytest.mark.parametrize(
+    ("import_source", "call_source"),
+    [
+        (
+            "import pathlib as paths",
+            'scratch = paths.Path("C:", "\\\\Users", runtime_name)',
+        ),
+        (
+            "from pathlib import Path as P",
+            'scratch = P("C:", "\\\\Users", runtime_name)',
+        ),
+        (
+            "import ntpath as windows_paths",
+            'scratch = windows_paths.join("C:", "\\\\Users", runtime_name)',
+        ),
+        (
+            "from os.path import join as path_join",
+            'scratch = path_join("C:", "\\\\Users", runtime_name)',
+        ),
+    ],
+)
+def test_privacy_contract_carries_import_aliases_across_code_cells(
+    import_source: str,
+    call_source: str,
+) -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[1].source += f"\n{import_source}"
+    notebook.cells[3].source += f"\n{call_source}"
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
 
 
 @pytest.mark.parametrize(("name", "required_terms"), NOTEBOOKS.items())
