@@ -79,7 +79,7 @@ def test_numpy_example_does_not_expose_the_payment_matrix_multiplication() -> No
     return_node = next(node for node in function.body if isinstance(node, ast.Return))
     imported_multiplication = [
         alias.name
-        for node in tree.body
+        for node in ast.walk(tree)
         if isinstance(node, ast.ImportFrom) and node.module in {"numpy", "operator"}
         for alias in node.names
         if alias.name in {"multiply", "mul"}
