@@ -22,7 +22,7 @@ Run `uv run python modules/01_python_core/04_typing/example.py` to request a rat
 
 ## Exercises
 
-The next coding task uses a payment-processor protocol without requiring inheritance.
+- [Delegate through a payment-processor protocol](exercises/payment_processor_protocol/README.md)
 
 ## Self-check
 

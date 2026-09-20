@@ -14,7 +14,7 @@ Pass functions, return them, capture configuration in closures, and choose posit
 
 ## Key concepts
 
-`/` marks positional-only parameters and `*` marks keyword-only parameters; defaults are evaluated once, so avoid mutable defaults. `enumerate` supplies indexes and `zip` pairs aligned iterables. Prefer a named function when a lambda would hide business intent.
+`/` marks positional-only parameters and `*` marks keyword-only parameters. `*args` collects extra positional arguments into a tuple, while `**kwargs` collects extra keyword arguments into a dict. At a call site, the same markers unpack an iterable or mapping to forward arguments. Defaults are evaluated once, so avoid mutable defaults. `enumerate` supplies indexes and `zip` pairs aligned iterables. Prefer a named function when a lambda would hide business intent.
 
 ## Example
 
@@ -22,7 +22,10 @@ Run `uv run python modules/01_python_core/03_functions/example.py` to send a not
 
 ## Exercises
 
-Later tasks build configurable predicates and combine independent provider responses.
+- [Build a configurable transaction filter](exercises/configurable_filter/README.md)
+- [Combine provider responses](exercises/combine_responses/README.md)
+- [Debug leaking audit tags](debugging/mutable_defaults/README.md)
+- [Review a stateful report builder](code_review/stateful_report/README.md)
 
 ## Self-check
 
@@ -32,6 +35,7 @@ Later tasks build configurable predicates and combine independent provider respo
 4. What is a closure?
 5. When is a named function clearer than a lambda?
 6. What do `enumerate` and `zip` provide?
+7. What do `*args` and `**kwargs` collect, and how do the same markers forward values?
 
 ## Done when
 

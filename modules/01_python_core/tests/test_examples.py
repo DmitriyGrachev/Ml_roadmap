@@ -1,11 +1,15 @@
 """Smoke tests for the standalone Module 01 teaching examples."""
 
+import ast
 import asyncio
+import inspect
+import io
+import logging
 import re
 import runpy
 import subprocess
 import sys
-from collections.abc import Awaitable, Callable, Iterator
+from collections.abc import Callable, Iterator
 from contextlib import suppress
 from pathlib import Path
 from typing import Any, cast
@@ -69,33 +73,34 @@ def test_generator_example_returns_a_lazy_iterator() -> None:
     assert next(lines) == "INFO document=terms parsed"
 
 
-def test_decorator_example_preserves_the_wrapped_name() -> None:
+def test_decorator_example_logs_calls_and_preserves_the_wrapped_function() -> None:
     namespace = load_example(MODULE_ROOT / "08_decorators" / "example.py")
-    parse_document = cast(Callable[[str], int], namespace["parse_document"])
+    log_calls = cast(Callable[..., Any], namespace["log_calls"])
+    messages = io.StringIO()
+    logger = logging.Logger("decorator-contract", level=logging.INFO)
+    logger.addHandler(logging.StreamHandler(messages))
 
-    assert parse_document.__name__ == "parse_document"
+    def count_terms(query: str) -> int:
+        """Count normalized search terms."""
 
+        return len(query.split())
 
-def test_decorator_example_reports_elapsed_time_with_an_injected_clock() -> None:
-    namespace = load_example(MODULE_ROOT / "08_decorators" / "example.py")
-    timed = cast(Callable[..., Any], namespace["timed"])
-    readings = iter((10.0, 10.25))
-    reports: list[str] = []
-
-    def count_words(text: str) -> int:
-        return len(text.split())
-
-    measured_count = cast(
+    logged_count = cast(
         Callable[[str], int],
-        timed(clock=lambda: next(readings), reporter=reports.append)(count_words),
+        log_calls(logger=logger)(count_terms),
     )
 
-    assert measured_count("terms and conditions") == 3
-    assert measured_count.__name__ == "count_words"
-    assert reports == ["count_words took 0.250s"]
+    assert logged_count("safe payment search") == 3
+    assert cast(Any, logged_count).__wrapped__ is count_terms
+    assert inspect.signature(logged_count) == inspect.signature(count_terms)
+    assert logged_count.__doc__ == count_terms.__doc__
+    assert messages.getvalue().splitlines() == [
+        "starting count_terms",
+        "finished count_terms",
+    ]
 
 
-def test_decorator_example_main_uses_a_deterministic_timing_demo(
+def test_decorator_example_main_uses_deterministic_logging(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
     namespace = load_example(MODULE_ROOT / "08_decorators" / "example.py")
@@ -103,54 +108,93 @@ def test_decorator_example_main_uses_a_deterministic_timing_demo(
 
     main()
 
-    assert capsys.readouterr().out == "3 words; demo_parse_document took 0.125s\n"
-
-
-def test_async_example_starts_all_calls_before_controlled_release_and_keeps_input_order() -> None:
-    namespace = load_example(MODULE_ROOT / "10_asyncio" / "example.py")
-    metadata_fetcher = Callable[[str], Awaitable[str]]
-    collect_metadata = cast(
-        Callable[[list[str], metadata_fetcher], Awaitable[list[str]]], namespace["collect_metadata"]
+    assert capsys.readouterr().out == (
+        "starting normalize_labels\nfinished normalize_labels\nbilling, urgent\n"
     )
 
-    async def run_scenario() -> tuple[list[str], list[str]]:
-        topics = ["risk", "compliance", "support"]
+
+def test_async_example_starts_fixed_heterogeneous_operations_before_release() -> None:
+    namespace = load_example(MODULE_ROOT / "10_asyncio" / "example.py")
+    build_study_dashboard = namespace["build_study_dashboard"]
+    study_dashboard = namespace["StudyDashboard"]
+
+    async def run_scenario() -> Any:
         started: set[str] = set()
-        completed: list[str] = []
         all_started = asyncio.Event()
-        releases = {topic: asyncio.Event() for topic in topics}
-        completions = {topic: asyncio.Event() for topic in topics}
+        release = asyncio.Event()
 
-        async def fetch(topic: str) -> str:
-            started.add(topic)
-            if len(started) == len(topics):
+        async def load_course_title() -> str:
+            started.add("title")
+            if len(started) == 2:
                 all_started.set()
-            await releases[topic].wait()
-            completed.append(topic)
-            completions[topic].set()
-            return f"{topic}:ready"
+            await release.wait()
+            return "Python core"
 
-        gather_task = asyncio.ensure_future(collect_metadata(topics, fetch))
+        async def count_completed_lessons() -> int:
+            started.add("count")
+            if len(started) == 2:
+                all_started.set()
+            await release.wait()
+            return 4
+
+        function_globals = build_study_dashboard.__globals__
+        original_title_loader = function_globals["load_course_title"]
+        original_count_loader = function_globals["count_completed_lessons"]
+        function_globals["load_course_title"] = load_course_title
+        function_globals["count_completed_lessons"] = count_completed_lessons
+        gather_task = asyncio.create_task(build_study_dashboard())
         try:
             await asyncio.wait_for(all_started.wait(), timeout=1.0)
-            assert started == set(topics)
+            assert started == {"title", "count"}
             assert gather_task.done() is False
-
-            for topic in ("support", "risk", "compliance"):
-                releases[topic].set()
-                await completions[topic].wait()
-
-            return await gather_task, completed
+            release.set()
+            return await asyncio.wait_for(gather_task, timeout=1.0)
         except BaseException:
             gather_task.cancel()
             with suppress(asyncio.CancelledError, Exception):
                 await gather_task
             raise
+        finally:
+            function_globals["load_course_title"] = original_title_loader
+            function_globals["count_completed_lessons"] = original_count_loader
 
-    result, completion_order = asyncio.run(run_scenario())
+    result = asyncio.run(run_scenario())
 
-    assert completion_order == ["support", "risk", "compliance"]
-    assert result == ["risk:ready", "compliance:ready", "support:ready"]
+    assert result == study_dashboard(course_title="Python core", completed_lessons=4)
+
+
+def test_async_example_is_not_a_generic_sequence_fanout_template() -> None:
+    path = MODULE_ROOT / "10_asyncio" / "example.py"
+    source = path.read_text(encoding="utf-8")
+    namespace = load_example(path)
+    build_study_dashboard = namespace["build_study_dashboard"]
+    study_dashboard = namespace["StudyDashboard"]
+    tree = ast.parse(source)
+    build_node = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.AsyncFunctionDef) and node.name == "build_study_dashboard"
+    )
+    gather_calls = [
+        node
+        for node in ast.walk(build_node)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and isinstance(node.func.value, ast.Name)
+        and node.func.value.id == "asyncio"
+        and node.func.attr == "gather"
+    ]
+
+    assert "collect_metadata" not in namespace
+    assert list(inspect.signature(build_study_dashboard).parameters) == []
+    assert inspect.signature(build_study_dashboard).return_annotation is study_dashboard
+    assert len(gather_calls) == 1
+    assert len(gather_calls[0].args) == 2
+    assert all(isinstance(argument, ast.Call) for argument in gather_calls[0].args)
+    assert not any(
+        isinstance(node, (ast.GeneratorExp, ast.ListComp, ast.SetComp))
+        for node in ast.walk(gather_calls[0])
+    )
 
 
 @pytest.mark.parametrize("example_path", EXAMPLE_PATHS, ids=lambda path: path.parent.name)

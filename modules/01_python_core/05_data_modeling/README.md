@@ -22,7 +22,7 @@ Run `uv run python modules/01_python_core/05_data_modeling/example.py` to create
 
 ## Exercises
 
-Later practice models a validated payment value without hiding its domain rules.
+- [Model an immutable payment](exercises/payment_model/README.md)
 
 ## Self-check
 

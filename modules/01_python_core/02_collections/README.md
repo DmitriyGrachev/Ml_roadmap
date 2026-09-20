@@ -22,7 +22,17 @@ Run `uv run python modules/01_python_core/02_collections/example.py` to summariz
 
 ## Exercises
 
-Collection exercises arrive after this lesson; practice reading the result types before writing any algorithm.
+Start with the focused collection tasks, then use the review and mini-feature to combine the ideas:
+
+- [Detect duplicate transactions](exercises/detect_duplicates/README.md)
+- [Group transaction amounts by user](exercises/group_by_user/README.md)
+- [Count payment providers](exercises/provider_frequency/README.md)
+- [Sort payments with multiple keys](exercises/sort_payments/README.md)
+- [Filter and project event records](exercises/filter_project_events/README.md)
+- [Slice transaction windows](exercises/slice_windows/README.md)
+- [Unpack settlement records safely](exercises/unpack_settlements/README.md)
+- [Review Java-shaped transaction grouping](code_review/java_shaped_grouping/README.md)
+- [Build a transaction analytics report](../mini_features/transaction_report/README.md)
 
 ## Self-check
 

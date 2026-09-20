@@ -22,7 +22,8 @@ Run `uv run python modules/01_python_core/07_iterators_generators/example.py` to
 
 ## Exercises
 
-Later debugging practice demonstrates a two-pass aggregation bug caused by iterator exhaustion.
+- [Debug an exhausted amount iterator](debugging/iterator_exhaustion/README.md)
+- [Stream NDJSON transactions lazily](exercises/stream_transactions/README.md)
 
 ## Self-check
 

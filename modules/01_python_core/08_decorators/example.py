@@ -1,45 +1,48 @@
-"""Time a document parser while retaining useful function metadata."""
+"""Log a function boundary while retaining useful callable metadata."""
 
+import logging
+import sys
 from collections.abc import Callable
 from functools import wraps
-from time import perf_counter
-
-type Clock = Callable[[], float]
-type Reporter = Callable[[str], None]
 
 
-def timed[**P, T](
-    *, clock: Clock = perf_counter, reporter: Reporter = print
-) -> Callable[[Callable[P, T]], Callable[P, T]]:
+def log_calls[**P, T](*, logger: logging.Logger) -> Callable[[Callable[P, T]], Callable[P, T]]:
     def decorate(function: Callable[P, T]) -> Callable[P, T]:
         @wraps(function)
         def wrapped(*args: P.args, **kwargs: P.kwargs) -> T:
-            started_at = clock()
-            result = function(*args, **kwargs)
-            elapsed = clock() - started_at
-            reporter(f"{function.__name__} took {elapsed:.3f}s")
-            return result
+            logger.info("starting %s", function.__name__)
+            try:
+                return function(*args, **kwargs)
+            finally:
+                logger.info("finished %s", function.__name__)
 
         return wrapped
 
     return decorate
 
 
-@timed()
-def parse_document(text: str) -> int:
-    return len(text.split())
+lesson_logger = logging.getLogger("python_core.decorators")
+
+
+@log_calls(logger=lesson_logger)
+def normalize_labels(labels: list[str]) -> str:
+    return ", ".join(label.strip().lower() for label in labels)
 
 
 def main() -> None:
-    readings = iter((20.0, 20.125))
-    reports: list[str] = []
-
-    @timed(clock=lambda: next(readings), reporter=reports.append)
-    def demo_parse_document(text: str) -> int:
-        return len(text.split())
-
-    word_count = demo_parse_document("terms and conditions")
-    print(f"{word_count} words; {reports[0]}")
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(logging.Formatter("%(message)s"))
+    previous_level = lesson_logger.level
+    previous_propagate = lesson_logger.propagate
+    lesson_logger.addHandler(handler)
+    lesson_logger.setLevel(logging.INFO)
+    lesson_logger.propagate = False
+    try:
+        print(normalize_labels([" Billing ", "URGENT"]))
+    finally:
+        lesson_logger.removeHandler(handler)
+        lesson_logger.setLevel(previous_level)
+        lesson_logger.propagate = previous_propagate
 
 
 if __name__ == "__main__":

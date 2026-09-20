@@ -22,7 +22,7 @@ Run `uv run python modules/01_python_core/09_testing/example.py` to see a curren
 
 ## Exercises
 
-Later practice tests a provider boundary with one deliberately scoped mock.
+- [Test one provider interaction](exercises/mock_provider/README.md)
 
 ## Self-check
 

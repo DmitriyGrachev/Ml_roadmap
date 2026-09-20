@@ -14,15 +14,15 @@ A decorator accepts a callable and returns a callable. `functools.wraps` preserv
 
 ## Key concepts
 
-Use `ParamSpec` when a generic decorator preserves arbitrary parameters. Keep retry, logging, and timing policies explicit so failures and return values remain understandable.
+Use `ParamSpec` when a generic decorator preserves arbitrary parameters. A logging decorator can record a call boundary without mixing logging into domain logic; avoid logging arguments that may contain secrets. Keep retry, logging, and timing policies explicit so failures and return values remain understandable.
 
 ## Example
 
-Run `uv run python modules/01_python_core/08_decorators/example.py` to time a document parser while retaining its original name.
+Run `uv run python modules/01_python_core/08_decorators/example.py` to log label normalization while retaining the wrapped function's metadata.
 
 ## Exercises
 
-Later practice adds a retry boundary with a specified retry count and preserved metadata.
+- [Retry selected gateway failures](exercises/retry_gateway/README.md)
 
 ## Self-check
 
@@ -31,6 +31,7 @@ Later practice adds a retry boundary with a specified retry count and preserved 
 3. When is a decorator appropriate?
 4. What does `ParamSpec` preserve?
 5. Why keep retry policy visible?
+6. Which call details are safe and useful to log?
 
 ## Done when
 

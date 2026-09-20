@@ -14,15 +14,15 @@ Coroutines may resemble `CompletableFuture`. Python `asyncio` uses cooperative s
 
 ## Key concepts
 
-Async helps when work spends time waiting on I/O. CPU-heavy work still needs an appropriate process or thread strategy; never infer concurrency from timing thresholds alone.
+Async helps when work spends time waiting on I/O. `asyncio.run` drives a top-level coroutine on an event loop, and `gather` can join independent awaitables without creating a thread for each one. This cooperative concurrency is not thread-based execution or CPU parallelism; CPU-heavy work needs a suitable process or thread strategy.
 
 ## Example
 
-Run `uv run python modules/01_python_core/10_asyncio/example.py` to concurrently collect deterministic mocked LLM metadata.
+Run `uv run python modules/01_python_core/10_asyncio/example.py` to combine two different mocked study services into one dashboard.
 
 ## Exercises
 
-Later practice coordinates controlled coroutines and checks ordered results plus exception propagation.
+- [Fetch quotes concurrently](exercises/fetch_quotes/README.md)
 
 ## Self-check
 

@@ -22,7 +22,7 @@ Run `uv run python modules/01_python_core/00_environment/example.py` to print st
 
 ## Exercises
 
-No coding exercise in this reading lesson; verify your setup before continuing.
+Verify the two commands above, then [open the module practice map](../README.md#practice-map) and choose a focused task.
 
 ## Self-check
 
