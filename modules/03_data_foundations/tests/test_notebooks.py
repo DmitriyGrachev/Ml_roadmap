@@ -4,7 +4,7 @@ import ast
 import json
 import re
 from collections.abc import Sequence
-from pathlib import Path
+from pathlib import Path, PurePosixPath, PureWindowsPath
 from typing import cast
 
 import nbformat
@@ -87,6 +87,8 @@ SAFE_TOKEN_NEIGHBORS = {
     "total",
     "usage",
 }
+PATH_CONSTRUCTORS = {"Path", "PurePath", "PurePosixPath", "PureWindowsPath"}
+MAX_STATIC_STRING_LENGTH = 10_000
 EXERCISE_MESSAGE = "Complete this notebook exercise"
 
 
@@ -196,6 +198,14 @@ def stored_identifier_names(tree: ast.Module) -> list[str]:
             name = node.attr
         elif isinstance(node, (ast.arg, ast.keyword)):
             name = node.arg
+        elif isinstance(node, (ast.ExceptHandler, ast.MatchAs, ast.MatchStar)):
+            name = node.name
+        elif isinstance(node, ast.Import):
+            names.extend(
+                alias.asname or alias.name.split(".", maxsplit=1)[0] for alias in node.names
+            )
+        elif isinstance(node, ast.ImportFrom):
+            names.extend(alias.asname or alias.name for alias in node.names if alias.name != "*")
         if name is not None:
             names.append(name)
     return names
@@ -219,8 +229,90 @@ def assignment_target_names(node: ast.AST) -> list[str]:
     ]
 
 
+def fold_static_string(node: ast.AST) -> str | None:
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        left = fold_static_string(node.left)
+        right = fold_static_string(node.right)
+        if left is None or right is None:
+            return None
+        combined = left + right
+        return combined if len(combined) <= MAX_STATIC_STRING_LENGTH else None
+
+    if not isinstance(node, ast.JoinedStr):
+        return None
+
+    parts: list[str] = []
+    for value in node.values:
+        if isinstance(value, ast.Constant) and isinstance(value.value, str):
+            part = value.value
+        elif isinstance(value, ast.FormattedValue):
+            if value.format_spec is not None and fold_static_string(value.format_spec) != "":
+                return None
+            if not isinstance(value.value, ast.Constant) or not isinstance(
+                value.value.value, (str, int, float, bool, type(None))
+            ):
+                return None
+            if value.conversion in {-1, ord("s")}:
+                part = str(value.value.value)
+            elif value.conversion == ord("r"):
+                part = repr(value.value.value)
+            elif value.conversion == ord("a"):
+                part = ascii(value.value.value)
+            else:
+                return None
+        else:
+            return None
+        parts.append(part)
+        if sum(map(len, parts)) > MAX_STATIC_STRING_LENGTH:
+            return None
+    return "".join(parts)
+
+
+def qualified_name(node: ast.AST) -> tuple[str, ...] | None:
+    if isinstance(node, ast.Name):
+        return (node.id,)
+    if isinstance(node, ast.Attribute):
+        parent = qualified_name(node.value)
+        if parent is not None:
+            return (*parent, node.attr)
+    return None
+
+
+def is_statically_absolute_path_call(node: ast.Call) -> bool:
+    function_name = qualified_name(node.func)
+    if function_name is None or node.keywords:
+        return False
+
+    is_path_constructor = function_name[-1] in PATH_CONSTRUCTORS and (
+        len(function_name) == 1 or function_name[:-1] == ("pathlib",)
+    )
+    is_join = function_name in {
+        ("os", "path", "join"),
+        ("posixpath", "join"),
+        ("ntpath", "join"),
+    }
+    if not is_path_constructor and not is_join:
+        return False
+
+    parts = [fold_static_string(argument) for argument in node.args]
+    static_parts = [part for part in parts if part is not None]
+    if any(
+        PurePosixPath(part).is_absolute() or PureWindowsPath(part).is_absolute()
+        for part in static_parts
+    ):
+        return True
+    if not parts or len(static_parts) != len(parts):
+        return False
+    return (
+        PurePosixPath(*static_parts).is_absolute() or PureWindowsPath(*static_parts).is_absolute()
+    )
+
+
 def is_safe_prose_literal(
-    node: ast.Constant,
+    node: ast.AST,
     value: str,
     parents: dict[ast.AST, ast.AST],
 ) -> bool:
@@ -273,32 +365,47 @@ def contains_luhn_card(value: str | int) -> bool:
     return False
 
 
+def assert_static_string_is_safe(
+    node: ast.AST,
+    value: str,
+    parents: dict[ast.AST, ast.AST],
+) -> None:
+    value = value.strip()
+    if is_safe_prose_literal(node, value, parents):
+        return
+    normalized = normalize_identifier(value)
+    assert not is_sensitive_identifier(normalized)
+    assert PRIVATE_FIELD_IDENTIFIER.search(normalized) is None
+    assert EMAIL_LITERAL.search(value) is None
+    assert SECRET_SIGNATURE.search(value) is None
+    assert not contains_luhn_card(value)
+    assert ABSOLUTE_LOCAL_PATH.search(value) is None
+
+
 def assert_executable_code_has_no_sensitive_content(tree: ast.Module) -> None:
     for name in stored_identifier_names(tree):
         assert not is_sensitive_identifier(name)
 
     parents = parent_nodes(tree)
     for node in ast.walk(tree):
-        if not isinstance(node, ast.Constant):
-            continue
-        if isinstance(node.value, bool):
-            continue
-        if isinstance(node.value, int):
-            assert not contains_luhn_card(node.value)
-            continue
-        if not isinstance(node.value, str):
+        if isinstance(node, ast.Constant):
+            if isinstance(node.value, bool):
+                continue
+            if isinstance(node.value, int):
+                assert not contains_luhn_card(node.value)
+                continue
+            if isinstance(node.value, str):
+                assert_static_string_is_safe(node, node.value, parents)
             continue
 
-        value = node.value.strip()
-        if is_safe_prose_literal(node, value, parents):
+        if isinstance(node, (ast.BinOp, ast.JoinedStr)):
+            static_value = fold_static_string(node)
+            if static_value is not None:
+                assert_static_string_is_safe(node, static_value, parents)
             continue
-        normalized = normalize_identifier(value)
-        assert not is_sensitive_identifier(normalized)
-        assert PRIVATE_FIELD_IDENTIFIER.search(normalized) is None
-        assert EMAIL_LITERAL.search(value) is None
-        assert SECRET_SIGNATURE.search(value) is None
-        assert not contains_luhn_card(value)
-        assert ABSOLUTE_LOCAL_PATH.search(value) is None
+
+        if isinstance(node, ast.Call):
+            assert not is_statically_absolute_path_call(node)
 
 
 def assert_no_sensitive_content(notebook: NotebookNode) -> None:
@@ -445,6 +552,71 @@ def test_warning_target_does_not_hide_sensitive_literal_signatures(unsafe_warnin
 
     with pytest.raises(AssertionError):
         assert_no_sensitive_content(notebook)
+
+
+@pytest.mark.parametrize(
+    "unsafe_composition",
+    [
+        'service_credential = "sk-proj-" + "abcdefghijklmnopqrstuvwxyz0123456789"',
+        'contact = "learner" + "@" + "example.test"',
+        'test_card = "4242 4242 " + "4242 4242"',
+        "service_credential = f\"sk-proj-{'abcdefghijklmnopqrstuvwxyz0123456789'}\"",
+        "service_credential = f\"{'sk-proj-' + 'abcdefghijklmnopqrstuvwxyz0123456789'}\"",
+        'scratch = Path("/", "content", "private", "data.csv")',
+        'scratch = PurePath("/", "content", "private", "data.csv")',
+        'scratch = pathlib.PurePosixPath("/", "mnt", "data.csv")',
+        'scratch = os.path.join("/", "private", "data.csv")',
+        'scratch = Path("/", runtime_name)',
+    ],
+)
+def test_privacy_contract_rejects_static_string_and_path_compositions(
+    unsafe_composition: str,
+) -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += f"\n{unsafe_composition}"
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
+
+
+@pytest.mark.parametrize(
+    "unsafe_binding",
+    [
+        "try:\n    pass\nexcept Exception as OPENAI_API_KEY:\n    pass",
+        "import os as OPENAI_API_KEY",
+        "from os import environ as SESSION_TOKEN",
+        "from settings import AZURE_OPENAI_API_KEY",
+    ],
+)
+def test_privacy_contract_rejects_sensitive_import_and_exception_bindings(
+    unsafe_binding: str,
+) -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += f"\n{unsafe_binding}"
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
+
+
+def test_privacy_contract_accepts_relative_url_and_dynamic_compositions() -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += (
+        '\nrelative_path = Path("datasets", "transactions.csv")\n'
+        'pure_relative_path = PurePath("datasets", "transactions.csv")\n'
+        'joined_relative_path = os.path.join("datasets", "transactions.csv")\n'
+        'dynamic_relative_path = Path("datasets", runtime_name)\n'
+        'documentation_url = "https://" + "example.test/data.csv"\n'
+        'credential_label = "sk-proj-" + runtime_suffix\n'
+        'contact_label = f"{runtime_user}@example.test"\n'
+        'warning = "Never store " + "API keys or passwords in notebooks."\n'
+        "try:\n"
+        "    pass\n"
+        "except Exception as error:\n"
+        "    pass\n"
+        "import os as operating_system"
+    )
+
+    assert_no_sensitive_content(notebook)
 
 
 @pytest.mark.parametrize(("name", "required_terms"), NOTEBOOKS.items())
