@@ -6,7 +6,7 @@ This future module will bring AI features into production concerns: deployment, 
 
 ## Prerequisites
 
-Complete the planned backend, data, LLM, retrieval, and agent sequences. You should understand test automation, configuration, persistence, API operations, and the difference between offline and live evaluation.
+Complete the implemented backend and data foundations modules, followed by the planned LLM, retrieval, and agent sequences. You should understand test automation, configuration, persistence, API operations, and the difference between offline and live evaluation.
 
 ## Planned outcomes
 

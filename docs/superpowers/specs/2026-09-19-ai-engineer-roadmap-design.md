@@ -185,7 +185,7 @@ Notebooks are Colab-compatible: they use repository-relative data paths with a d
 6. add API and database integration tests;
 7. perform exploratory analysis in a Jupyter notebook.
 
-The canonical transaction fields are `id`, `user_id`, `amount`, `currency`, `merchant`, `category`, `timestamp`, and `status`. Money is represented as decimal values at domain and persistence boundaries. Timestamps are timezone-aware. Dataset generation uses a fixed seed and synthetic identities only.
+The canonical transaction fields are `id`, `user_id`, `amount`, `currency`, `merchant`, `category`, `timestamp`, `status`, and `is_fraud`. `is_fraud` is a synthetic boolean fraud label used only by generated learning data. Money is represented as decimal values at domain and persistence boundaries. Timestamps are timezone-aware. Dataset generation uses a fixed seed and synthetic identities only.
 
 Each stage has its own acceptance criteria and test command. Starter boundaries stay unimplemented when implementing them would solve the student task. Supporting infrastructure—configuration parsing, application factories, fixtures, and test helpers—may be complete when it teaches setup rather than the target algorithm.
 

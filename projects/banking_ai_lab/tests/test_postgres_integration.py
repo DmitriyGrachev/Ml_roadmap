@@ -42,7 +42,10 @@ from roadmap_tools import exercise_call
 pytestmark = pytest.mark.postgres
 
 POSTGRES_ENVIRONMENT = "ROADMAP_POSTGRES_URL"
-POSTGRES_SKIP_REASON = "cd projects/banking_ai_lab; docker compose up -d postgres"
+POSTGRES_SKIP_REASON = (
+    "Set ROADMAP_POSTGRES_URL after following "
+    "projects/banking_ai_lab/stages/05_postgresql/README.md"
+)
 CONNECT_ATTEMPTS = 3
 CONNECT_TIMEOUT_SECONDS = 2
 

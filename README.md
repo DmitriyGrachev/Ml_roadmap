@@ -12,6 +12,25 @@ Start with the first lesson: [Environment and workflow](modules/01_python_core/0
 
 Then try the first coding exercise: [Detect duplicate transactions](modules/01_python_core/02_collections/exercises/detect_duplicates/README.md).
 
+## Repository structure
+
+```text
+ai-engineer-roadmap/
+├── modules/01_python_core/
+├── modules/02_python_backend/
+├── modules/03_data_foundations/
+├── modules/04_machine_learning/
+├── modules/05_llm_engineering/
+├── modules/06_rag/
+├── modules/07_agents/
+├── modules/08_production_ai/
+├── projects/banking_ai_lab/
+├── datasets/
+├── scripts/
+├── src/roadmap_tools/
+└── tests/integration/
+```
+
 ## Windows-first start
 
 Open PowerShell at the repository root (for example, `C:\path\to\AIML\_road`), then synchronize the single project environment:

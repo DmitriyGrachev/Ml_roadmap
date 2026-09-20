@@ -19,7 +19,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
-    { name = "httpx2" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "psycopg", extra = ["binary"] },
@@ -31,6 +30,7 @@ dependencies = [
 
 [package.dev-dependencies]
 dev = [
+    { name = "httpx2" },
     { name = "ipykernel" },
     { name = "jupyterlab" },
     { name = "mypy" },
@@ -44,7 +44,6 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "fastapi" },
-    { name = "httpx2" },
     { name = "numpy" },
     { name = "pandas" },
     { name = "psycopg", extras = ["binary"] },
@@ -56,6 +55,7 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "httpx2" },
     { name = "ipykernel" },
     { name = "jupyterlab" },
     { name = "mypy" },

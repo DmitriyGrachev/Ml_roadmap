@@ -6,7 +6,7 @@ This future module will connect the data-foundations work to supervised learning
 
 ## Prerequisites
 
-Complete the planned Python core, production Python, and data foundations sequences. You should be comfortable reading tabular data, checking data quality, and explaining leakage, class imbalance, and the limits of accuracy.
+Complete Modules 01–03: Python core, production Python, and data foundations. You should be comfortable reading tabular data, checking data quality, and explaining leakage, class imbalance, and the limits of accuracy.
 
 ## Planned outcomes
 

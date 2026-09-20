@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import csv
 import re
 import tomllib
@@ -17,6 +18,8 @@ from roadmap_tools.catalog import Catalog
 REPOSITORY_ROOT = Path(__file__).resolve().parents[3]
 PROJECT_ROOT = REPOSITORY_ROOT / "projects" / "banking_ai_lab"
 STAGES_ROOT = PROJECT_ROOT / "stages"
+POSTGRES_INTEGRATION_TEST = PROJECT_ROOT / "tests" / "test_postgres_integration.py"
+POSTGRES_SETUP_GUIDE = "projects/banking_ai_lab/stages/05_postgresql/README.md"
 
 EXPECTED_COLUMNS = (
     "id",
@@ -290,6 +293,27 @@ def test_environment_and_compose_keep_the_complete_local_contract() -> None:
     assert all(
         port.startswith("127.0.0.1:") for service in services.values() for port in service["ports"]
     )
+
+
+def test_postgres_skip_reason_points_to_the_complete_setup_guide() -> None:
+    """An unconfigured run must identify both the opt-in variable and the full setup workflow."""
+    tree = ast.parse(POSTGRES_INTEGRATION_TEST.read_text(encoding="utf-8"))
+    assignment = next(
+        statement
+        for statement in tree.body
+        if isinstance(statement, ast.Assign)
+        and any(
+            isinstance(target, ast.Name) and target.id == "POSTGRES_SKIP_REASON"
+            for target in statement.targets
+        )
+    )
+    reason = ast.literal_eval(assignment.value)
+
+    assert reason == (
+        "Set ROADMAP_POSTGRES_URL after following "
+        "projects/banking_ai_lab/stages/05_postgresql/README.md"
+    )
+    assert (REPOSITORY_ROOT / POSTGRES_SETUP_GUIDE).is_file()
 
 
 def test_stage_seven_documents_both_notebook_workflows_and_reset_contract() -> None:

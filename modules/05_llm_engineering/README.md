@@ -6,7 +6,7 @@ This future module will focus on application-level LLM integration: prompt and o
 
 ## Prerequisites
 
-Complete the planned Python and backend modules, including typed boundaries, API validation, async I/O, tests, and configuration practices. Data foundations should be sufficient to reason about evaluation samples and failure slices.
+Complete the implemented Python core and backend modules, including typed boundaries, API validation, async I/O, tests, and configuration practices. Data foundations should be sufficient to reason about evaluation samples and failure slices.
 
 ## Planned outcomes
 

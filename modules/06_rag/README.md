@@ -6,7 +6,7 @@ This future module will cover document ingestion, chunking, metadata, retrieval 
 
 ## Prerequisites
 
-Complete the planned data foundations and LLM engineering sequences. Familiarity with APIs, persistence boundaries, tests, and document-oriented data is expected.
+Complete the implemented data foundations module and the planned LLM engineering sequence. Familiarity with APIs, persistence boundaries, tests, and document-oriented data is expected.
 
 ## Planned outcomes
 

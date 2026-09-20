@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import ast
 import re
 from pathlib import Path
 
@@ -9,6 +10,12 @@ from roadmap_tools.catalog import Catalog
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 ROOT_README = REPOSITORY_ROOT / "README.md"
+DESIGN_SPEC = (
+    REPOSITORY_ROOT / "docs" / "superpowers" / "specs" / "2026-09-19-ai-engineer-roadmap-design.md"
+)
+TRANSACTION_DOMAIN = (
+    REPOSITORY_ROOT / "projects" / "banking_ai_lab" / "banking_ai_lab" / "domain.py"
+)
 SETUP_GUIDE = REPOSITORY_ROOT / "docs" / "setup.md"
 ROADMAP_GUIDE = REPOSITORY_ROOT / "docs" / "roadmap.md"
 TESTING_GUIDE = REPOSITORY_ROOT / "docs" / "testing-exercises.md"
@@ -75,6 +82,27 @@ MARKDOWN_LINK = re.compile(r"(?<!!)\[[^]]*\]\(([^)]+)\)")
 FENCED_CODE_BLOCK = re.compile(r"^```[^\n]*\n(.*?)^```[ \t]*$", re.MULTILINE | re.DOTALL)
 CHECKLIST_ENTRY = re.compile(r"^- \[[ ~x]\] ([a-z0-9-]+)$", re.MULTILINE)
 IMPLEMENTED_MODULE_RANGE = "Modules 01\N{EN DASH}03"
+REPOSITORY_STRUCTURE_PATHS = (
+    "modules/01_python_core/",
+    "modules/02_python_backend/",
+    "modules/03_data_foundations/",
+    "modules/04_machine_learning/",
+    "modules/05_llm_engineering/",
+    "modules/06_rag/",
+    "modules/07_agents/",
+    "modules/08_production_ai/",
+    "projects/banking_ai_lab/",
+    "datasets/",
+    "scripts/",
+    "src/roadmap_tools/",
+    "tests/integration/",
+)
+CURRENT_PREREQUISITES = {
+    "04_machine_learning": ("Complete Modules 01\N{EN DASH}03", "planned Python core"),
+    "05_llm_engineering": ("implemented Python core and backend modules", "planned Python"),
+    "06_rag": ("implemented data foundations module", "planned data foundations"),
+    "08_production_ai": ("implemented backend and data foundations modules", "planned backend"),
+}
 
 
 def test_root_readme_exposes_every_learning_command() -> None:
@@ -84,6 +112,19 @@ def test_root_readme_exposes_every_learning_command() -> None:
 
     for command in REQUIRED_COMMANDS:
         assert command in fenced_commands
+
+
+def test_root_readme_structure_names_existing_repository_boundaries() -> None:
+    """The overview tree cannot retain missing paths or omit a major learning boundary."""
+    readme = ROOT_README.read_text(encoding="utf-8")
+    structure = _markdown_section(readme, "Repository structure")
+    documented_paths = tuple(
+        match.group(1)
+        for match in re.finditer(r"^[|\u251c\u2514]\S*\s+([^ ]+/)\s*$", structure, re.MULTILINE)
+    )
+
+    assert documented_paths == REPOSITORY_STRUCTURE_PATHS
+    assert all((REPOSITORY_ROOT / path).is_dir() for path in documented_paths)
 
 
 def test_fenced_command_lines_ignore_inline_command_mentions() -> None:
@@ -129,6 +170,17 @@ def test_shared_guides_describe_the_implemented_curriculum() -> None:
     assert "later, `uv run python scripts/learn.py test" not in testing_guide
 
 
+def test_design_spec_uses_the_canonical_transaction_columns() -> None:
+    """The design must describe the domain schema rather than maintain a second loose schema."""
+    design = DESIGN_SPEC.read_text(encoding="utf-8")
+    schema_sentence = re.search(r"The canonical transaction fields are ([^.]+)\.", design)
+
+    assert schema_sentence is not None
+    documented_columns = tuple(re.findall(r"`([^`]+)`", schema_sentence.group(1)))
+    assert documented_columns == _transaction_columns_from_domain()
+    assert "`is_fraud` is a synthetic boolean fraud label" in design
+
+
 def test_sqlalchemy_guide_labels_unconfigured_alembic_commands_as_conceptual() -> None:
     lesson = SQLALCHEMY_README.read_text(encoding="utf-8")
 
@@ -163,6 +215,16 @@ def test_future_module_placeholders_describe_deferred_learning() -> None:
         assert "Exercises are intentionally deferred." in readme
 
 
+def test_future_module_prerequisites_distinguish_completed_and_planned_work() -> None:
+    """Implemented foundations must not be presented as future prerequisites."""
+    for module, (current_phrase, stale_phrase) in CURRENT_PREREQUISITES.items():
+        readme = (REPOSITORY_ROOT / "modules" / module / "README.md").read_text(encoding="utf-8")
+        prerequisites = _markdown_section(readme, "Prerequisites")
+
+        assert current_phrase in prerequisites, module
+        assert stale_phrase not in prerequisites, module
+
+
 def _relative_markdown_targets(document: Path) -> tuple[Path, ...]:
     """Return local Markdown destinations while excluding anchors and external links."""
     targets: list[Path] = []
@@ -171,6 +233,34 @@ def _relative_markdown_targets(document: Path) -> tuple[Path, ...]:
         if target and "://" not in target and not target.startswith(("#", "/", "mailto:")):
             targets.append(Path(target))
     return tuple(targets)
+
+
+def _markdown_section(document: str, heading: str) -> str:
+    match = re.search(
+        rf"(?ms)^## {re.escape(heading)}\s*$\n(.*?)(?=^## |\Z)",
+        document,
+    )
+    assert match is not None, f"Missing section: {heading}"
+    return match.group(1)
+
+
+def _transaction_columns_from_domain() -> tuple[str, ...]:
+    tree = ast.parse(TRANSACTION_DOMAIN.read_text(encoding="utf-8"))
+    for statement in tree.body:
+        if (
+            isinstance(statement, ast.AnnAssign)
+            and isinstance(statement.target, ast.Name)
+            and statement.target.id == "TRANSACTION_COLUMNS"
+            and isinstance(statement.value, ast.Tuple)
+        ):
+            columns = tuple(
+                element.value
+                for element in statement.value.elts
+                if isinstance(element, ast.Constant) and isinstance(element.value, str)
+            )
+            assert len(columns) == len(statement.value.elts)
+            return columns
+    raise AssertionError("TRANSACTION_COLUMNS must remain a literal tuple in domain.py")
 
 
 def _fenced_command_lines(document: str) -> tuple[str, ...]:

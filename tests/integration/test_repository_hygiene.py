@@ -263,19 +263,287 @@ def block_has_reachable_not_implemented(statements: list[ast.stmt]) -> bool:
     )
 
 
+def node_obviously_binds_wraps(node: ast.AST) -> bool:
+    """Recognize ordinary bindings that can replace the imported ``wraps`` name."""
+
+    return (
+        (
+            isinstance(node, ast.Name)
+            and node.id == "wraps"
+            and isinstance(node.ctx, (ast.Store, ast.Del))
+        )
+        or (isinstance(node, ast.arg) and node.arg == "wraps")
+        or (
+            isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+            and node.name == "wraps"
+        )
+        or (isinstance(node, ast.ExceptHandler) and node.name == "wraps")
+        or (isinstance(node, (ast.Global, ast.Nonlocal)) and "wraps" in node.names)
+    )
+
+
+def module_has_unshadowed_wraps_import(tree: ast.Module) -> bool:
+    """Recognize the retry starter's exact, unshadowed ``functools.wraps`` import."""
+
+    top_level_nodes = set(tree.body)
+    exact_imports = 0
+    shadowed = False
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom):
+            for alias in node.names:
+                bound_name = alias.asname or alias.name
+                if bound_name != "wraps":
+                    continue
+                if (
+                    node in top_level_nodes
+                    and node.module == "functools"
+                    and node.level == 0
+                    and alias.name == "wraps"
+                    and alias.asname is None
+                ):
+                    exact_imports += 1
+                else:
+                    shadowed = True
+        elif isinstance(node, ast.Import):
+            for alias in node.names:
+                bound_name = alias.asname or alias.name.split(".", maxsplit=1)[0]
+                if bound_name == "wraps":
+                    shadowed = True
+        elif node_obviously_binds_wraps(node):
+            shadowed = True
+
+    return exact_imports == 1 and not shadowed
+
+
+def boundary_decorators_are_allowed(
+    qualified_name: str,
+    decorators: list[ast.expr],
+    *,
+    has_unshadowed_wraps_import: bool,
+) -> bool:
+    """Allow no boundary decorator except retry's exact metadata-preserving wrapper."""
+
+    if not decorators:
+        return True
+    if (
+        qualified_name != "retry.decorate.wrapped"
+        or not has_unshadowed_wraps_import
+        or len(decorators) != 1
+    ):
+        return False
+
+    decorator = decorators[0]
+    return (
+        isinstance(decorator, ast.Call)
+        and isinstance(decorator.func, ast.Name)
+        and decorator.func.id == "wraps"
+        and len(decorator.args) == 1
+        and isinstance(decorator.args[0], ast.Name)
+        and decorator.args[0].id == "operation"
+        and not decorator.keywords
+    )
+
+
+def is_literal_globals_target(node: ast.Subscript, name: str) -> bool:
+    """Return whether *node* statically targets ``globals()[name]``."""
+
+    namespace = node.value
+    return (
+        isinstance(namespace, ast.Call)
+        and isinstance(namespace.func, ast.Name)
+        and namespace.func.id == "globals"
+        and not namespace.args
+        and not namespace.keywords
+        and isinstance(node.slice, ast.Constant)
+        and node.slice.value == name
+    )
+
+
+def scope_rebinds_name_after(
+    owner: ast.Module | ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef,
+    definition: ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef,
+) -> bool:
+    """Find transparent rebinding after *definition* in its owning lexical scope."""
+
+    definition_end = (
+        definition.end_lineno if definition.end_lineno is not None else definition.lineno
+    )
+    found = False
+
+    class RebindingVisitor(ast.NodeVisitor):
+        def binds_boundary_after(self, node: ast.AST, name: str | None) -> None:
+            nonlocal found
+            if name == definition.name and getattr(node, "lineno", 0) > definition_end:
+                found = True
+
+        def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+            self.binds_boundary_after(node, node.name)
+
+        def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+            self.binds_boundary_after(node, node.name)
+
+        def visit_ClassDef(self, node: ast.ClassDef) -> None:
+            self.binds_boundary_after(node, node.name)
+
+        def visit_Lambda(self, node: ast.Lambda) -> None:
+            return None
+
+        def visit_Name(self, node: ast.Name) -> None:
+            if isinstance(node.ctx, (ast.Store, ast.Del)):
+                self.binds_boundary_after(node, node.id)
+
+        def visit_Import(self, node: ast.Import) -> None:
+            for alias in node.names:
+                self.binds_boundary_after(
+                    node,
+                    alias.asname or alias.name.split(".", maxsplit=1)[0],
+                )
+
+        def visit_ImportFrom(self, node: ast.ImportFrom) -> None:
+            nonlocal found
+            for alias in node.names:
+                if alias.name == "*":
+                    if node.lineno > definition_end:
+                        found = True
+                    continue
+                self.binds_boundary_after(node, alias.asname or alias.name)
+
+        def visit_ExceptHandler(self, node: ast.ExceptHandler) -> None:
+            self.binds_boundary_after(node, node.name)
+            self.generic_visit(node)
+
+        def visit_MatchAs(self, node: ast.MatchAs) -> None:
+            self.binds_boundary_after(node, node.name)
+            self.generic_visit(node)
+
+        def visit_MatchStar(self, node: ast.MatchStar) -> None:
+            self.binds_boundary_after(node, node.name)
+
+        def visit_MatchMapping(self, node: ast.MatchMapping) -> None:
+            self.binds_boundary_after(node, node.rest)
+            self.generic_visit(node)
+
+        def visit_ListComp(self, node: ast.ListComp) -> None:
+            self.visit_comprehension_expressions(node, (node.elt,))
+
+        def visit_SetComp(self, node: ast.SetComp) -> None:
+            self.visit_comprehension_expressions(node, (node.elt,))
+
+        def visit_DictComp(self, node: ast.DictComp) -> None:
+            self.visit_comprehension_expressions(node, (node.key, node.value))
+
+        def visit_GeneratorExp(self, node: ast.GeneratorExp) -> None:
+            self.visit_comprehension_expressions(node, (node.elt,))
+
+        def visit_comprehension_expressions(
+            self,
+            node: ast.ListComp | ast.SetComp | ast.DictComp | ast.GeneratorExp,
+            values: tuple[ast.expr, ...],
+        ) -> None:
+            for generator in node.generators:
+                self.visit(generator.iter)
+                for condition in generator.ifs:
+                    self.visit(condition)
+            for value in values:
+                self.visit(value)
+
+        def visit_Subscript(self, node: ast.Subscript) -> None:
+            nonlocal found
+            if (
+                isinstance(owner, ast.Module)
+                and node.lineno > definition_end
+                and isinstance(node.ctx, (ast.Store, ast.Del))
+                and is_literal_globals_target(node, definition.name)
+            ):
+                found = True
+            self.generic_visit(node)
+
+    visitor = RebindingVisitor()
+    for statement in owner.body:
+        visitor.visit(statement)
+    return found
+
+
+def module_rebinds_class_boundary_after(
+    tree: ast.Module,
+    class_owner: ast.ClassDef,
+    boundary: ast.FunctionDef | ast.AsyncFunctionDef,
+) -> bool:
+    """Recognize direct module-level replacement of a class learner boundary."""
+
+    class_end = class_owner.end_lineno if class_owner.end_lineno is not None else class_owner.lineno
+    found = False
+
+    class ClassBoundaryRebindingVisitor(ast.NodeVisitor):
+        def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
+            return None
+
+        def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
+            return None
+
+        def visit_ClassDef(self, node: ast.ClassDef) -> None:
+            return None
+
+        def visit_Lambda(self, node: ast.Lambda) -> None:
+            return None
+
+        def visit_Attribute(self, node: ast.Attribute) -> None:
+            nonlocal found
+            if (
+                node.lineno > class_end
+                and isinstance(node.ctx, (ast.Store, ast.Del))
+                and node.attr == boundary.name
+                and isinstance(node.value, ast.Name)
+                and node.value.id == class_owner.name
+            ):
+                found = True
+            self.generic_visit(node)
+
+        def visit_Call(self, node: ast.Call) -> None:
+            nonlocal found
+            if (
+                node.lineno > class_end
+                and isinstance(node.func, ast.Name)
+                and node.func.id in {"delattr", "setattr"}
+                and (
+                    (node.func.id == "setattr" and len(node.args) == 3)
+                    or (node.func.id == "delattr" and len(node.args) == 2)
+                )
+                and not node.keywords
+                and isinstance(node.args[0], ast.Name)
+                and node.args[0].id == class_owner.name
+                and isinstance(node.args[1], ast.Constant)
+                and node.args[1].value == boundary.name
+            ):
+                found = True
+            self.generic_visit(node)
+
+    visitor = ClassBoundaryRebindingVisitor()
+    for statement in tree.body:
+        visitor.visit(statement)
+    return found
+
+
 def reachable_not_implemented_functions(path: Path) -> tuple[str, ...]:
     """List functions whose own control flow can reach the starter boundary."""
 
     tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
 
+    has_unshadowed_wraps_import = module_has_unshadowed_wraps_import(tree)
+
     class BoundaryVisitor(ast.NodeVisitor):
         def __init__(self) -> None:
             self.scope: list[str] = []
+            self.owners: list[
+                ast.Module | ast.ClassDef | ast.FunctionDef | ast.AsyncFunctionDef
+            ] = [tree]
             self.boundaries: list[str] = []
 
         def visit_ClassDef(self, node: ast.ClassDef) -> None:
             self.scope.append(node.name)
+            self.owners.append(node)
             self.generic_visit(node)
+            self.owners.pop()
             self.scope.pop()
 
         def visit_FunctionDef(self, node: ast.FunctionDef) -> None:
@@ -284,11 +552,41 @@ def reachable_not_implemented_functions(path: Path) -> tuple[str, ...]:
         def visit_AsyncFunctionDef(self, node: ast.AsyncFunctionDef) -> None:
             self._visit_function(node)
 
+        def _boundary_is_rebound(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> bool:
+            definitions = [
+                definition
+                for definition in (*self.owners[1:], node)
+                if not isinstance(definition, ast.Module)
+            ]
+            if any(
+                scope_rebinds_name_after(owner, definition)
+                for owner, definition in zip(self.owners, definitions, strict=True)
+            ):
+                return True
+
+            return (
+                len(self.owners) == 2
+                and isinstance(self.owners[0], ast.Module)
+                and isinstance(self.owners[1], ast.ClassDef)
+                and module_rebinds_class_boundary_after(self.owners[0], self.owners[1], node)
+            )
+
         def _visit_function(self, node: ast.FunctionDef | ast.AsyncFunctionDef) -> None:
             self.scope.append(node.name)
-            if block_has_reachable_not_implemented(node.body):
-                self.boundaries.append(".".join(self.scope))
+            qualified_name = ".".join(self.scope)
+            if (
+                block_has_reachable_not_implemented(node.body)
+                and boundary_decorators_are_allowed(
+                    qualified_name,
+                    node.decorator_list,
+                    has_unshadowed_wraps_import=has_unshadowed_wraps_import,
+                )
+                and not self._boundary_is_rebound(node)
+            ):
+                self.boundaries.append(qualified_name)
+            self.owners.append(node)
             self.generic_visit(node)
+            self.owners.pop()
             self.scope.pop()
 
     visitor = BoundaryVisitor()
@@ -475,3 +773,180 @@ def test_reachability_check_rejects_solved_and_dead_decoy_boundaries(tmp_path: P
         encoding="utf-8",
     )
     assert reachable_not_implemented_functions(starter) == ("solve",)
+
+
+def test_reachability_check_rejects_a_solving_decorator(tmp_path: Path) -> None:
+    starter = tmp_path / "starter.py"
+    starter.write_text(
+        "def replace_with_solution(operation):\n"
+        "    del operation\n"
+        "    def completed() -> int:\n"
+        "        return 1\n"
+        "    return completed\n\n"
+        "@replace_with_solution\n"
+        "def solve() -> int:\n"
+        "    raise NotImplementedError('hidden behind a solution')\n",
+        encoding="utf-8",
+    )
+
+    assert reachable_not_implemented_functions(starter) == ()
+
+
+def test_reachability_check_allows_the_exact_retry_wraps_decorator() -> None:
+    retry_starter = (
+        REPOSITORY_ROOT / "modules/01_python_core/08_decorators/exercises/retry_gateway/starter.py"
+    )
+
+    assert reachable_not_implemented_functions(retry_starter) == ("retry.decorate.wrapped",)
+
+
+def test_retry_wraps_exception_rejects_aliasing_and_shadowing(tmp_path: Path) -> None:
+    starter = tmp_path / "starter.py"
+    starter.write_text(
+        "from functools import wraps as preserve\n\n"
+        "def retry():\n"
+        "    def decorate(operation):\n"
+        "        @preserve(operation)\n"
+        "        def wrapped():\n"
+        "            raise NotImplementedError('aliased wraps')\n"
+        "        return wrapped\n"
+        "    return decorate\n",
+        encoding="utf-8",
+    )
+    assert reachable_not_implemented_functions(starter) == ()
+
+    starter.write_text(
+        "from functools import wraps\n\n"
+        "def replace_with_solution(operation):\n"
+        "    return operation\n\n"
+        "wraps = replace_with_solution\n\n"
+        "def retry():\n"
+        "    def decorate(operation):\n"
+        "        @wraps(operation)\n"
+        "        def wrapped():\n"
+        "            raise NotImplementedError('shadowed wraps')\n"
+        "        return wrapped\n"
+        "    return decorate\n",
+        encoding="utf-8",
+    )
+    assert reachable_not_implemented_functions(starter) == ()
+
+
+def test_reachability_check_rejects_literal_globals_rebinding_after_boundary(
+    tmp_path: Path,
+) -> None:
+    starter = tmp_path / "starter.py"
+    starter.write_text(
+        "def solve() -> int:\n"
+        "    raise NotImplementedError('student boundary')\n\n"
+        "def _completed_solve() -> int:\n"
+        "    return 1\n\n"
+        'globals()["solve"] = _completed_solve\n',
+        encoding="utf-8",
+    )
+
+    assert reachable_not_implemented_functions(starter) == ()
+
+
+def test_reachability_check_rejects_post_definition_scope_rebinding(tmp_path: Path) -> None:
+    starter = tmp_path / "starter.py"
+    canonical_boundary = (
+        "def solve() -> int:\n"
+        "    raise NotImplementedError('student boundary')\n\n"
+        "def _completed_solve() -> int:\n"
+        "    return 1\n\n"
+    )
+    rebindings = {
+        "assignment": "solve = _completed_solve\n",
+        "deletion": "del solve\n",
+        "duplicate function": "def solve() -> int:\n    return 1\n",
+        "import": "from completed import solve\n",
+        "aliased import": "import completed as solve\n",
+    }
+
+    for label, rebinding in rebindings.items():
+        starter.write_text(canonical_boundary + rebinding, encoding="utf-8")
+        assert reachable_not_implemented_functions(starter) == (), label
+
+
+def test_reachability_check_ignores_bindings_before_the_final_boundary(tmp_path: Path) -> None:
+    starter = tmp_path / "starter.py"
+    starter.write_text(
+        "def _completed_solve() -> int:\n"
+        "    return 1\n\n"
+        "solve = _completed_solve\n"
+        "del solve\n"
+        "from completed import solve\n"
+        'globals()["solve"] = _completed_solve\n\n'
+        "def solve() -> int:\n"
+        "    raise NotImplementedError('student boundary')\n",
+        encoding="utf-8",
+    )
+
+    assert reachable_not_implemented_functions(starter) == ("solve",)
+
+
+def test_reachability_check_rejects_class_scope_rebinding(tmp_path: Path) -> None:
+    starter = tmp_path / "starter.py"
+    starter.write_text(
+        "def _completed_solve(self) -> int:\n"
+        "    return 1\n\n"
+        "class Solver:\n"
+        "    def solve(self) -> int:\n"
+        "        raise NotImplementedError('student boundary')\n\n"
+        "    solve = _completed_solve\n",
+        encoding="utf-8",
+    )
+
+    assert reachable_not_implemented_functions(starter) == ()
+
+
+def test_reachability_check_rejects_outer_owner_rebinding(tmp_path: Path) -> None:
+    starter = tmp_path / "starter.py"
+    nested_boundary = (
+        "def retry():\n"
+        "    def decorate():\n"
+        "        def wrapped() -> int:\n"
+        "            raise NotImplementedError('student boundary')\n"
+        "        return wrapped\n"
+        "    return decorate\n\n"
+        "def _completed_retry():\n"
+        "    return lambda: 1\n\n"
+    )
+    starter.write_text(nested_boundary + "retry = _completed_retry\n", encoding="utf-8")
+
+    assert reachable_not_implemented_functions(starter) == ()
+
+    starter.write_text(
+        "def _completed_retry():\n"
+        "    return lambda: 1\n\n"
+        "retry = _completed_retry\n\n"
+        "def retry():\n"
+        "    def decorate():\n"
+        "        def wrapped() -> int:\n"
+        "            raise NotImplementedError('student boundary')\n"
+        "        return wrapped\n"
+        "    return decorate\n",
+        encoding="utf-8",
+    )
+
+    assert reachable_not_implemented_functions(starter) == ("retry.decorate.wrapped",)
+
+
+def test_reachability_check_rejects_module_class_attribute_rebinding(tmp_path: Path) -> None:
+    starter = tmp_path / "starter.py"
+    class_boundary = (
+        "class Solver:\n"
+        "    def solve(self) -> int:\n"
+        "        raise NotImplementedError('student boundary')\n\n"
+        "def _completed_solve(self) -> int:\n"
+        "    return 1\n\n"
+    )
+    rebindings = {
+        "attribute assignment": "Solver.solve = _completed_solve\n",
+        "literal setattr": 'setattr(Solver, "solve", _completed_solve)\n',
+    }
+
+    for label, rebinding in rebindings.items():
+        starter.write_text(class_boundary + rebinding, encoding="utf-8")
+        assert reachable_not_implemented_functions(starter) == (), label

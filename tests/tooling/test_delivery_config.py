@@ -15,6 +15,17 @@ def test_runtime_dependencies_include_an_asgi_server() -> None:
     assert any(dependency.startswith("uvicorn") for dependency in dependencies)
 
 
+def test_httpx2_is_available_only_as_a_development_dependency() -> None:
+    with (REPOSITORY_ROOT / "pyproject.toml").open("rb") as project_file:
+        project = tomllib.load(project_file)
+
+    runtime_dependencies = project["project"]["dependencies"]
+    development_dependencies = project["dependency-groups"]["dev"]
+
+    assert not any(dependency.startswith("httpx2") for dependency in runtime_dependencies)
+    assert any(dependency.startswith("httpx2") for dependency in development_dependencies)
+
+
 def test_docker_build_context_excludes_local_and_secret_files() -> None:
     patterns = {
         line.strip()

@@ -9,6 +9,8 @@ from roadmap_tools import exercise_call
 
 from . import starter
 
+GATEWAY_START_TIMEOUT_SECONDS = 1.0
+
 
 def start_fetch(
     gateways: list[starter.QuoteGateway], request: starter.QuoteRequest
@@ -60,7 +62,17 @@ async def test_quotes_start_concurrently_and_return_in_gateway_order() -> None:
     )
 
     try:
-        await first.started.wait()
+        try:
+            await asyncio.wait_for(
+                first.started.wait(),
+                timeout=GATEWAY_START_TIMEOUT_SECONDS,
+            )
+        except TimeoutError:
+            pytest.fail(
+                "first gateway did not start; fetch_provider_quotes must start every gateway "
+                "before awaiting gateway results",
+                pytrace=False,
+            )
         assert second.started.is_set()
         release.set()
         assert await task == [
