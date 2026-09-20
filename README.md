@@ -4,11 +4,13 @@ An active-learning roadmap for an experienced Java and Spring backend engineer m
 
 ## Current scope
 
-The foundation and learning workflow are ready. Modules 01–03 are planned next; their lesson folders are not present yet. Modules 04–08 are roadmap placeholders, not implemented courses.
+The foundation, learning workflow, Modules 01–03, and the progressive Banking AI Lab are ready.
+Modules 01–03 are implemented; Modules 04–08 remain roadmap placeholders rather than implemented
+courses.
 
-Use the planned first lesson path as inline code: `modules/01_python_core/00_environment/README.md`.
+Start with the first lesson: [Environment and workflow](modules/01_python_core/00_environment/README.md).
 
-Use the planned first coding path as inline code: `modules/01_python_core/02_collections/exercises/detect_duplicates/README.md`.
+Then try the first coding exercise: [Detect duplicate transactions](modules/01_python_core/02_collections/exercises/detect_duplicates/README.md).
 
 ## Windows-first start
 
@@ -28,7 +30,8 @@ See [Windows and PyCharm setup](docs/setup.md) for the complete workflow.
 
 ## Learning workflow
 
-Run these commands from the repository root. Some commands are the final interface contract for Modules 01–03 and become useful as those modules arrive.
+Run these commands from the repository root. They are the supported workflow for the implemented
+Modules 01–03 and Banking AI Lab.
 
 ```powershell
 uv sync --all-groups
@@ -43,7 +46,9 @@ uv run ruff format --check .
 uv run mypy
 ```
 
-`uv run pytest` is the repository health check. An untouched student boundary is reported as expected-incomplete rather than as a completed exercise. Scoped tests will be added beside each lesson; use the exact command named in that lesson's exercise README.
+`uv run pytest` is the repository health check. An untouched student boundary is reported as
+expected-incomplete rather than as a completed exercise. Scoped tests live beside each lesson; use
+the exact command named in that lesson's exercise README.
 
 Progress is intentionally manual: edit the checklist in [progress.md](progress.md), then inspect it with `uv run python scripts/learn.py status`.
 

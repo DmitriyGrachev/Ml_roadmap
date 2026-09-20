@@ -9,13 +9,19 @@ from roadmap_tools.catalog import Catalog
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 ROOT_README = REPOSITORY_ROOT / "README.md"
+SETUP_GUIDE = REPOSITORY_ROOT / "docs" / "setup.md"
+ROADMAP_GUIDE = REPOSITORY_ROOT / "docs" / "roadmap.md"
+TESTING_GUIDE = REPOSITORY_ROOT / "docs" / "testing-exercises.md"
+SQLALCHEMY_README = (
+    REPOSITORY_ROOT / "modules" / "02_python_backend" / "06_sqlalchemy" / "README.md"
+)
 PROGRESS_PATH = REPOSITORY_ROOT / "progress.md"
 SHARED_DOCUMENTS = (
     ROOT_README,
-    REPOSITORY_ROOT / "docs" / "roadmap.md",
-    REPOSITORY_ROOT / "docs" / "setup.md",
+    ROADMAP_GUIDE,
+    SETUP_GUIDE,
     REPOSITORY_ROOT / "docs" / "learning-rules.md",
-    REPOSITORY_ROOT / "docs" / "testing-exercises.md",
+    TESTING_GUIDE,
     REPOSITORY_ROOT / "docs" / "java-to-python-cheatsheet.md",
 )
 REQUIRED_COMMANDS = (
@@ -68,6 +74,7 @@ FUTURE_MODULES = (
 MARKDOWN_LINK = re.compile(r"(?<!!)\[[^]]*\]\(([^)]+)\)")
 FENCED_CODE_BLOCK = re.compile(r"^```[^\n]*\n(.*?)^```[ \t]*$", re.MULTILINE | re.DOTALL)
 CHECKLIST_ENTRY = re.compile(r"^- \[[ ~x]\] ([a-z0-9-]+)$", re.MULTILINE)
+IMPLEMENTED_MODULE_RANGE = "Modules 01\N{EN DASH}03"
 
 
 def test_root_readme_exposes_every_learning_command() -> None:
@@ -103,8 +110,34 @@ def test_shared_documentation_relative_links_resolve() -> None:
     assert not unresolved, "Unresolved local Markdown links:\n" + "\n".join(unresolved)
 
 
+def test_shared_guides_describe_the_implemented_curriculum() -> None:
+    root_readme = ROOT_README.read_text(encoding="utf-8")
+    setup_guide = SETUP_GUIDE.read_text(encoding="utf-8")
+    roadmap_guide = ROADMAP_GUIDE.read_text(encoding="utf-8")
+    testing_guide = TESTING_GUIDE.read_text(encoding="utf-8")
+
+    assert f"{IMPLEMENTED_MODULE_RANGE} are implemented" in root_readme
+    assert f"{IMPLEMENTED_MODULE_RANGE} are planned next" not in root_readme
+    assert "their lesson folders are not present yet" not in root_readme
+    assert "These are intentionally inline paths until Module 01 is added" not in setup_guide
+    assert "After lessons arrive" not in setup_guide
+    assert "The first implemented learning wave covers Modules 01" in roadmap_guide
+    assert "will cover Modules 01" not in roadmap_guide
+    assert "planned first lesson path" not in roadmap_guide
+    assert "Each exercise README names its focused test command" in testing_guide
+    assert "README will name" not in testing_guide
+    assert "later, `uv run python scripts/learn.py test" not in testing_guide
+
+
+def test_sqlalchemy_guide_labels_unconfigured_alembic_commands_as_conceptual() -> None:
+    lesson = SQLALCHEMY_README.read_text(encoding="utf-8")
+
+    assert "conceptual production examples" in lesson
+    assert "does not include an Alembic configuration" in lesson
+
+
 def test_progress_is_an_ordered_editable_module_01_to_03_checklist() -> None:
-    """Learners can update the planned lesson sequence before it is implemented."""
+    """Learners can update the implemented lesson sequence as they progress."""
     entries = CHECKLIST_ENTRY.findall(PROGRESS_PATH.read_text(encoding="utf-8"))
 
     assert entries == list(PLANNED_LESSON_IDS)

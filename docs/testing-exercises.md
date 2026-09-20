@@ -12,7 +12,9 @@ This keeps the repository health check useful without pretending the learner's w
 
 ## Run the narrowest useful command
 
-Start from the repository root. Each exercise README will name its focused test command; later, `uv run python scripts/learn.py test python-collections` will delegate only to catalog-owned test targets. Use `uv run pytest` to check overall repository health.
+Start from the repository root. Each exercise README names its focused test command;
+`uv run python scripts/learn.py test python-collections` delegates only to catalog-owned test
+targets. Use `uv run pytest` to check overall repository health.
 
 ## When a test fails
 

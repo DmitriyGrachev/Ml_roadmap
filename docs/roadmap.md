@@ -1,6 +1,9 @@
 # Roadmap
 
-This roadmap develops an experienced Java and Spring engineer's Python and AI engineering skills through active work rather than broad survey material. The first implemented learning wave will cover Modules 01–03; later modules retain a visible destination without representing completed courseware.
+This roadmap develops an experienced Java and Spring engineer's Python and AI engineering skills
+through active work rather than broad survey material.
+The first implemented learning wave covers Modules 01–03; later modules retain a visible
+destination without representing completed courseware.
 
 ## Learning sequence
 
@@ -19,4 +22,6 @@ One synthetic-data project links the modules without hiding the learning goal be
 
 ## Start and track
 
-Follow the [Windows and PyCharm setup](setup.md), then work from the planned first lesson path: `modules/01_python_core/00_environment/README.md`. Update the manual [progress checklist](../progress.md) as lessons are completed.
+Follow the [Windows and PyCharm setup](setup.md), then begin with
+[Environment and workflow](../modules/01_python_core/00_environment/README.md). Update the manual
+[progress checklist](../progress.md) as lessons are completed.

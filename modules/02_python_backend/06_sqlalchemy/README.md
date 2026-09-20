@@ -19,7 +19,10 @@ Use `select()` and typed mappings. Commit a successful unit of work, roll back f
 
 Treat ORM metadata and database migrations as different tools. `Base.metadata.create_all()` is handy
 for an isolated exercise or test database, but it does not version production schema changes.
-Alembic stores ordered revisions: generate a candidate with
+
+The following Alembic commands are conceptual production examples, not runnable repository setup:
+this roadmap intentionally does not include an Alembic configuration. In an application where
+Alembic is configured, generate a candidate with
 `alembic revision --autogenerate -m "describe change"`, review its `upgrade()` and `downgrade()`
 operations, and apply committed revisions with `alembic upgrade head`. Autogeneration is a draft,
 not a substitute for reviewing data migrations, constraints, locks, and rollback safety.
