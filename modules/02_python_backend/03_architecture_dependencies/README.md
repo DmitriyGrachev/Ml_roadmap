@@ -30,7 +30,8 @@ The support API closes over one service instance created by `create_app`, so eac
 
 ## Exercises
 
-The payment-router exercise receives its service explicitly and adds request-scoped wiring only as an extension.
+The [payment-router exercise](exercises/payment_router/README.md) receives its service explicitly and
+adds request-scoped wiring only as an extension.
 
 ## Self-check
 

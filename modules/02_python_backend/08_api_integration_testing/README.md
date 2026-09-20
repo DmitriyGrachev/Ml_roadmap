@@ -30,7 +30,8 @@ The support API test makes two apps and proves that a ticket created in one is a
 
 ## Exercises
 
-The API-test-review exercise characterizes a coupled fixture, then asks you to make it order-independent.
+The [API-test-review exercise](exercises/api_test_review/README.md) characterizes a coupled fixture,
+then asks you to make its application, service, dependency overrides, and client lifecycle isolated.
 
 ## Self-check
 

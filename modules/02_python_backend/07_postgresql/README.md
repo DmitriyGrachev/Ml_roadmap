@@ -17,6 +17,8 @@ Move database-specific learning to PostgreSQL without making a local database a 
 
 Read `ROADMAP_POSTGRES_URL` only for opt-in checks. Keep generic repository behavior on SQLite and test PostgreSQL-only type and dialect behavior separately.
 
+> **PostgreSQL is optional:** ordinary module tests do not require Docker or a running PostgreSQL server.
+
 ## Key concepts
 
 - PostgreSQL URL
@@ -30,7 +32,8 @@ When no URL is configured, a PostgreSQL test should skip with `Set ROADMAP_POSTG
 
 ## Exercises
 
-The query exercise aggregates daily currency totals in SQL and includes a PostgreSQL-only verification.
+The [query exercise](exercises/postgres_query/README.md) aggregates daily currency totals in SQL and
+includes a PostgreSQL-only verification.
 
 ## Self-check
 

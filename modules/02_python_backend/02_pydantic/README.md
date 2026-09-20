@@ -30,7 +30,8 @@ Use `BaseModel`, `Field`, `ConfigDict`, and typed values such as `Decimal` and t
 
 ## Exercises
 
-The transaction-contract exercise will validate amount, currency, merchant, timestamp, and unexpected fields without persisting a payment.
+The [transaction-contract exercise](exercises/transaction_contract/README.md) validates amount,
+currency, merchant, timestamp, and unexpected fields without persisting a payment.
 
 ## Self-check
 

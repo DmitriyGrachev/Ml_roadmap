@@ -17,6 +17,8 @@ Package a completed API for a reproducible runtime without making Docker part of
 
 Use a supported slim Python image, install `uv`, sync from the lock file without development dependencies, and run as a non-root user. Keep the app module configurable rather than hard-coded.
 
+> **Docker is optional:** the module's examples and exercises run without building an image or starting Compose.
+
 ## Key concepts
 
 - locked dependencies
@@ -30,7 +32,8 @@ The later `Dockerfile.example` documents an application module placeholder and a
 
 ## Exercises
 
-Review the deployment examples after the persistence exercises, and never place credentials in an image or committed Compose file.
+Review the [Dockerfile example](Dockerfile.example) and [Compose example](compose.example.yaml) after
+the persistence exercises, and never place credentials in an image or committed Compose file.
 
 ## Self-check
 

@@ -30,7 +30,8 @@ Keep settings at the application edge. Map known domain exceptions to stable `co
 
 ## Exercises
 
-The error-mapping exercise adds request IDs and verifies conflict and missing-resource responses.
+The [error-mapping exercise](exercises/error_mapping/README.md) adds request IDs and verifies conflict
+and missing-resource responses.
 
 ## Self-check
 

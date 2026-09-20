@@ -30,7 +30,8 @@ An async support integration can await two independent status calls; a CPU-heavy
 
 ## Exercises
 
-The provider-fanout exercise proves concurrency with event gates rather than fragile timing thresholds.
+The [provider-fanout exercise](exercises/provider_fanout/README.md) proves concurrency with event gates
+rather than fragile timing thresholds.
 
 ## Self-check
 

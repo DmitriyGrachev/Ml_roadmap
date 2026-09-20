@@ -17,6 +17,8 @@ Persist typed domain records with SQLAlchemy 2.x while treating a session as a b
 
 Use `select()` and typed mappings. Commit a successful unit of work, roll back failures, and close every session through a context manager or request dependency.
 
+> **Local-only database:** SQLite keeps the core exercise local; it does not replace the opt-in PostgreSQL dialect check in Lesson 07.
+
 ## Key concepts
 
 - declarative base
@@ -30,7 +32,8 @@ A support-ticket repository would receive a `Session`, add one record, and retur
 
 ## Exercises
 
-The transaction-repository exercise uses temporary SQLite for behavior that does not require PostgreSQL dialect semantics.
+The [transaction-repository exercise](exercises/transaction_repository/README.md) uses temporary
+SQLite for behavior that does not require PostgreSQL dialect semantics.
 
 ## Self-check
 
