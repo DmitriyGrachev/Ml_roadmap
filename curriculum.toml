@@ -1,4 +1,445 @@
 [[items]]
+id = "python-environment"
+title = "Environment and workflow"
+kind = "lesson"
+readme = "modules/01_python_core/00_environment/README.md"
+tests = ["modules/01_python_core/tests/test_examples.py"]
+
+[[items]]
+id = "python-object-model"
+title = "Object model"
+kind = "lesson"
+readme = "modules/01_python_core/01_object_model/README.md"
+tests = ["modules/01_python_core/tests/test_examples.py"]
+
+[[items]]
+id = "python-collections"
+title = "Collections"
+kind = "lesson"
+readme = "modules/01_python_core/02_collections/README.md"
+tests = ["modules/01_python_core/02_collections"]
+
+[[items]]
+id = "python-detect-duplicates"
+title = "Detect duplicate transactions"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/exercises/detect_duplicates/README.md"
+tests = ["modules/01_python_core/02_collections/exercises/detect_duplicates/test_starter.py"]
+
+[[items]]
+id = "python-group-by-user"
+title = "Group transaction amounts by user"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/exercises/group_by_user/README.md"
+tests = ["modules/01_python_core/02_collections/exercises/group_by_user/test_starter.py"]
+
+[[items]]
+id = "python-provider-frequency"
+title = "Count payment providers"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/exercises/provider_frequency/README.md"
+tests = ["modules/01_python_core/02_collections/exercises/provider_frequency/test_starter.py"]
+
+[[items]]
+id = "python-sort-payments"
+title = "Sort payments with multiple keys"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/exercises/sort_payments/README.md"
+tests = ["modules/01_python_core/02_collections/exercises/sort_payments/test_starter.py"]
+
+[[items]]
+id = "python-filter-project-events"
+title = "Filter and project event records"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/exercises/filter_project_events/README.md"
+tests = ["modules/01_python_core/02_collections/exercises/filter_project_events/test_starter.py"]
+
+[[items]]
+id = "python-slice-windows"
+title = "Slice transaction windows"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/exercises/slice_windows/README.md"
+tests = ["modules/01_python_core/02_collections/exercises/slice_windows/test_starter.py"]
+
+[[items]]
+id = "python-unpack-settlements"
+title = "Unpack settlement records safely"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/exercises/unpack_settlements/README.md"
+tests = ["modules/01_python_core/02_collections/exercises/unpack_settlements/test_starter.py"]
+
+[[items]]
+id = "python-review-java-shaped-grouping"
+title = "Review Java-shaped transaction grouping"
+kind = "exercise"
+readme = "modules/01_python_core/02_collections/code_review/java_shaped_grouping/README.md"
+tests = ["modules/01_python_core/02_collections/code_review/java_shaped_grouping/test_characterization.py"]
+
+[[items]]
+id = "python-functions"
+title = "Functions"
+kind = "lesson"
+readme = "modules/01_python_core/03_functions/README.md"
+tests = ["modules/01_python_core/03_functions"]
+
+[[items]]
+id = "python-configurable-filter"
+title = "Build a configurable transaction filter"
+kind = "exercise"
+readme = "modules/01_python_core/03_functions/exercises/configurable_filter/README.md"
+tests = ["modules/01_python_core/03_functions/exercises/configurable_filter/test_starter.py"]
+
+[[items]]
+id = "python-combine-responses"
+title = "Combine provider responses"
+kind = "exercise"
+readme = "modules/01_python_core/03_functions/exercises/combine_responses/README.md"
+tests = ["modules/01_python_core/03_functions/exercises/combine_responses/test_starter.py"]
+
+[[items]]
+id = "python-debug-mutable-defaults"
+title = "Debug leaking audit tags"
+kind = "exercise"
+readme = "modules/01_python_core/03_functions/debugging/mutable_defaults/README.md"
+tests = ["modules/01_python_core/03_functions/debugging/mutable_defaults/test_behavior.py"]
+
+[[items]]
+id = "python-review-stateful-report"
+title = "Review a stateful report builder"
+kind = "exercise"
+readme = "modules/01_python_core/03_functions/code_review/stateful_report/README.md"
+tests = ["modules/01_python_core/03_functions/code_review/stateful_report/test_characterization.py"]
+
+[[items]]
+id = "python-typing"
+title = "Typing"
+kind = "lesson"
+readme = "modules/01_python_core/04_typing/README.md"
+tests = ["modules/01_python_core/04_typing"]
+
+[[items]]
+id = "python-payment-processor-protocol"
+title = "Delegate through a payment-processor protocol"
+kind = "exercise"
+readme = "modules/01_python_core/04_typing/exercises/payment_processor_protocol/README.md"
+tests = ["modules/01_python_core/04_typing/exercises/payment_processor_protocol/test_starter.py"]
+
+[[items]]
+id = "python-transaction-report"
+title = "Build a transaction analytics report"
+kind = "exercise"
+readme = "modules/01_python_core/mini_features/transaction_report/README.md"
+tests = ["modules/01_python_core/mini_features/transaction_report/test_report.py"]
+
+[[items]]
+id = "python-data-modeling"
+title = "Data modeling"
+kind = "lesson"
+readme = "modules/01_python_core/05_data_modeling/README.md"
+tests = ["modules/01_python_core/05_data_modeling"]
+
+[[items]]
+id = "python-payment-model"
+title = "Model an immutable payment"
+kind = "exercise"
+readme = "modules/01_python_core/05_data_modeling/exercises/payment_model/README.md"
+tests = ["modules/01_python_core/05_data_modeling/exercises/payment_model/test_starter.py"]
+
+[[items]]
+id = "python-io"
+title = "Exceptions and I/O"
+kind = "lesson"
+readme = "modules/01_python_core/06_exceptions_io/README.md"
+tests = ["modules/01_python_core/06_exceptions_io"]
+
+[[items]]
+id = "python-json-export"
+title = "Export JSON atomically"
+kind = "exercise"
+readme = "modules/01_python_core/06_exceptions_io/exercises/json_export/README.md"
+tests = ["modules/01_python_core/06_exceptions_io/exercises/json_export/test_starter.py"]
+
+[[items]]
+id = "python-generators"
+title = "Iterators and generators"
+kind = "lesson"
+readme = "modules/01_python_core/07_iterators_generators/README.md"
+tests = ["modules/01_python_core/07_iterators_generators"]
+
+[[items]]
+id = "python-debug-iterator-exhaustion"
+title = "Debug an exhausted amount iterator"
+kind = "exercise"
+readme = "modules/01_python_core/07_iterators_generators/debugging/iterator_exhaustion/README.md"
+tests = ["modules/01_python_core/07_iterators_generators/debugging/iterator_exhaustion/test_behavior.py"]
+
+[[items]]
+id = "python-stream-transactions"
+title = "Stream NDJSON transactions lazily"
+kind = "exercise"
+readme = "modules/01_python_core/07_iterators_generators/exercises/stream_transactions/README.md"
+tests = ["modules/01_python_core/07_iterators_generators/exercises/stream_transactions/test_starter.py"]
+
+[[items]]
+id = "python-decorators"
+title = "Decorators"
+kind = "lesson"
+readme = "modules/01_python_core/08_decorators/README.md"
+tests = ["modules/01_python_core/08_decorators"]
+
+[[items]]
+id = "python-retry-gateway"
+title = "Retry selected gateway failures"
+kind = "exercise"
+readme = "modules/01_python_core/08_decorators/exercises/retry_gateway/README.md"
+tests = ["modules/01_python_core/08_decorators/exercises/retry_gateway/test_starter.py"]
+
+[[items]]
+id = "python-testing"
+title = "Testing"
+kind = "lesson"
+readme = "modules/01_python_core/09_testing/README.md"
+tests = ["modules/01_python_core/09_testing"]
+
+[[items]]
+id = "python-mock-provider"
+title = "Test one provider interaction"
+kind = "exercise"
+readme = "modules/01_python_core/09_testing/exercises/mock_provider/README.md"
+tests = ["modules/01_python_core/09_testing/exercises/mock_provider/test_starter.py"]
+
+[[items]]
+id = "python-asyncio"
+title = "asyncio"
+kind = "lesson"
+readme = "modules/01_python_core/10_asyncio/README.md"
+tests = ["modules/01_python_core/10_asyncio"]
+
+[[items]]
+id = "python-fetch-quotes"
+title = "Fetch quotes concurrently"
+kind = "exercise"
+readme = "modules/01_python_core/10_asyncio/exercises/fetch_quotes/README.md"
+tests = ["modules/01_python_core/10_asyncio/exercises/fetch_quotes/test_starter.py"]
+
+[[items]]
+id = "backend-fastapi"
+title = "01 \u2014 FastAPI application and routers"
+kind = "lesson"
+readme = "modules/02_python_backend/01_fastapi/README.md"
+tests = ["modules/02_python_backend/examples/support_api/test_app.py"]
+
+[[items]]
+id = "backend-pydantic"
+title = "02 \u2014 Pydantic request and response models"
+kind = "lesson"
+readme = "modules/02_python_backend/02_pydantic/README.md"
+tests = ["modules/02_python_backend/02_pydantic"]
+
+[[items]]
+id = "backend-transaction-contract"
+title = "Exercise \u2014 Transaction contract"
+kind = "exercise"
+readme = "modules/02_python_backend/02_pydantic/exercises/transaction_contract/README.md"
+tests = ["modules/02_python_backend/02_pydantic/exercises/transaction_contract/test_starter.py"]
+
+[[items]]
+id = "backend-architecture"
+title = "03 \u2014 Dependencies and service boundaries"
+kind = "lesson"
+readme = "modules/02_python_backend/03_architecture_dependencies/README.md"
+tests = ["modules/02_python_backend/03_architecture_dependencies"]
+
+[[items]]
+id = "backend-payment-router"
+title = "Exercise \u2014 Explicit payment router"
+kind = "exercise"
+readme = "modules/02_python_backend/03_architecture_dependencies/exercises/payment_router/README.md"
+tests = ["modules/02_python_backend/03_architecture_dependencies/exercises/payment_router/test_starter.py"]
+
+[[items]]
+id = "backend-config-errors"
+title = "04 \u2014 Settings, errors, and structured logs"
+kind = "lesson"
+readme = "modules/02_python_backend/04_config_errors_logging/README.md"
+tests = ["modules/02_python_backend/04_config_errors_logging"]
+
+[[items]]
+id = "backend-error-mapping"
+title = "Exercise \u2014 Payment error mapping"
+kind = "exercise"
+readme = "modules/02_python_backend/04_config_errors_logging/exercises/error_mapping/README.md"
+tests = ["modules/02_python_backend/04_config_errors_logging/exercises/error_mapping/test_starter.py"]
+
+[[items]]
+id = "backend-async"
+title = "05 \u2014 Async endpoints and I/O boundaries"
+kind = "lesson"
+readme = "modules/02_python_backend/05_async_endpoints/README.md"
+tests = ["modules/02_python_backend/05_async_endpoints"]
+
+[[items]]
+id = "backend-provider-fanout"
+title = "Exercise \u2014 Concurrent provider fan-out"
+kind = "exercise"
+readme = "modules/02_python_backend/05_async_endpoints/exercises/provider_fanout/README.md"
+tests = ["modules/02_python_backend/05_async_endpoints/exercises/provider_fanout/test_starter.py"]
+
+[[items]]
+id = "backend-sqlalchemy"
+title = "06 \u2014 SQLAlchemy 2.x models and sessions"
+kind = "lesson"
+readme = "modules/02_python_backend/06_sqlalchemy/README.md"
+tests = ["modules/02_python_backend/06_sqlalchemy"]
+
+[[items]]
+id = "backend-transaction-repository"
+title = "Exercise \u2014 Transaction repository"
+kind = "exercise"
+readme = "modules/02_python_backend/06_sqlalchemy/exercises/transaction_repository/README.md"
+tests = ["modules/02_python_backend/06_sqlalchemy/exercises/transaction_repository/test_starter.py"]
+
+[[items]]
+id = "backend-postgresql"
+title = "07 \u2014 PostgreSQL configuration and persistence"
+kind = "lesson"
+readme = "modules/02_python_backend/07_postgresql/README.md"
+tests = ["modules/02_python_backend/07_postgresql"]
+
+[[items]]
+id = "backend-postgres-query"
+title = "Exercise \u2014 Daily currency totals"
+kind = "exercise"
+readme = "modules/02_python_backend/07_postgresql/exercises/postgres_query/README.md"
+tests = ["modules/02_python_backend/07_postgresql/exercises/postgres_query/test_starter.py"]
+
+[[items]]
+id = "backend-testing"
+title = "08 \u2014 API, service, repository, and integration tests"
+kind = "lesson"
+readme = "modules/02_python_backend/08_api_integration_testing/README.md"
+tests = ["modules/02_python_backend/08_api_integration_testing"]
+
+[[items]]
+id = "backend-api-test-review"
+title = "Code review \u2014 Isolate an API test fixture"
+kind = "exercise"
+readme = "modules/02_python_backend/08_api_integration_testing/exercises/api_test_review/README.md"
+tests = ["modules/02_python_backend/08_api_integration_testing/exercises/api_test_review/test_characterization.py"]
+
+[[items]]
+id = "backend-docker"
+title = "09 \u2014 Docker runtime packaging"
+kind = "lesson"
+readme = "modules/02_python_backend/09_docker_delivery/README.md"
+tests = ["modules/02_python_backend/tests/test_lesson_contracts.py"]
+
+[[items]]
+id = "data-numpy"
+title = "NumPy arrays and vectorization"
+kind = "lesson"
+readme = "modules/03_data_foundations/01_numpy/README.md"
+tests = ["modules/03_data_foundations/01_numpy"]
+
+[[items]]
+id = "data-payment-matrix"
+title = "Payment matrix conversion"
+kind = "exercise"
+readme = "modules/03_data_foundations/01_numpy/exercises/payment_matrix/README.md"
+tests = ["modules/03_data_foundations/01_numpy/exercises/payment_matrix/test_starter.py"]
+
+[[items]]
+id = "data-pandas"
+title = "Pandas core transformations"
+kind = "lesson"
+readme = "modules/03_data_foundations/02_pandas_core/README.md"
+tests = ["modules/03_data_foundations/02_pandas_core"]
+
+[[items]]
+id = "data-transaction-summary"
+title = "Transaction summary"
+kind = "exercise"
+readme = "modules/03_data_foundations/02_pandas_core/exercises/transaction_summary/README.md"
+tests = ["modules/03_data_foundations/02_pandas_core/exercises/transaction_summary/test_starter.py"]
+
+[[items]]
+id = "data-merchant-join"
+title = "Merchant risk join"
+kind = "exercise"
+readme = "modules/03_data_foundations/02_pandas_core/exercises/merchant_join/README.md"
+tests = ["modules/03_data_foundations/02_pandas_core/exercises/merchant_join/test_starter.py"]
+
+[[items]]
+id = "data-quality"
+title = "Data quality checks"
+kind = "lesson"
+readme = "modules/03_data_foundations/03_data_quality/README.md"
+tests = ["modules/03_data_foundations/03_data_quality"]
+
+[[items]]
+id = "data-quality-report"
+title = "Transaction quality report"
+kind = "exercise"
+readme = "modules/03_data_foundations/03_data_quality/exercises/quality_report/README.md"
+tests = ["modules/03_data_foundations/03_data_quality/exercises/quality_report/test_starter.py"]
+
+[[items]]
+id = "data-statistics"
+title = "Practical statistics"
+kind = "lesson"
+readme = "modules/03_data_foundations/04_practical_statistics/README.md"
+tests = ["modules/03_data_foundations/04_practical_statistics"]
+
+[[items]]
+id = "data-statistical-profile"
+title = "Statistical amount profile"
+kind = "exercise"
+readme = "modules/03_data_foundations/04_practical_statistics/exercises/statistical_profile/README.md"
+tests = ["modules/03_data_foundations/04_practical_statistics/exercises/statistical_profile/test_starter.py"]
+
+[[items]]
+id = "data-bayes-alert"
+title = "Fraud probability after an alert"
+kind = "exercise"
+readme = "modules/03_data_foundations/04_practical_statistics/exercises/bayes_alert/README.md"
+tests = ["modules/03_data_foundations/04_practical_statistics/exercises/bayes_alert/test_starter.py"]
+
+[[items]]
+id = "data-splits"
+title = "Splits and leakage"
+kind = "lesson"
+readme = "modules/03_data_foundations/05_splits_and_leakage/README.md"
+tests = ["modules/03_data_foundations/05_splits_and_leakage"]
+
+[[items]]
+id = "data-time-split"
+title = "Chronological transaction split"
+kind = "exercise"
+readme = "modules/03_data_foundations/05_splits_and_leakage/exercises/time_split/README.md"
+tests = ["modules/03_data_foundations/05_splits_and_leakage/exercises/time_split/test_starter.py"]
+
+[[items]]
+id = "data-fraud-metrics"
+title = "Fraud metrics"
+kind = "lesson"
+readme = "modules/03_data_foundations/06_fraud_metrics/README.md"
+tests = ["modules/03_data_foundations/06_fraud_metrics"]
+
+[[items]]
+id = "data-confusion-metrics"
+title = "Fraud confusion metrics"
+kind = "exercise"
+readme = "modules/03_data_foundations/06_fraud_metrics/exercises/confusion_metrics/README.md"
+tests = ["modules/03_data_foundations/06_fraud_metrics/exercises/confusion_metrics/test_starter.py"]
+
+[[items]]
+id = "data-ranking-metrics"
+title = "Fraud ranking metrics"
+kind = "exercise"
+readme = "modules/03_data_foundations/06_fraud_metrics/exercises/ranking_metrics/README.md"
+tests = ["modules/03_data_foundations/06_fraud_metrics/exercises/ranking_metrics/test_starter.py"]
+
+[[items]]
 id = "banking-ai-lab"
 title = "Banking AI Lab"
 kind = "project"

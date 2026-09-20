@@ -1,8 +1,9 @@
 # Learning progress
 
-Edit a marker as you learn: `[ ]` not started, `[~]` in progress, `[x]` complete. The sequence below is the planned Module 01–03 lesson inventory; it is useful before the lesson folders are added.
+Edit a marker as you learn: `[ ]` not started, `[~]` in progress, `[x]` complete.
+The checklist follows the exact Module 01–03 lesson order and remains manually owned.
 
-## Modules 01–03
+## Module 01 — Python core
 
 - [ ] python-environment
 - [ ] python-object-model
@@ -15,6 +16,9 @@ Edit a marker as you learn: `[ ]` not started, `[~]` in progress, `[x]` complete
 - [ ] python-decorators
 - [ ] python-testing
 - [ ] python-asyncio
+
+## Module 02 — Python backend
+
 - [ ] backend-fastapi
 - [ ] backend-pydantic
 - [ ] backend-architecture
@@ -24,6 +28,9 @@ Edit a marker as you learn: `[ ]` not started, `[~]` in progress, `[x]` complete
 - [ ] backend-postgresql
 - [ ] backend-testing
 - [ ] backend-docker
+
+## Module 03 — Data foundations
+
 - [ ] data-numpy
 - [ ] data-pandas
 - [ ] data-quality
