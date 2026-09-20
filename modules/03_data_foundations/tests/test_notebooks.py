@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import json
 import re
+from collections.abc import Sequence
 from pathlib import Path
 from typing import cast
 
@@ -40,27 +41,52 @@ NOTEBOOKS = {
         "pr-auc",
     ),
 }
-WINDOWS_ABSOLUTE_PATH = re.compile(
-    r"(?:^|[\s`\"'(=])(?:[A-Za-z]:[\\/]|\\\\[^\\\s]+[\\/])",
-    re.MULTILINE,
-)
-POSIX_ABSOLUTE_PATH = re.compile(
-    r"(?:^|[\s`\"'(=])/(?!/)[A-Za-z0-9._~-]+(?:/[A-Za-z0-9._~-]+)*"
-    r"(?=$|[\s`\"'),;])",
-    re.MULTILINE,
-)
-SECRET_ASSIGNMENT = re.compile(
-    r"\b(?:api[ _-]?key|access[ _-]?token|auth[ _-]?token|password|passwd|client[ _-]?secret)"
-    r"\b\s*(?:=|:)\s*[\"']?[^\s\"',]{6,}",
-    re.IGNORECASE,
+ABSOLUTE_LOCAL_PATH = re.compile(
+    r"(?<![\w:/])(?:[A-Za-z]:[\\/][^\s\"'`]+|\\\\[^\s\"'`]+|"
+    r"/(?!/)[A-Za-z0-9._~-]+(?:/[A-Za-z0-9._~-]+)*)"
 )
 SECRET_SIGNATURE = re.compile(
-    r"\b(?:sk-[A-Za-z0-9_-]{8,}|AKIA[0-9A-Z]{12,}|Bearer\s+[A-Za-z0-9._~+/-]{8,})\b"
+    r"\b(?:sk-(?:proj-)?[A-Za-z0-9_-]{20,}|AKIA[0-9A-Z]{16}|"
+    r"gh[pousr]_[A-Za-z0-9]{20,}|AIza[0-9A-Za-z_-]{30,}|"
+    r"Bearer\s+[A-Za-z0-9._~+/-]{20,})\b"
 )
-PRIVATE_COLUMN = re.compile(
-    r"(?:^|_)(?:api_key|password|passwd|token|secret|card_number|cardholder_name|cvv|pin|"
-    r"ssn|email|phone|iban|account_number|customer_name|full_name|date_of_birth|dob)(?:_|$)"
+EMAIL_LITERAL = re.compile(
+    r"\b[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+\b"
 )
+CARD_CANDIDATE = re.compile(r"(?<!\d)(?:\d[ -]?){12,18}\d(?!\d)")
+SENSITIVE_NON_TOKEN_IDENTIFIER = re.compile(r"(?:^|_)(?:api_key|password|passwd|secret)(?:_|$)")
+PRIVATE_FIELD_IDENTIFIER = re.compile(
+    r"(?:^|_)(?:card_number|cardholder_name|cvv|pin|ssn|email|phone|iban|"
+    r"account_number|customer_name|full_name|date_of_birth|dob)(?:_|$)"
+)
+SAFE_PROSE_CUE = re.compile(
+    r"\b(?:warning|never|do not|don't|avoid|must not|should not|placeholder|training note)\b",
+    re.IGNORECASE,
+)
+SAFE_PROSE_TARGET = re.compile(r"(?:^|_)(?:warning|message|instruction|note|prose)(?:_|$)")
+SAFE_TOKEN_NEIGHBORS = {
+    "average",
+    "budget",
+    "budgets",
+    "completion",
+    "count",
+    "counts",
+    "id",
+    "ids",
+    "input",
+    "length",
+    "lengths",
+    "limit",
+    "limits",
+    "max",
+    "min",
+    "output",
+    "prompt",
+    "size",
+    "sizes",
+    "total",
+    "usage",
+}
 EXERCISE_MESSAGE = "Complete this notebook exercise"
 
 
@@ -137,22 +163,149 @@ def assert_real_colab_upload(setup_cell: NotebookNode) -> None:
     assert relative_data_path
 
 
+def normalize_identifier(value: str) -> str:
+    with_camel_boundaries = re.sub(r"([a-z0-9])([A-Z])", r"\1_\2", value)
+    return re.sub(r"[^a-z0-9]+", "_", with_camel_boundaries.lower()).strip("_")
+
+
+def is_sensitive_identifier(value: str) -> bool:
+    normalized = normalize_identifier(value)
+    if SENSITIVE_NON_TOKEN_IDENTIFIER.search(normalized):
+        return True
+
+    parts = normalized.split("_")
+    for index, part in enumerate(parts):
+        if part == "tokens":
+            continue
+        if part != "token":
+            continue
+        previous = parts[index - 1] if index > 0 else ""
+        following = parts[index + 1] if index + 1 < len(parts) else ""
+        if previous not in SAFE_TOKEN_NEIGHBORS and following not in SAFE_TOKEN_NEIGHBORS:
+            return True
+    return False
+
+
+def stored_identifier_names(tree: ast.Module) -> list[str]:
+    names: list[str] = []
+    for node in ast.walk(tree):
+        name: str | None = None
+        if isinstance(node, ast.Name) and isinstance(node.ctx, ast.Store):
+            name = node.id
+        elif isinstance(node, ast.Attribute) and isinstance(node.ctx, ast.Store):
+            name = node.attr
+        elif isinstance(node, (ast.arg, ast.keyword)):
+            name = node.arg
+        if name is not None:
+            names.append(name)
+    return names
+
+
+def parent_nodes(tree: ast.Module) -> dict[ast.AST, ast.AST]:
+    return {child: parent for parent in ast.walk(tree) for child in ast.iter_child_nodes(parent)}
+
+
+def assignment_target_names(node: ast.AST) -> list[str]:
+    targets: Sequence[ast.AST]
+    if isinstance(node, ast.Assign):
+        targets = node.targets
+    elif isinstance(node, (ast.AnnAssign, ast.AugAssign)):
+        targets = [node.target]
+    else:
+        return []
+
+    return [
+        child.id for target in targets for child in ast.walk(target) if isinstance(child, ast.Name)
+    ]
+
+
+def is_safe_prose_literal(
+    node: ast.Constant,
+    value: str,
+    parents: dict[ast.AST, ast.AST],
+) -> bool:
+    if (
+        SECRET_SIGNATURE.search(value)
+        or EMAIL_LITERAL.search(value)
+        or contains_luhn_card(value)
+        or ABSOLUTE_LOCAL_PATH.search(value)
+    ):
+        return False
+
+    current: ast.AST = node
+    while current in parents:
+        current = parents[current]
+        if isinstance(current, (ast.Assign, ast.AnnAssign, ast.AugAssign)):
+            return any(
+                SAFE_PROSE_TARGET.search(normalize_identifier(name))
+                for name in assignment_target_names(current)
+            )
+        if isinstance(current, ast.Call):
+            function_name = ""
+            if isinstance(current.func, ast.Name):
+                function_name = current.func.id
+            elif isinstance(current.func, ast.Attribute):
+                function_name = current.func.attr
+            if function_name in {"display", "print", "warn", "warning"}:
+                return SAFE_PROSE_CUE.search(value) is not None
+        if isinstance(current, ast.Expr):
+            return SAFE_PROSE_CUE.search(value) is not None
+        if isinstance(current, ast.stmt):
+            break
+    return False
+
+
+def contains_luhn_card(value: str | int) -> bool:
+    for candidate in CARD_CANDIDATE.findall(str(value)):
+        digits = [int(character) for character in candidate if character.isdigit()]
+        if not 13 <= len(digits) <= 19 or len(set(digits)) == 1:
+            continue
+        checksum = 0
+        parity = len(digits) % 2
+        for index, digit in enumerate(digits):
+            if index % 2 == parity:
+                digit *= 2
+                if digit > 9:
+                    digit -= 9
+            checksum += digit
+        if checksum % 10 == 0:
+            return True
+    return False
+
+
+def assert_executable_code_has_no_sensitive_content(tree: ast.Module) -> None:
+    for name in stored_identifier_names(tree):
+        assert not is_sensitive_identifier(name)
+
+    parents = parent_nodes(tree)
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Constant):
+            continue
+        if isinstance(node.value, bool):
+            continue
+        if isinstance(node.value, int):
+            assert not contains_luhn_card(node.value)
+            continue
+        if not isinstance(node.value, str):
+            continue
+
+        value = node.value.strip()
+        if is_safe_prose_literal(node, value, parents):
+            continue
+        normalized = normalize_identifier(value)
+        assert not is_sensitive_identifier(normalized)
+        assert PRIVATE_FIELD_IDENTIFIER.search(normalized) is None
+        assert EMAIL_LITERAL.search(value) is None
+        assert SECRET_SIGNATURE.search(value) is None
+        assert not contains_luhn_card(value)
+        assert ABSOLUTE_LOCAL_PATH.search(value) is None
+
+
 def assert_no_sensitive_content(notebook: NotebookNode) -> None:
-    source = "\n".join(cast(str, cell.source) for cell in notebook.cells)
-
-    assert not WINDOWS_ABSOLUTE_PATH.search(source)
-    assert not POSIX_ABSOLUTE_PATH.search(source)
-    assert not SECRET_ASSIGNMENT.search(source)
-    assert not SECRET_SIGNATURE.search(source)
-
     for cell in notebook.cells:
         if cell.cell_type != "code":
             continue
-        for node in ast.walk(parse_code_cell(cell)):
-            if not isinstance(node, ast.Constant) or not isinstance(node.value, str):
-                continue
-            normalized = re.sub(r"[^a-z0-9]+", "_", node.value.lower()).strip("_")
-            assert PRIVATE_COLUMN.search(normalized) is None
+        assert_executable_code_has_no_sensitive_content(parse_code_cell(cell))
 
 
 @pytest.mark.parametrize("name", NOTEBOOKS)
@@ -206,6 +359,92 @@ def test_notebook_is_portable_small_private_data_free_and_offline(name: str) -> 
     for cell in notebook.cells:
         if cell.cell_type == "code":
             assert len(json.dumps(cell.outputs, ensure_ascii=False).encode("utf-8")) < 20_000
+
+
+@pytest.mark.parametrize(
+    "unsafe_source",
+    [
+        'OPENAI_API_KEY = "placeholder"',
+        "AZURE_OPENAI_API_KEY = load_from_vault()",
+        "SESSION_TOKEN = object()",
+        'ADMIN_PASSWORD_HINT = "placeholder"',
+        'contacts = ["learner@example.test"]',
+        'test_cards = ["4242 4242 4242 4242"]',
+        'service_credential = "sk-proj-abcdefghijklmnopqrstuvwxyz0123456789"',
+        'scratch = Path("/content/input.csv")',
+        'scratch = Path("C:/Users/learner/input.csv")',
+        'command = "cp /content/input.csv output.csv"',
+        'command = "type C:/Users/learner/input.csv"',
+        'customers = {"customer_email": ["redacted"]}',
+    ],
+)
+def test_privacy_contract_rejects_sensitive_executable_code(unsafe_source: str) -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += f"\n{unsafe_source}"
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
+
+
+def test_privacy_contract_ignores_non_executable_prose_comments_and_warnings() -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[0].source += (
+        "\n\nTraining warning: never paste OPENAI_API_KEY, learner@example.test, "
+        "4242 4242 4242 4242, or /content/input.csv into a notebook."
+    )
+    notebook.cells[3].source += (
+        '\n# api_key = "sk-proj-abcdefghijklmnopqrstuvwxyz0123456789"\n'
+        'warning = "Warning: do not store email addresses, card numbers, API keys, or paths."\n'
+        'warning += " Use synthetic placeholders in training notebooks."\n'
+        'print("Never store email addresses, API keys, tokens, or passwords in notebooks.")\n'
+        "print(warning)"
+    )
+
+    assert_no_sensitive_content(notebook)
+
+
+def test_privacy_contract_allows_benign_token_measurement_names() -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[
+        3
+    ].source += (
+        "\ntoken_counts = [128, 256]\nmodel_token_budget = 4_096\naverage_token_length = 4.2"
+    )
+
+    assert_no_sensitive_content(notebook)
+
+
+@pytest.mark.parametrize(
+    "unsafe_payload",
+    [
+        'payload = "never send learner@example.test"',
+        'payload = "never store 4242 4242 4242 4242"',
+        'payload = "never paste sk-proj-abcdefghijklmnopqrstuvwxyz0123456789"',
+    ],
+)
+def test_warning_words_do_not_hide_sensitive_executable_payloads(unsafe_payload: str) -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += f"\n{unsafe_payload}"
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
+
+
+@pytest.mark.parametrize(
+    "unsafe_warning",
+    [
+        'warning = "learner@example.test"',
+        'warning = "4242 4242 4242 4242"',
+        'warning = "sk-proj-abcdefghijklmnopqrstuvwxyz0123456789"',
+        'warning = "/content/input.csv"',
+    ],
+)
+def test_warning_target_does_not_hide_sensitive_literal_signatures(unsafe_warning: str) -> None:
+    notebook = read_notebook("03_fraud_metrics.ipynb")
+    notebook.cells[3].source += f"\n{unsafe_warning}"
+
+    with pytest.raises(AssertionError):
+        assert_no_sensitive_content(notebook)
 
 
 @pytest.mark.parametrize(("name", "required_terms"), NOTEBOOKS.items())
