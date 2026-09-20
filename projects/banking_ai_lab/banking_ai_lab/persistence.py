@@ -12,7 +12,13 @@ from sqlalchemy import Boolean, DateTime, Engine, Numeric, String, Uuid, create_
 from sqlalchemy.engine.interfaces import Dialect
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 
-from banking_ai_lab.domain import Transaction, TransactionStatus
+from banking_ai_lab.domain import (
+    CATEGORY_MAX_LENGTH,
+    MERCHANT_MAX_LENGTH,
+    USER_ID_MAX_LENGTH,
+    Transaction,
+    TransactionStatus,
+)
 
 
 class Base(DeclarativeBase):
@@ -51,11 +57,11 @@ class TransactionRow(Base):
     __tablename__ = "transactions"
 
     id: Mapped[UUID] = mapped_column(Uuid(as_uuid=True), primary_key=True)
-    user_id: Mapped[str] = mapped_column(String(128), nullable=False, index=True)
+    user_id: Mapped[str] = mapped_column(String(USER_ID_MAX_LENGTH), nullable=False, index=True)
     amount: Mapped[Decimal] = mapped_column(ExactDecimal(), nullable=False)
     currency: Mapped[str] = mapped_column(String(3), nullable=False)
-    merchant: Mapped[str] = mapped_column(String(256), nullable=False)
-    category: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    merchant: Mapped[str] = mapped_column(String(MERCHANT_MAX_LENGTH), nullable=False)
+    category: Mapped[str | None] = mapped_column(String(CATEGORY_MAX_LENGTH), nullable=True)
     timestamp: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
     status: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
     is_fraud: Mapped[bool] = mapped_column(Boolean, nullable=False)

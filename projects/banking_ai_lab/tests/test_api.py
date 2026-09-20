@@ -21,7 +21,13 @@ from banking_ai_lab.analytics import (
 from banking_ai_lab.api import TransactionReportResponse
 from banking_ai_lab.app import APP_TITLE, APP_VERSION, create_app
 from banking_ai_lab.config import Settings
-from banking_ai_lab.domain import Transaction, TransactionStatus
+from banking_ai_lab.domain import (
+    CATEGORY_MAX_LENGTH,
+    MERCHANT_MAX_LENGTH,
+    USER_ID_MAX_LENGTH,
+    Transaction,
+    TransactionStatus,
+)
 from banking_ai_lab.service import (
     DuplicateTransactionError,
     TransactionNotFoundError,
@@ -400,6 +406,32 @@ def test_post_validation_is_field_specific_and_never_calls_service(
     transaction = make_transaction(1)
     payload = request_json(transaction)
     payload[field] = value
+    service = ControlledService()
+    app = create_app(cast(TransactionService, service))
+
+    with TestClient(app) as client:
+        response = client.post(f"{API_PREFIX}/transactions", json=payload)
+
+    assert response.status_code == 422
+    assert any(error["loc"] == ["body", field] for error in response.json()["detail"])
+    assert service.calls == []
+
+
+@pytest.mark.parametrize(
+    ("field", "maximum"),
+    [
+        ("user_id", USER_ID_MAX_LENGTH),
+        ("merchant", MERCHANT_MAX_LENGTH),
+        ("category", CATEGORY_MAX_LENGTH),
+    ],
+)
+def test_post_rejects_text_wider_than_storage_before_calling_service(
+    field: str,
+    maximum: int,
+) -> None:
+    transaction = make_transaction(1)
+    payload = request_json(transaction)
+    payload[field] = "x" * (maximum + 1)
     service = ControlledService()
     app = create_app(cast(TransactionService, service))
 

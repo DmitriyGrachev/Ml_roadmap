@@ -26,6 +26,8 @@ Edit only `import_transactions` in
 - Require all nine canonical headers; report missing headers in canonical column order.
 - Accept lowercase `true` and `false` fraud labels and an empty optional category without silently
   normalizing other invalid values.
+- Enforce the shared storage-safe text limits: 128 characters for `user_id`, 256 for `merchant`,
+  and 128 for a present `category`.
 - Keep valid transactions in file order while collecting every independent row issue in CSV column
   order.
 - Classify a later byte-identical record as a duplicate row and a reused ID with changed data as a
@@ -35,8 +37,8 @@ Edit only `import_transactions` in
 ## Acceptance criteria
 
 Clean and generated datasets import into frozen `Transaction` objects. Empty files, missing
-headers, malformed fields, excess amount precision, exact duplicate rows, and reused IDs produce
-the documented ordered issues. A missing path raises `FileNotFoundError`.
+headers, malformed or overlong fields, excess amount precision, exact duplicate rows, and reused
+IDs produce the documented ordered issues. A missing path raises `FileNotFoundError`.
 
 ## Run
 

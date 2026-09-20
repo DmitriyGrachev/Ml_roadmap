@@ -11,7 +11,13 @@ from typing import Any, ClassVar, cast
 from uuid import UUID
 
 import pytest
-from banking_ai_lab.domain import Transaction, TransactionStatus
+from banking_ai_lab.domain import (
+    CATEGORY_MAX_LENGTH,
+    MERCHANT_MAX_LENGTH,
+    USER_ID_MAX_LENGTH,
+    Transaction,
+    TransactionStatus,
+)
 from banking_ai_lab.persistence import (
     Base,
     ExactDecimal,
@@ -22,7 +28,7 @@ from banking_ai_lab.persistence import (
     create_session_factory,
 )
 from banking_ai_lab.service import DuplicateTransactionError
-from sqlalchemy import DateTime, Engine, Numeric, func, select
+from sqlalchemy import DateTime, Engine, Numeric, String, func, select
 from sqlalchemy.dialects import sqlite
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session, sessionmaker
@@ -188,6 +194,15 @@ def test_sqlalchemy_metadata_uses_typed_money_timestamp_and_complete_columns() -
     assert columns["timestamp"].type.timezone is True
     assert columns["category"].nullable is True
     assert columns["user_id"].nullable is False
+    user_id_type = columns["user_id"].type
+    merchant_type = columns["merchant"].type
+    category_type = columns["category"].type
+    assert isinstance(user_id_type, String)
+    assert isinstance(merchant_type, String)
+    assert isinstance(category_type, String)
+    assert user_id_type.length == USER_ID_MAX_LENGTH
+    assert merchant_type.length == MERCHANT_MAX_LENGTH
+    assert category_type.length == CATEGORY_MAX_LENGTH
 
 
 def test_model_mapping_preserves_exact_decimal_and_restores_utc_after_sqlite_round_trip(

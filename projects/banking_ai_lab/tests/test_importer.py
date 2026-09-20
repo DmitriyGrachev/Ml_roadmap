@@ -11,7 +11,13 @@ from typing import Any, cast
 from uuid import UUID
 
 import pytest
-from banking_ai_lab.domain import TRANSACTION_COLUMNS, Transaction
+from banking_ai_lab.domain import (
+    CATEGORY_MAX_LENGTH,
+    MERCHANT_MAX_LENGTH,
+    TRANSACTION_COLUMNS,
+    USER_ID_MAX_LENGTH,
+    Transaction,
+)
 from banking_ai_lab.importer import ImportIssue, ImportResult, import_transactions
 from pydantic import ValidationError
 
@@ -81,6 +87,28 @@ def test_transaction_accepts_an_absent_category() -> None:
     transaction = Transaction.model_validate(transaction_payload(category=None))
 
     assert transaction.category is None
+
+
+@pytest.mark.parametrize(
+    ("field", "maximum"),
+    [
+        ("user_id", USER_ID_MAX_LENGTH),
+        ("merchant", MERCHANT_MAX_LENGTH),
+        ("category", CATEGORY_MAX_LENGTH),
+    ],
+)
+def test_transaction_text_width_matches_the_persistence_schema(
+    field: str,
+    maximum: int,
+) -> None:
+    accepted = "x" * maximum
+    transaction = Transaction.model_validate(transaction_payload(**{field: accepted}))
+
+    assert getattr(transaction, field) == accepted
+    with pytest.raises(ValidationError) as caught:
+        Transaction.model_validate(transaction_payload(**{field: "x" * (maximum + 1)}))
+
+    assert [error["loc"] for error in caught.value.errors()] == [(field,)]
 
 
 @pytest.mark.parametrize(
@@ -270,6 +298,33 @@ def test_import_transactions_collects_safe_field_issues_and_continues(tmp_path: 
         assert "Sensitive Merchant Token" not in issue.message
         assert invalid["id"] not in issue.message
         assert serialized_row not in issue.message
+
+
+@pytest.mark.student_exercise
+def test_import_transactions_reports_overlong_text_fields_without_echoing_values(
+    tmp_path: Path,
+) -> None:
+    path = tmp_path / "overlong-text.csv"
+    invalid = csv_row(
+        1,
+        user_id="u" * (USER_ID_MAX_LENGTH + 1),
+        merchant="m" * (MERCHANT_MAX_LENGTH + 1),
+        category="c" * (CATEGORY_MAX_LENGTH + 1),
+    )
+    valid = csv_row(2)
+    write_csv(path, [invalid, valid])
+
+    result = exercise_call(import_transactions, path)
+
+    assert [str(item.id) for item in result.transactions] == [valid["id"]]
+    assert [(issue.row_number, issue.field) for issue in result.issues] == [
+        (1, "user_id"),
+        (1, "merchant"),
+        (1, "category"),
+    ]
+    for issue in result.issues:
+        assert issue.message
+        assert invalid[issue.field] not in issue.message
 
 
 @pytest.mark.student_exercise

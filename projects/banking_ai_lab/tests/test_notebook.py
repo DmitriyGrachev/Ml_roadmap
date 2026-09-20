@@ -7,6 +7,7 @@ import copy
 import csv
 import hashlib
 import json
+import os
 import re
 from collections import Counter
 from datetime import UTC, datetime
@@ -56,6 +57,27 @@ EMAIL_LITERAL = re.compile(
 )
 ABSOLUTE_LOCAL_PATH = re.compile(
     r"(?<![A-Za-z0-9_])(?:[A-Za-z]:[\\/]|\\\\|/(?:Users|content|home|mnt|tmp)/)"
+)
+SENSITIVE_ENV_FRAGMENTS = (
+    "API_KEY",
+    "APIKEY",
+    "AUTH",
+    "AWS_",
+    "AZURE_",
+    "COOKIE",
+    "CREDENTIAL",
+    "DATABASE_URL",
+    "GITHUB_",
+    "GITLAB_",
+    "GOOGLE_",
+    "KUBE",
+    "OPENAI_",
+    "PASSWORD",
+    "PASSWD",
+    "POSTGRES",
+    "SECRET",
+    "SSH_",
+    "TOKEN",
 )
 
 
@@ -151,6 +173,77 @@ def expected_category_order() -> tuple[str, ...]:
     with dataset_path.open(encoding="utf-8", newline="") as source:
         categories = {row["category"] for row in csv.DictReader(source) if row["category"]}
     return tuple(sorted(categories))
+
+
+def isolated_kernel_environment(cwd: Path) -> dict[str, str]:
+    blocked_names = {
+        "IPYTHONDIR",
+        "JUPYTER_CONFIG_DIR",
+        "JUPYTER_DATA_DIR",
+        "JUPYTER_PATH",
+        "JUPYTER_RUNTIME_DIR",
+        "PYTHONPATH",
+        "PYTHONSTARTUP",
+    }
+    environment = {
+        name: value
+        for name, value in os.environ.items()
+        if name.upper() not in blocked_names
+        and not name.upper().endswith("_PROXY")
+        and not any(fragment in name.upper() for fragment in SENSITIVE_ENV_FRAGMENTS)
+    }
+    isolated_home = cwd / ".notebook-kernel"
+    locations = {
+        "HOME": isolated_home,
+        "USERPROFILE": isolated_home,
+        "IPYTHONDIR": isolated_home / "ipython",
+        "JUPYTER_CONFIG_DIR": isolated_home / "jupyter-config",
+        "JUPYTER_DATA_DIR": isolated_home / "jupyter-data",
+        "JUPYTER_RUNTIME_DIR": isolated_home / "jupyter-runtime",
+        "MPLCONFIGDIR": isolated_home / "matplotlib",
+    }
+    for location in locations.values():
+        location.mkdir(parents=True, exist_ok=True)
+    environment.update({name: str(path) for name, path in locations.items()})
+    environment.update(
+        {
+            "ALL_PROXY": "http://127.0.0.1:9",
+            "HTTP_PROXY": "http://127.0.0.1:9",
+            "HTTPS_PROXY": "http://127.0.0.1:9",
+            "NO_PROXY": "",
+            "all_proxy": "http://127.0.0.1:9",
+            "http_proxy": "http://127.0.0.1:9",
+            "https_proxy": "http://127.0.0.1:9",
+            "no_proxy": "",
+            "PIP_NO_INDEX": "1",
+            "PYTHONNOUSERSITE": "1",
+        }
+    )
+    return environment
+
+
+def execute_completed_notebook(
+    notebook: NotebookNode,
+    *,
+    cwd: Path,
+    verifier_sources: tuple[str, ...] = (),
+) -> NotebookNode:
+    assert_notebook_safe_for_execution(notebook)
+    executable = copy.deepcopy(notebook)
+    for cell in code_cells(executable):
+        if "exercise" in cell.metadata.get("tags", []):
+            cell.source = "pass"
+    executable.cells.extend(
+        nbformat.v4.new_code_cell(source=source)  # type: ignore[no-untyped-call]
+        for source in verifier_sources
+    )
+    executed = NotebookClient(
+        executable,
+        timeout=60,
+        kernel_name="python3",
+        allow_errors=False,
+    ).execute(cwd=str(cwd), env=isolated_kernel_environment(cwd))
+    return executed
 
 
 def assert_completed_cells_are_narrow_infrastructure(notebook: NotebookNode) -> None:
@@ -278,6 +371,19 @@ def assert_completed_cells_are_narrow_infrastructure(notebook: NotebookNode) -> 
             "DATA_PATH.write_bytes(uploaded[DATA_PATH.name])",
         ),
         "load": (
+            """
+EXPECTED_COLUMNS = (
+    "id",
+    "user_id",
+    "amount",
+    "currency",
+    "merchant",
+    "category",
+    "timestamp",
+    "status",
+    "is_fraud",
+)
+""",
             """
 if tuple(transactions.columns) != EXPECTED_COLUMNS:
     raise ValueError("Unexpected transaction columns")
@@ -471,8 +577,7 @@ def test_notebook_is_v4_python_three_with_title_goals_and_self_check() -> None:
     assert cast(str, notebook.metadata.language_info.version).startswith("3")
 
 
-def test_notebook_uses_exact_seed_relative_dataset_and_manual_colab_fallback() -> None:
-    notebook = read_notebook()
+def assert_exact_seed_path_and_colab_contract(notebook: NotebookNode) -> None:
     trees = [parse_cell(cell) for cell in code_cells(notebook)]
     assignments = [
         node for tree in trees for node in ast.walk(tree) if isinstance(node, ast.Assign)
@@ -528,8 +633,11 @@ def test_notebook_uses_exact_seed_relative_dataset_and_manual_colab_fallback() -
     assert calls_upload
 
 
-def test_notebook_has_six_distinct_raise_only_student_analyses() -> None:
-    notebook = read_notebook()
+def test_notebook_uses_exact_seed_relative_dataset_and_manual_colab_fallback() -> None:
+    assert_exact_seed_path_and_colab_contract(read_notebook())
+
+
+def assert_exact_exercise_contract(notebook: NotebookNode) -> None:
     exercises = {
         cast(str, cell.id): cell
         for cell in code_cells(notebook)
@@ -544,6 +652,10 @@ def test_notebook_has_six_distinct_raise_only_student_analyses() -> None:
         assert source.count("#") >= 2
         assert all(term in source.lower() for term in required_terms)
         assert_exact_exercise_raise(cell)
+
+
+def test_notebook_has_six_distinct_raise_only_student_analyses() -> None:
+    assert_exact_exercise_contract(read_notebook())
 
 
 def test_completed_cells_load_parse_and_inspect_without_solving_student_analyses() -> None:
@@ -829,8 +941,7 @@ def test_completed_cells_reject_semantic_and_colab_mutations(
         assert_completed_cells_are_narrow_infrastructure(notebook)
 
 
-def test_notebook_is_clean_small_private_data_free_and_offline() -> None:
-    notebook = read_notebook()
+def assert_notebook_is_clean_private_and_offline(notebook: NotebookNode) -> None:
     all_source = "\n".join(cast(str, cell.source) for cell in notebook.cells)
     assert "http://" not in all_source
     assert "https://" not in all_source
@@ -865,6 +976,41 @@ def test_notebook_is_clean_small_private_data_free_and_offline() -> None:
         assert cell.execution_count is None
         assert cell.outputs == []
         assert len(json.dumps(cell.outputs, ensure_ascii=False).encode("utf-8")) < 20_000
+
+
+def assert_notebook_safe_for_execution(notebook: NotebookNode) -> None:
+    nbformat.validate(notebook)
+    assert_exact_seed_path_and_colab_contract(notebook)
+    assert_exact_exercise_contract(notebook)
+    assert_completed_cells_are_narrow_infrastructure(notebook)
+    assert_notebook_is_clean_private_and_offline(notebook)
+
+
+def test_notebook_is_clean_small_private_data_free_and_offline() -> None:
+    assert_notebook_is_clean_private_and_offline(read_notebook())
+
+
+def test_kernel_environment_scrubs_secrets_and_forces_offline_proxies(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("OPENAI_API_KEY", "must-not-reach-kernel")
+    monkeypatch.setenv("DATABASE_URL", "postgresql://secret.invalid/private")
+    monkeypatch.setenv("HTTPS_PROXY", "https://ambient-proxy.invalid")
+    monkeypatch.setenv("PYTHONPATH", "ambient-import-path")
+    monkeypatch.setenv("SAFE_LOCALE", "kept")
+
+    environment = isolated_kernel_environment(tmp_path)
+
+    assert "OPENAI_API_KEY" not in environment
+    assert "DATABASE_URL" not in environment
+    assert "PYTHONPATH" not in environment
+    assert environment["SAFE_LOCALE"] == "kept"
+    assert environment["HTTP_PROXY"] == "http://127.0.0.1:9"
+    assert environment["HTTPS_PROXY"] == "http://127.0.0.1:9"
+    assert environment["ALL_PROXY"] == "http://127.0.0.1:9"
+    assert environment["NO_PROXY"] == ""
+    assert Path(environment["HOME"]).is_relative_to(tmp_path)
+    assert Path(environment["JUPYTER_RUNTIME_DIR"]).is_relative_to(tmp_path)
 
 
 def test_colab_fallback_uploads_missing_dataset_to_relative_path(tmp_path: Path) -> None:
@@ -906,24 +1052,42 @@ assert DATA_PATH.read_bytes() == _uploaded_bytes
         ]
     )
 
+    assert_notebook_safe_for_execution(notebook)
     NotebookClient(
         simulation,
         timeout=60,
         kernel_name="python3",
         allow_errors=False,
-    ).execute(cwd=str(tmp_path))
+    ).execute(cwd=str(tmp_path), env=isolated_kernel_environment(tmp_path))
 
     assert (tmp_path / "datasets" / "transactions.csv").read_bytes() == uploaded_bytes
 
 
-def test_completed_notebook_executes_from_repository_root_with_exercises_disabled() -> None:
+def test_unsafe_completed_cell_is_rejected_before_kernel_execution(tmp_path: Path) -> None:
     notebook = copy.deepcopy(read_notebook())
-    for cell in code_cells(notebook):
-        if "exercise" in cell.metadata.get("tags", []):
-            cell.source = "pass"
-    notebook.cells.append(
-        nbformat.v4.new_code_cell(  # type: ignore[no-untyped-call]
-            source="""
+    setup_cell = next(cell for cell in code_cells(notebook) if cell.id == "setup")
+    setup_cell.source = (
+        f'{setup_cell.source}\nPath("probe-side-effect.txt").write_text('
+        '"EXECUTED", encoding="utf-8")'
+    )
+    dataset_copy = tmp_path / "datasets" / "transactions.csv"
+    dataset_copy.parent.mkdir(parents=True)
+    dataset_copy.write_bytes((REPOSITORY_ROOT / "datasets" / "transactions.csv").read_bytes())
+
+    with pytest.raises(AssertionError):
+        execute_completed_notebook(notebook, cwd=tmp_path)
+
+    assert not (tmp_path / "probe-side-effect.txt").exists()
+
+
+def test_completed_notebook_executes_from_temporary_repo_copy(
+    tmp_path: Path,
+) -> None:
+    notebook = read_notebook()
+    dataset_copy = tmp_path / "datasets" / "transactions.csv"
+    dataset_copy.parent.mkdir(parents=True)
+    dataset_copy.write_bytes((REPOSITORY_ROOT / "datasets" / "transactions.csv").read_bytes())
+    schema_verifier = """
 assert tuple(transactions.columns) == (
     "id",
     "user_id",
@@ -954,8 +1118,6 @@ assert safe_counts == {
     "status_counts": {"approved": 874, "declined": 78, "pending": 31, "refunded": 17},
 }
 """.strip()
-        )
-    )
     semantic_verifier = """
 import hashlib as _hashlib
 import json as _json
@@ -997,18 +1159,13 @@ assert float(np.random.random()) == 0.368507245109836
     semantic_verifier = semantic_verifier.replace(
         "__EXPECTED_DIGEST__", repr(expected_transaction_digest())
     ).replace("__EXPECTED_CATEGORIES__", repr(expected_category_order()))
-    notebook.cells.append(
-        nbformat.v4.new_code_cell(source=semantic_verifier)  # type: ignore[no-untyped-call]
+    executed = execute_completed_notebook(
+        notebook,
+        cwd=tmp_path,
+        verifier_sources=(schema_verifier, semantic_verifier),
     )
 
-    executed = NotebookClient(
-        notebook,
-        timeout=60,
-        kernel_name="python3",
-        allow_errors=False,
-    ).execute(cwd=str(REPOSITORY_ROOT))
-
-    assert executed is notebook
+    assert executed is not notebook
     output_cells = {cast(str, cell.id): cell for cell in code_cells(executed) if cell.outputs}
     assert set(output_cells) == {"inspect", "safe-counts"}
 

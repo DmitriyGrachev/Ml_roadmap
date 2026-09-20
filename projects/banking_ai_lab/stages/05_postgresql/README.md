@@ -53,6 +53,7 @@ to the database.
 ## Acceptance criteria
 
 - Insert, get, filtered list, stable ordering, pagination, Decimal, and UTC round trips pass.
+- SQLAlchemy text-column widths use the same shared limits enforced by the domain and HTTP DTOs.
 - Duplicate inserts preserve existing data, translate the error, roll back, and close the session.
 - Read/write failures propagate the original exception even when cleanup also fails.
 - A configured unreachable PostgreSQL URL fails after bounded retries rather than skipping.

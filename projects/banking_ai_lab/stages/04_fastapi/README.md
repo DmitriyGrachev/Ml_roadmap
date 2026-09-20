@@ -32,7 +32,8 @@ uv run pytest projects/banking_ai_lab/tests/test_api.py -q -rx
 - POST and GET responses contain every transaction field with stable JSON types.
 - Missing and duplicate records become safe 404 and 409 responses.
 - List results preserve timestamp/ID order and pass explicit filters and pagination.
-- Invalid amounts, currencies, timestamps, offsets, and limits never call the service.
+- Invalid amounts, currencies, timestamps, storage-width text, offsets, and limits return
+  field-specific validation errors and never call the service.
 - Unrelated exceptions remain visible in tests and generic in production-mode responses.
 
 ## Hints

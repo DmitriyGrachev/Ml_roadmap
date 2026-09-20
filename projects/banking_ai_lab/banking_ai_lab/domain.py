@@ -19,6 +19,9 @@ STATUSES: tuple[TransactionStatus, ...] = (
     "pending",
     "refunded",
 )
+USER_ID_MAX_LENGTH = 128
+MERCHANT_MAX_LENGTH = 256
+CATEGORY_MAX_LENGTH = 128
 TRANSACTION_COLUMNS: tuple[str, ...] = (
     "id",
     "user_id",
@@ -43,11 +46,11 @@ class Transaction(BaseModel):
     )
 
     id: UUID
-    user_id: str = Field(repr=False)
+    user_id: str = Field(repr=False, max_length=USER_ID_MAX_LENGTH)
     amount: Decimal
     currency: Currency
-    merchant: str
-    category: str | None = None
+    merchant: str = Field(max_length=MERCHANT_MAX_LENGTH)
+    category: str | None = Field(default=None, max_length=CATEGORY_MAX_LENGTH)
     timestamp: datetime
     status: TransactionStatus
     is_fraud: StrictBool
