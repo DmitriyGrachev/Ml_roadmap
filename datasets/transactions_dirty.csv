@@ -1,0 +1,9 @@
+id,user_id,amount,currency,merchant,category,timestamp,status,is_fraud
+8739e14a-af43-5676-b834-d43129838674,user-0083,2418.98,USD,Harbor Crypto,digital_assets,2025-02-12T18:13:48+00:00,approved,false
+8739e14a-af43-5676-b834-d43129838674,user-0083,2418.98,USD,Harbor Crypto,digital_assets,2025-02-12T18:13:48+00:00,approved,false
+59a55aa1-fbb5-5501-9fb3-5321ff5aec4f,user-0131,911.28,EUR,Harbor Crypto,digital_assets,2025-02-26T18:48:10+00:00,approved,false
+59a55aa1-fbb5-5501-9fb3-5321ff5aec4f,user-0131,999.99,EUR,Harbor Crypto,digital_assets,2025-02-26T18:48:10+00:00,approved,false
+94a3051c-65ba-50fc-914e-4ea1dc3839d0,user-0089,not-a-decimal,USD,Ember Energy,utilities,2025-03-21T14:39:01+00:00,declined,false
+6f0ddaf9-0ea9-5fed-b3dc-43750a3ef5ff,user-0216,328.12,EUR,Granite Fitness,fitness,2025-03-25T09:04:00+00:00,unknown,false
+2ad443ff-acb1-5cb6-91f9-cd4bda152c8a,user-0199,937.76,USD,Cedar Pharmacy,,2025-04-14T05:07:36+00:00,approved,false
+f1c14d94-f13a-5f24-8412-2f4ca2b605b1,user-0159,935.05,USD,Harbor Crypto,digital_assets,not-a-timestamp,approved,false
