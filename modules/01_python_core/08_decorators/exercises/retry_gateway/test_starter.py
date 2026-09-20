@@ -1,5 +1,7 @@
 """Acceptance tests for the parameterized retry decorator."""
 
+import inspect
+
 import pytest
 
 from roadmap_tools import exercise_call
@@ -87,11 +89,14 @@ def test_retry_propagates_a_non_retryable_error_immediately() -> None:
 
 
 def test_retry_preserves_wrapped_function_metadata() -> None:
-    def authorize_payment() -> str:
+    def authorize_payment(payment_id: str, *, capture: bool = False) -> str:
         """Authorize one payment."""
-        return "authorized"
+        return f"{payment_id}:{capture}"
 
     wrapped = retry(attempts=2, retry_on=(TransientGatewayError,))(authorize_payment)
 
     assert wrapped.__name__ == "authorize_payment"
     assert wrapped.__doc__ == "Authorize one payment."
+    assert inspect.unwrap(wrapped) is authorize_payment
+    assert inspect.signature(wrapped) == inspect.signature(authorize_payment)
+    assert wrapped.__annotations__ == authorize_payment.__annotations__

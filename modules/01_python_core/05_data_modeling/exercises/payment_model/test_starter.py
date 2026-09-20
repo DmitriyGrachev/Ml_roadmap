@@ -37,7 +37,16 @@ def test_payment_rejects_a_blank_or_non_string_identifier(identifier: object) ->
 
 
 @pytest.mark.student_exercise
-@pytest.mark.parametrize("amount", [Decimal("0"), Decimal("-0.01"), Decimal("NaN")])
+@pytest.mark.parametrize(
+    "amount",
+    [
+        Decimal("0"),
+        Decimal("-0.01"),
+        Decimal("NaN"),
+        Decimal("Infinity"),
+        Decimal("-Infinity"),
+    ],
+)
 def test_payment_rejects_a_non_positive_or_non_finite_amount(amount: Decimal) -> None:
     with pytest.raises(ValueError, match="amount"):
         exercise_call(Payment, "pay-001", amount, "EUR")

@@ -55,7 +55,7 @@ class OneShotRows:
         return self._rows
 
 
-def test_report_value_objects_are_frozen() -> None:
+def test_transaction_report_is_frozen() -> None:
     report = TransactionReport(
         transaction_count=0,
         total_amount=Decimal("0"),
@@ -68,14 +68,46 @@ def test_report_value_objects_are_frozen() -> None:
         exercise_call(setattr, report, "transaction_count", 1)
 
 
+@pytest.mark.parametrize(
+    ("record", "field", "replacement"),
+    [
+        pytest.param(
+            CurrencyTotal(currency="EUR", total=Decimal("1.00")),
+            "total",
+            Decimal("2.00"),
+            id="currency-total",
+        ),
+        pytest.param(
+            StatusCount(status="posted", count=1),
+            "count",
+            2,
+            id="status-count",
+        ),
+        pytest.param(
+            MerchantTotal(merchant="Alpha", total=Decimal("1.00")),
+            "merchant",
+            "Beta",
+            id="merchant-total",
+        ),
+    ],
+)
+def test_report_aggregate_value_objects_are_frozen(
+    record: object,
+    field: str,
+    replacement: object,
+) -> None:
+    with pytest.raises(FrozenInstanceError):
+        exercise_call(setattr, record, field, replacement)
+
+
 @pytest.mark.student_exercise
 def test_report_contains_every_aggregate_in_deterministic_order() -> None:
     rows = OneShotRows(
         [
-            transaction("txn-1", "3.00", "USD", "posted", "Zen Market"),
-            transaction("txn-2", "5.00", "EUR", "reversed", "Alpha Shop"),
-            transaction("txn-3", "5.00", "USD", "posted", "Beta Store"),
-            transaction("txn-4", "1.00", "EUR", "posted", "Alpha Shop"),
+            transaction("txn-1", "3.00", "USD", "reversed", "Zen Market"),
+            transaction("txn-2", "5.00", "EUR", "posted", "Alpha Shop"),
+            transaction("txn-3", "5.00", "USD", "reversed", "Beta Store"),
+            transaction("txn-4", "1.00", "EUR", "pending", "Alpha Shop"),
         ]
     )
 
@@ -89,8 +121,9 @@ def test_report_contains_every_aggregate_in_deterministic_order() -> None:
             CurrencyTotal(currency="USD", total=Decimal("8.00")),
         ),
         counts_by_status=(
-            StatusCount(status="posted", count=3),
-            StatusCount(status="reversed", count=1),
+            StatusCount(status="pending", count=1),
+            StatusCount(status="posted", count=1),
+            StatusCount(status="reversed", count=2),
         ),
         top_merchants=(
             MerchantTotal(merchant="Alpha Shop", total=Decimal("6.00")),
@@ -176,90 +209,168 @@ def test_report_does_not_mutate_rows_or_nested_metadata() -> None:
 @pytest.mark.parametrize(
     "invalid_row",
     [
-        {
-            "id": "txn-1",
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": "Alpha",
-        },
-        {
-            "id": "txn-1",
-            "amount": 4.5,
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": "Alpha",
-        },
-        {
-            "id": "txn-1",
-            "amount": Decimal("NaN"),
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": "Alpha",
-        },
-        {
-            "id": "txn-1",
-            "amount": Decimal("-0.01"),
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": "Alpha",
-        },
-        {
-            "id": " ",
-            "amount": Decimal("1.00"),
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": "Alpha",
-        },
-        {
-            "id": "txn-1",
-            "amount": Decimal("1.00"),
-            "currency": "eur",
-            "status": "posted",
-            "merchant": "Alpha",
-        },
-        {
-            "id": "txn-1",
-            "amount": Decimal("1.00"),
-            "currency": "EUR",
-            "status": " ",
-            "merchant": "Alpha",
-        },
-        {
-            "id": "txn-1",
-            "amount": Decimal("1.00"),
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": " ",
-        },
-        {
-            "id": "txn-1",
-            "amount": Decimal("1.00"),
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": "Alpha",
-            "unexpected": "field",
-        },
-        {
-            "id": "txn-1",
-            "amount": Decimal("1.00"),
-            "currency": "EUR",
-            "status": "posted",
-            "merchant": "Alpha",
-            "metadata": {"risk": 4},
-        },
+        pytest.param(
+            {
+                "amount": Decimal("1.00"),
+                "currency": "EUR",
+                "status": "posted",
+                "merchant": "Alpha",
+            },
+            id="missing-id",
+        ),
+        pytest.param(
+            {
+                "id": "txn-1",
+                "currency": "EUR",
+                "status": "posted",
+                "merchant": "Alpha",
+            },
+            id="missing-amount",
+        ),
+        pytest.param(
+            {
+                "id": "txn-1",
+                "amount": Decimal("1.00"),
+                "status": "posted",
+                "merchant": "Alpha",
+            },
+            id="missing-currency",
+        ),
+        pytest.param(
+            {
+                "id": "txn-1",
+                "amount": Decimal("1.00"),
+                "currency": "EUR",
+                "merchant": "Alpha",
+            },
+            id="missing-status",
+        ),
+        pytest.param(
+            {
+                "id": "txn-1",
+                "amount": Decimal("1.00"),
+                "currency": "EUR",
+                "status": "posted",
+            },
+            id="missing-merchant",
+        ),
+        pytest.param(
+            {
+                "id": "txn-1",
+                "amount": 4.5,
+                "currency": "EUR",
+                "status": "posted",
+                "merchant": "Alpha",
+            },
+            id="non-decimal-amount",
+        ),
+        *[
+            pytest.param(
+                {
+                    "id": "txn-1",
+                    "amount": amount,
+                    "currency": "EUR",
+                    "status": "posted",
+                    "merchant": "Alpha",
+                },
+                id=case_id,
+            )
+            for amount, case_id in (
+                (Decimal("NaN"), "nan-amount"),
+                (Decimal("Infinity"), "positive-infinity-amount"),
+                (Decimal("-Infinity"), "negative-infinity-amount"),
+                (Decimal("-0.01"), "negative-amount"),
+            )
+        ],
+        *[
+            pytest.param(
+                {
+                    "id": identifier,
+                    "amount": Decimal("1.00"),
+                    "currency": "EUR",
+                    "status": "posted",
+                    "merchant": "Alpha",
+                },
+                id=case_id,
+            )
+            for identifier, case_id in ((" ", "blank-id"), (42, "non-string-id"))
+        ],
+        *[
+            pytest.param(
+                {
+                    "id": "txn-1",
+                    "amount": Decimal("1.00"),
+                    "currency": currency,
+                    "status": "posted",
+                    "merchant": "Alpha",
+                },
+                id=case_id,
+            )
+            for currency, case_id in (
+                ("eur", "lowercase-currency"),
+                ("E1R", "non-letter-currency"),
+                ("ÉUR", "non-ascii-currency"),
+                (" EU", "whitespace-currency"),
+                (978, "non-string-currency"),
+            )
+        ],
+        *[
+            pytest.param(
+                {
+                    "id": "txn-1",
+                    "amount": Decimal("1.00"),
+                    "currency": "EUR",
+                    "status": status,
+                    "merchant": "Alpha",
+                },
+                id=case_id,
+            )
+            for status, case_id in ((" ", "blank-status"), (1, "non-string-status"))
+        ],
+        *[
+            pytest.param(
+                {
+                    "id": "txn-1",
+                    "amount": Decimal("1.00"),
+                    "currency": "EUR",
+                    "status": "posted",
+                    "merchant": merchant,
+                },
+                id=case_id,
+            )
+            for merchant, case_id in ((" ", "blank-merchant"), (1, "non-string-merchant"))
+        ],
+        pytest.param(
+            {
+                "id": "txn-1",
+                "amount": Decimal("1.00"),
+                "currency": "EUR",
+                "status": "posted",
+                "merchant": "Alpha",
+                "unexpected": "field",
+            },
+            id="unexpected-field",
+        ),
+        *[
+            pytest.param(
+                {
+                    "id": "txn-1",
+                    "amount": Decimal("1.00"),
+                    "currency": "EUR",
+                    "status": "posted",
+                    "merchant": "Alpha",
+                    "metadata": metadata,
+                },
+                id=case_id,
+            )
+            for metadata, case_id in (
+                (None, "none-metadata"),
+                ("risk=high", "non-dict-metadata"),
+                ({1: "high"}, "non-string-metadata-key"),
+                ({"risk": 4}, "non-string-metadata-value"),
+            )
+        ],
     ],
-    ids=(
-        "missing-field",
-        "non-decimal-amount",
-        "non-finite-amount",
-        "negative-amount",
-        "blank-id",
-        "invalid-currency",
-        "blank-status",
-        "blank-merchant",
-        "unexpected-field",
-        "invalid-metadata",
-    ),
 )
 def test_report_rejects_a_malformed_row(invalid_row: dict[str, object]) -> None:
     with pytest.raises(ValueError, match="transaction row"):
