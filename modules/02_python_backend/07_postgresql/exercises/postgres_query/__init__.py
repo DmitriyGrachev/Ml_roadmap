@@ -1,0 +1,1 @@
+"""PostgreSQL aggregation exercise package."""
