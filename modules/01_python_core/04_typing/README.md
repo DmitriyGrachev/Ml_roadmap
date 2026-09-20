@@ -18,7 +18,7 @@ Type hints support readers and static tools but do not enforce runtime validatio
 
 ## Example
 
-Run `uv run python modules/01_python_core/04_typing/example.py` to request a rate from an `ExchangeRateProvider` protocol.
+Run `uv run python modules/01_python_core/04_typing/example.py` to normalize labels supplied through a read-only `LabelSource` protocol.
 
 ## Exercises
 

@@ -18,7 +18,7 @@ Raise a custom exception at the boundary that recognizes the domain error, and c
 
 ## Example
 
-Run `uv run python modules/01_python_core/06_exceptions_io/example.py` to export a small JSON document inside a temporary directory.
+Run `uv run python modules/01_python_core/06_exceptions_io/example.py` to read a JSON summary and translate an unsupported status into a domain exception.
 
 ## Exercises
 

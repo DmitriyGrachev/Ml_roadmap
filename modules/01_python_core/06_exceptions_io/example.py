@@ -1,31 +1,45 @@
-"""Export JSON and translate an invalid status into a domain exception."""
+"""Read JSON and translate an invalid status into a domain exception."""
 
 import json
 import tempfile
 from pathlib import Path
+from typing import TypedDict
+
+
+class Summary(TypedDict):
+    document: str
+    status: str
 
 
 class InvalidSummaryStatusError(ValueError):
     """The summary status is not part of the supported domain vocabulary."""
 
 
-def export_summary(destination: Path, *, status: str = "ready") -> Path:
-    if status not in {"ready", "failed"}:
+def load_summary(source: Path) -> Summary:
+    with source.open(encoding="utf-8") as handle:
+        payload: object = json.load(handle)
+
+    if not isinstance(payload, dict):
+        raise TypeError("summary must be a JSON object")
+    document = payload.get("document")
+    status = payload.get("status")
+    if not isinstance(document, str):
+        raise TypeError("summary document must be a string")
+    if not isinstance(status, str) or status not in {"ready", "failed"}:
         raise InvalidSummaryStatusError(f"unsupported summary status: {status}")
 
-    temporary = destination.with_suffix(".tmp")
-    with temporary.open("w", encoding="utf-8") as handle:
-        json.dump({"document": "terms", "status": status}, handle)
-    temporary.replace(destination)
-    return destination
+    return {"document": document, "status": status}
 
 
 def main() -> None:
     with tempfile.TemporaryDirectory() as directory:
-        exported = export_summary(Path(directory) / "summary.json")
-        print(exported.read_text(encoding="utf-8"))
+        source = Path(directory) / "summary.json"
+        source.write_text('{"document":"terms","status":"ready"}', encoding="utf-8")
+        print(load_summary(source))
+
+        source.write_text('{"document":"terms","status":"pending"}', encoding="utf-8")
         try:
-            export_summary(Path(directory) / "invalid.json", status="pending")
+            load_summary(source)
         except InvalidSummaryStatusError as error:
             print(f"rejected: {error}")
 

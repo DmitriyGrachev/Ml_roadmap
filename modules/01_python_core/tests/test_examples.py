@@ -63,6 +63,72 @@ def test_object_example_distinguishes_identity_from_equality() -> None:
     assert same_value is True
 
 
+def test_typing_example_uses_a_data_protocol_and_normalizes_values() -> None:
+    path = MODULE_ROOT / "04_typing" / "example.py"
+    namespace = load_example(path)
+    normalize_labels = cast(Callable[[object], tuple[str, ...]], namespace["normalize_labels"])
+
+    class LabelsOnly:
+        labels = (" Billing ", "urgent", "billing", "")
+
+    assert normalize_labels(LabelsOnly()) == ("billing", "urgent")
+
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    protocol_node = next(
+        node
+        for node in tree.body
+        if isinstance(node, ast.ClassDef)
+        and any(isinstance(base, ast.Name) and base.id == "Protocol" for base in node.bases)
+    )
+    protocol_members = [node for node in protocol_node.body if isinstance(node, ast.FunctionDef)]
+
+    assert protocol_members
+    assert all(
+        any(
+            isinstance(decorator, ast.Name) and decorator.id == "property"
+            for decorator in node.decorator_list
+        )
+        for node in protocol_members
+    )
+
+
+def test_exception_example_reads_and_validates_json_without_an_atomic_export_template(
+    tmp_path: Path,
+) -> None:
+    path = MODULE_ROOT / "06_exceptions_io" / "example.py"
+    source = path.read_text(encoding="utf-8")
+    namespace = load_example(path)
+    load_summary = cast(Callable[[Path], dict[str, str]], namespace["load_summary"])
+    invalid_status_error = cast(type[Exception], namespace["InvalidSummaryStatusError"])
+    summary = tmp_path / "summary.json"
+    summary.write_text('{"document":"terms","status":"ready"}', encoding="utf-8")
+
+    assert load_summary(summary) == {"document": "terms", "status": "ready"}
+
+    summary.write_text('{"document":"terms","status":"pending"}', encoding="utf-8")
+    with pytest.raises(invalid_status_error, match="unsupported summary status: pending"):
+        load_summary(summary)
+
+    tree = ast.parse(source)
+    called_attributes = {
+        node.func.attr
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute)
+    }
+    json_calls = {
+        node.func.attr
+        for node in ast.walk(tree)
+        if isinstance(node, ast.Call)
+        and isinstance(node.func, ast.Attribute)
+        and isinstance(node.func.value, ast.Name)
+        and node.func.value.id == "json"
+    }
+
+    assert "load" in json_calls
+    assert json_calls.isdisjoint({"dump", "dumps"})
+    assert called_attributes.isdisjoint({"replace", "with_suffix"})
+
+
 def test_generator_example_returns_a_lazy_iterator() -> None:
     namespace = load_example(MODULE_ROOT / "07_iterators_generators" / "example.py")
     stream_log_lines = cast(Callable[[], Iterator[str]], namespace["stream_log_lines"])

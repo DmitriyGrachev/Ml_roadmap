@@ -1,23 +1,30 @@
-"""Describe an exchange-rate boundary with a structural protocol."""
+"""Normalize labels supplied through a structural data protocol."""
 
 from typing import Protocol
 
 
-class ExchangeRateProvider(Protocol):
-    def rate_for(self, currency: str) -> str: ...
+class LabelSource(Protocol):
+    @property
+    def labels(self) -> tuple[str, ...]: ...
 
 
-class FixedRates:
-    def rate_for(self, currency: str) -> str:
-        return {"EUR": "1.08", "GBP": "1.27"}.get(currency, "1.00")
+class SupportTicket:
+    def __init__(self, *labels: str) -> None:
+        self._labels = labels
+
+    @property
+    def labels(self) -> tuple[str, ...]:
+        return self._labels
 
 
-def quoted_rate(provider: ExchangeRateProvider, currency: str) -> str:
-    return provider.rate_for(currency)
+def normalize_labels(source: LabelSource) -> tuple[str, ...]:
+    normalized = {label.strip().lower() for label in source.labels if label.strip()}
+    return tuple(sorted(normalized))
 
 
 def main() -> None:
-    print(quoted_rate(FixedRates(), "EUR"))
+    ticket = SupportTicket(" Billing ", "urgent", "billing")
+    print(", ".join(normalize_labels(ticket)))
 
 
 if __name__ == "__main__":
