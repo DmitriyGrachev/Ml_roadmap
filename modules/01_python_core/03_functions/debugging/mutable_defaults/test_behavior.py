@@ -12,3 +12,12 @@ def test_default_audit_tags_are_isolated_between_calls() -> None:
 
     assert first_tags == ["screened"]
     assert second_tags == ["settled"]
+
+
+def test_explicit_audit_tag_list_is_updated_and_returned() -> None:
+    provided = ["opened"]
+
+    result = append_audit_tag("screened", provided)
+
+    assert provided == ["opened", "screened"]
+    assert result is provided

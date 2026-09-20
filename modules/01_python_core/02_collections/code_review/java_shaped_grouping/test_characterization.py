@@ -11,25 +11,26 @@ def test_groups_full_rows_in_first_seen_user_order() -> None:
         {
             "id": "txn-001",
             "user_id": "user-b",
-            "amount": Decimal("12.40"),
+            "amount": Decimal("12.4000000000000000001"),
             "currency": "USD",
             "status": "posted",
         },
         {
             "id": "txn-002",
             "user_id": "user-a",
-            "amount": Decimal("8.10"),
+            "amount": Decimal("8.1000000000000000002"),
             "currency": "EUR",
             "status": "pending",
         },
         {
             "id": "txn-003",
             "user_id": "user-b",
-            "amount": Decimal("0.50"),
+            "amount": Decimal("0.5000000000000000003"),
             "currency": "USD",
             "status": "reversed",
         },
     ]
+    original_rows = deepcopy(rows)
 
     grouped = group_transactions(rows)
 
@@ -39,14 +40,14 @@ def test_groups_full_rows_in_first_seen_user_order() -> None:
             {
                 "id": "txn-001",
                 "user_id": "user-b",
-                "amount": Decimal("12.40"),
+                "amount": Decimal("12.4000000000000000001"),
                 "currency": "USD",
                 "status": "posted",
             },
             {
                 "id": "txn-003",
                 "user_id": "user-b",
-                "amount": Decimal("0.50"),
+                "amount": Decimal("0.5000000000000000003"),
                 "currency": "USD",
                 "status": "reversed",
             },
@@ -55,12 +56,18 @@ def test_groups_full_rows_in_first_seen_user_order() -> None:
             {
                 "id": "txn-002",
                 "user_id": "user-a",
-                "amount": Decimal("8.10"),
+                "amount": Decimal("8.1000000000000000002"),
                 "currency": "EUR",
                 "status": "pending",
             }
         ],
     }
+    assert all(
+        isinstance(row["amount"], Decimal)
+        for grouped_rows in grouped.values()
+        for row in grouped_rows
+    )
+    assert rows == original_rows
 
 
 def test_grouping_does_not_mutate_nested_input_rows() -> None:
