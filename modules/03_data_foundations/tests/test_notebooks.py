@@ -240,9 +240,17 @@ def static_format_number_exceeds_limit(value: str) -> bool:
 
 
 def fold_static_formatted_value(value: ast.FormattedValue) -> str | None:
-    if not isinstance(value.value, ast.Constant) or not isinstance(
+    if isinstance(value.value, ast.Constant) and isinstance(
         value.value.value, (str, int, float, bool, type(None))
     ):
+        literal_value: object = value.value.value
+    else:
+        folded_string = fold_static_string(value.value)
+        if folded_string is None:
+            return None
+        literal_value = folded_string
+
+    if not isinstance(literal_value, (str, int, float, bool, type(None))):
         return None
 
     format_spec = ""
@@ -257,13 +265,13 @@ def fold_static_formatted_value(value: ast.FormattedValue) -> str | None:
         raise AssertionError("static format specification exceeds the analysis limit")
 
     if value.conversion == -1:
-        converted = value.value.value
+        converted = literal_value
     elif value.conversion == ord("s"):
-        converted = str(value.value.value)
+        converted = str(literal_value)
     elif value.conversion == ord("r"):
-        converted = repr(value.value.value)
+        converted = repr(literal_value)
     elif value.conversion == ord("a"):
-        converted = ascii(value.value.value)
+        converted = ascii(literal_value)
     else:
         return None
     try:
@@ -673,6 +681,8 @@ def test_warning_target_does_not_hide_sensitive_literal_signatures(unsafe_warnin
         "service_credential = f\"{'sk-proj-' + 'abcdefghijklmnopqrstuvwxyz0123456789'}\"",
         "contact = f\"{'learner':>7}@example.test\"",
         "contact = f\"{'learner'!s:>7}@example.test\"",
+        "contact = f\"{('learn' + 'er'):>7}@example.test\"",
+        "contact = f\"{('learn' + 'er')!s:>7}@example.test\"",
         "contact = f\"{'learner':>{7}}@example.test\"",
         'scratch = Path("/", "content", "private", "data.csv")',
         'scratch = PurePath("/", "content", "private", "data.csv")',
