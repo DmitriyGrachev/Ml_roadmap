@@ -31,6 +31,26 @@ HEADER = [
 ]
 SUPPORTED_CURRENCIES = {"EUR", "GBP", "MDL", "USD"}
 SUPPORTED_STATUSES = {"approved", "declined", "pending", "refunded"}
+SUPPORTED_MERCHANTS = {
+    "Aurora Market",
+    "Bluebird Travel",
+    "Cedar Pharmacy",
+    "Delta Devices",
+    "Ember Energy",
+    "Fjord Books",
+    "Granite Fitness",
+    "Harbor Crypto",
+}
+SUPPORTED_CATEGORIES = {
+    "digital_assets",
+    "education",
+    "electronics",
+    "fitness",
+    "groceries",
+    "health",
+    "travel",
+    "utilities",
+}
 FORBIDDEN_PERSONAL_COLUMNS = {
     "name",
     "email",
@@ -74,6 +94,18 @@ def is_valid_timestamp(value: str) -> bool:
     return parsed.utcoffset() == timedelta(0) and value.endswith("+00:00")
 
 
+def assert_valid_row(row: dict[str, str]) -> None:
+    assert UUID(row["id"]).version == 5
+    assert re.fullmatch(r"user-\d{4}", row["user_id"])
+    assert is_valid_amount(row["amount"])
+    assert row["currency"] in SUPPORTED_CURRENCIES
+    assert row["merchant"] in SUPPORTED_MERCHANTS
+    assert row["category"] in SUPPORTED_CATEGORIES
+    assert is_valid_timestamp(row["timestamp"])
+    assert row["status"] in SUPPORTED_STATUSES
+    assert row["is_fraud"] in {"false", "true"}
+
+
 def test_generated_transaction_records_are_typed_frozen_and_deterministic() -> None:
     generator = load_generator()
 
@@ -90,6 +122,33 @@ def test_generated_transaction_records_are_typed_frozen_and_deterministic() -> N
     assert {record.id for record in different_seed} == {
         str(uuid5(EXPECTED_NAMESPACE, f"18:{index}")) for index in range(8)
     }
+    first_payloads = {
+        (
+            record.user_id,
+            record.amount,
+            record.currency,
+            record.merchant,
+            record.category,
+            record.timestamp,
+            record.status,
+            record.is_fraud,
+        )
+        for record in first
+    }
+    different_payloads = {
+        (
+            record.user_id,
+            record.amount,
+            record.currency,
+            record.merchant,
+            record.category,
+            record.timestamp,
+            record.status,
+            record.is_fraud,
+        )
+        for record in different_seed
+    }
+    assert first_payloads != different_payloads
     record = first[0]
     assert isinstance(record.amount, Decimal)
     assert record.timestamp.utcoffset() == timedelta(0)
@@ -149,8 +208,8 @@ def test_clean_dataset_has_the_documented_schema_and_domain_values(tmp_path: Pat
     assert all(is_valid_timestamp(row["timestamp"]) for row in rows)
     assert {row["currency"] for row in rows} == SUPPORTED_CURRENCIES
     assert {row["status"] for row in rows} == SUPPORTED_STATUSES
-    assert len({row["merchant"] for row in rows}) >= 5
-    assert len({row["category"] for row in rows}) >= 5
+    assert {row["merchant"] for row in rows} == SUPPORTED_MERCHANTS
+    assert {row["category"] for row in rows} == SUPPORTED_CATEGORIES
     assert {row["is_fraud"] for row in rows} == {"false", "true"}
     fraud_rate = sum(row["is_fraud"] == "true" for row in rows) / len(rows)
     assert 0.0005 <= fraud_rate <= 0.01
@@ -183,12 +242,9 @@ def test_dirty_dataset_contains_each_documented_fault_independently(tmp_path: Pa
     assert len(exact_duplicate_ids) == 1
     assert len(distinct_duplicate_ids) == 1
     assert exact_duplicate_ids.isdisjoint(distinct_duplicate_ids)
-    for identifier in distinct_duplicate_ids:
+    for identifier in exact_duplicate_ids | distinct_duplicate_ids:
         for row in rows_by_id[identifier]:
-            assert is_valid_amount(row["amount"])
-            assert is_valid_timestamp(row["timestamp"])
-            assert row["status"] in SUPPORTED_STATUSES
-            assert row["category"]
+            assert_valid_row(row)
     assert any(count > 1 for count in Counter(raw_data_lines).values())
     assert any(
         not is_valid_amount(row["amount"])
