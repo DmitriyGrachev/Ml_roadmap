@@ -55,6 +55,13 @@ def test_pr_auc_consumes_tied_scores_as_one_threshold_group() -> None:
 
 
 @pytest.mark.parametrize("metric", [roc_auc, pr_auc], ids=["roc", "pr"])
+def test_accepts_inclusive_score_endpoints(metric: MetricFunction) -> None:
+    result = exercise_call(metric, labels=[0, 1], scores=[0.0, 1.0])
+
+    assert result == pytest.approx(1.0)
+
+
+@pytest.mark.parametrize("metric", [roc_auc, pr_auc], ids=["roc", "pr"])
 def test_metric_is_invariant_to_paired_input_order(metric: MetricFunction) -> None:
     forward = exercise_call(metric, [1, 0, 1, 0], [0.9, 0.9, 0.2, 0.1])
     reversed_order = exercise_call(metric, [0, 1, 0, 1], [0.1, 0.2, 0.9, 0.9])

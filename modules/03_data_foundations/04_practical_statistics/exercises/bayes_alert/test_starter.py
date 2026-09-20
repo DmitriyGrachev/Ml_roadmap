@@ -22,13 +22,37 @@ def test_calculates_the_posterior_for_a_rare_fraud_event() -> None:
     assert posterior == pytest.approx(0.08683729433272395)
 
 
+@pytest.mark.parametrize(
+    ("base_rate", "sensitivity", "false_positive_rate", "expected"),
+    [
+        (0.0, 0.0, 1.0, 0.0),
+        (1.0, 1.0, 0.0, 1.0),
+    ],
+    ids=["lower-base-and-sensitivity-upper-fpr", "upper-base-and-sensitivity-lower-fpr"],
+)
+def test_accepts_inclusive_probability_endpoints(
+    base_rate: float,
+    sensitivity: float,
+    false_positive_rate: float,
+    expected: float,
+) -> None:
+    posterior = exercise_call(
+        fraud_probability_given_alert,
+        base_rate=base_rate,
+        sensitivity=sensitivity,
+        false_positive_rate=false_positive_rate,
+    )
+
+    assert posterior == pytest.approx(expected)
+
+
 def test_rejects_zero_total_alert_probability() -> None:
     with pytest.raises(ValueError, match=r"alert|undefined|zero"):
         exercise_call(
             fraud_probability_given_alert,
-            base_rate=0.0,
+            base_rate=1.0,
             sensitivity=0.0,
-            false_positive_rate=0.0,
+            false_positive_rate=0.5,
         )
 
 

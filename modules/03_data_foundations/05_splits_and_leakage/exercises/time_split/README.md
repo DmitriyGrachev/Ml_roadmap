@@ -30,7 +30,8 @@ fraction below one.
 Partition sizes follow the floor-based rule exactly. Concatenating the three outputs
 reconstructs the stable chronological order. Duplicate timestamps preserve input order,
 and no timestamp in train is later than a timestamp that begins validation or test.
-Invalid fractions raise `ValueError` and the input frame remains unchanged.
+Invalid fractions raise `ValueError`. The input frame remains unchanged, and mutating
+any returned partition must not change the input or either other returned partition.
 
 ## Commands
 

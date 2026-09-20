@@ -70,6 +70,30 @@ def test_f1_is_one_for_a_perfect_predictor() -> None:
     assert result == pytest.approx(1.0)
 
 
+def test_accuracy_is_one_half_for_mixed_counts() -> None:
+    result = exercise_call(accuracy, ConfusionCounts(tp=1, fp=1, tn=1, fn=1))
+
+    assert result == pytest.approx(0.5)
+
+
+def test_precision_is_one_half_for_mixed_counts() -> None:
+    result = exercise_call(precision, ConfusionCounts(tp=1, fp=1, tn=1, fn=1))
+
+    assert result == pytest.approx(0.5)
+
+
+def test_recall_is_one_half_for_mixed_counts() -> None:
+    result = exercise_call(recall, ConfusionCounts(tp=1, fp=1, tn=1, fn=1))
+
+    assert result == pytest.approx(0.5)
+
+
+def test_f1_is_one_half_for_mixed_counts() -> None:
+    result = exercise_call(f1, ConfusionCounts(tp=1, fp=1, tn=1, fn=1))
+
+    assert result == pytest.approx(0.5)
+
+
 def test_all_negative_predictor_is_99_9_percent_accurate() -> None:
     result = exercise_call(accuracy, ConfusionCounts(tp=0, fp=0, tn=999, fn=1))
 
@@ -82,29 +106,55 @@ def test_all_negative_predictor_has_zero_fraud_recall() -> None:
     assert result == pytest.approx(0.0)
 
 
-def test_accuracy_uses_the_configured_value_for_an_empty_count_set() -> None:
+def test_accuracy_defaults_to_zero_for_an_empty_count_set() -> None:
     counts = ConfusionCounts(tp=0, fp=0, tn=0, fn=0)
 
     assert exercise_call(accuracy, counts) == pytest.approx(0.0)
+
+
+def test_accuracy_uses_custom_zero_division_for_an_empty_count_set() -> None:
+    counts = ConfusionCounts(tp=0, fp=0, tn=0, fn=0)
+
     assert exercise_call(accuracy, counts, zero_division=0.25) == pytest.approx(0.25)
 
 
-def test_precision_uses_the_configured_value_for_no_positive_predictions() -> None:
+def test_precision_defaults_to_zero_for_no_positive_predictions() -> None:
     counts = ConfusionCounts(tp=0, fp=0, tn=4, fn=1)
 
     assert exercise_call(precision, counts) == pytest.approx(0.0)
+
+
+def test_precision_uses_custom_zero_division_for_no_positive_predictions() -> None:
+    counts = ConfusionCounts(tp=0, fp=0, tn=4, fn=1)
+
     assert exercise_call(precision, counts, zero_division=0.25) == pytest.approx(0.25)
 
 
-def test_recall_uses_the_configured_value_for_no_actual_positives() -> None:
+def test_recall_defaults_to_zero_for_no_actual_positives() -> None:
     counts = ConfusionCounts(tp=0, fp=1, tn=4, fn=0)
 
     assert exercise_call(recall, counts) == pytest.approx(0.0)
+
+
+def test_recall_uses_custom_zero_division_for_no_actual_positives() -> None:
+    counts = ConfusionCounts(tp=0, fp=1, tn=4, fn=0)
+
     assert exercise_call(recall, counts, zero_division=0.25) == pytest.approx(0.25)
 
 
-def test_f1_uses_the_configured_value_when_no_positive_class_is_present() -> None:
+def test_f1_defaults_to_zero_when_no_positive_class_is_present() -> None:
     counts = ConfusionCounts(tp=0, fp=0, tn=4, fn=0)
 
     assert exercise_call(f1, counts) == pytest.approx(0.0)
+
+
+def test_f1_uses_custom_zero_division_when_no_positive_class_is_present() -> None:
+    counts = ConfusionCounts(tp=0, fp=0, tn=4, fn=0)
+
     assert exercise_call(f1, counts, zero_division=0.25) == pytest.approx(0.25)
+
+
+def test_f1_is_defined_as_zero_when_false_positives_and_false_negatives_exist() -> None:
+    counts = ConfusionCounts(tp=0, fp=1, tn=4, fn=1)
+
+    assert exercise_call(f1, counts, zero_division=0.25) == pytest.approx(0.0)

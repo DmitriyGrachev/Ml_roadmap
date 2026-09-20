@@ -70,7 +70,7 @@ Run: `uv run pytest modules/03_data_foundations/tests/test_examples.py -q`
 
 Run: `uv run ruff check modules/03_data_foundations`
 
-Run: `uv run mypy modules/03_data_foundations --exclude 'notebooks'`
+Run: `uv run mypy -p modules.03_data_foundations --exclude 'notebooks'`
 
 Expected: all example tests pass.
 
@@ -122,7 +122,7 @@ Run: `uv run pytest modules/03_data_foundations/01_numpy/exercises modules/03_da
 
 Run: `uv run ruff check modules/03_data_foundations/01_numpy modules/03_data_foundations/02_pandas_core modules/03_data_foundations/03_data_quality`
 
-Run: `uv run mypy modules/03_data_foundations --exclude 'notebooks'`
+Run: `uv run mypy -p modules.03_data_foundations --exclude 'notebooks'`
 
 Commit with message `feat: add NumPy and Pandas exercises`.
 
@@ -174,7 +174,7 @@ Run: `uv run pytest modules/03_data_foundations/04_practical_statistics modules/
 
 Run: `uv run ruff check modules/03_data_foundations`
 
-Run: `uv run mypy modules/03_data_foundations --exclude 'notebooks'`
+Run: `uv run mypy -p modules.03_data_foundations --exclude 'notebooks'`
 
 Commit with message `feat: add statistics and fraud metric exercises`.
 
@@ -213,7 +213,7 @@ Run: `uv run ruff check modules/03_data_foundations`
 
 Run: `uv run ruff format --check modules/03_data_foundations --exclude '*.ipynb'`
 
-Run: `uv run mypy modules/03_data_foundations --exclude 'notebooks'`
+Run: `uv run mypy -p modules.03_data_foundations --exclude 'notebooks'`
 
 Expected: examples and notebook contracts pass; student code remains visibly expected-incomplete.
 

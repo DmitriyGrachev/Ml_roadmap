@@ -29,7 +29,9 @@ that value when the metric's denominator is zero instead of raising or returning
 Counts identify all four outcomes. Perfect predictions give each metric a value of one.
 For 1 fraudulent transaction among 1,000 transactions, a predictor that always returns
 `0` has accuracy `0.999` and fraud recall `0.0`. Every zero-denominator branch honors
-both the default and a caller-supplied `zero_division` value.
+both the default and a caller-supplied `zero_division` value. When true positives are
+zero but false positives and false negatives exist, F1 is defined as `0.0`; the
+`zero_division` fallback does not apply because the F1 denominator is nonzero.
 
 ## Reasoning prompt
 
