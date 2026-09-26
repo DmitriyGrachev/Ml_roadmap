@@ -1,0 +1,1 @@
+"""SQLAlchemy equipment repository practice."""

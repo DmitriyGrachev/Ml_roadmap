@@ -1,0 +1,1 @@
+"""Authorized vector search exercise."""

@@ -1,0 +1,1 @@
+"""Museum event contract exercise."""

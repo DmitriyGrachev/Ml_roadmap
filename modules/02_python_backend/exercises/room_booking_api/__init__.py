@@ -1,0 +1,1 @@
+"""Room booking API practice."""

@@ -4,13 +4,24 @@ An active-learning roadmap for an experienced Java and Spring backend engineer m
 
 ## Current scope
 
-The foundation, learning workflow, Modules 01–03, and the progressive Banking AI Lab are ready.
-Modules 01–03 are implemented; Modules 04–08 remain roadmap placeholders rather than implemented
-courses.
+The foundation, learning workflow, all eight modules, and the progressive Banking AI Lab are ready.
+Modules 01–08 are implemented, with 56 lessons, 88 exercises, and one progressive project.
+All eight modules include neutral-theme Medium practice. Implemented courseware includes examples
+and deliberately unsolved student tasks; it does not mean those tasks are already completed.
+
+New: [RAG and evaluation](modules/06_rag/README.md),
+[Agents, workflows and MCP](modules/07_agents/README.md), and
+[Production AI / LLMOps](modules/08_production_ai/README.md).
+For practice outside banking, use the [neutral practice map](docs/neutral-practice.md).
+It includes 24 additional exercises, three per module, with separate starters and automated tests.
+Existing tasks and their contracts are unchanged.
 
 Start with the first lesson: [Environment and workflow](modules/01_python_core/00_environment/README.md).
 
 Then try the first coding exercise: [Detect duplicate transactions](modules/01_python_core/02_collections/exercises/detect_duplicates/README.md).
+
+For a neutral Beginner alternative after learning collections, start with
+[Build a word index](modules/01_python_core/exercises/word_index/README.md).
 
 ## Repository structure
 
@@ -50,7 +61,7 @@ See [Windows and PyCharm setup](docs/setup.md) for the complete workflow.
 ## Learning workflow
 
 Run these commands from the repository root. They are the supported workflow for the implemented
-Modules 01–03 and Banking AI Lab.
+Modules 01–08 and Banking AI Lab.
 
 ```powershell
 uv sync --all-groups
@@ -73,11 +84,16 @@ Progress is intentionally manual: edit the checklist in [progress.md](progress.m
 
 ## Roadmap and project thread
 
-The learning sequence moves from native Python, through production FastAPI and data foundations, to the later AI topics. The Banking AI Lab evolves from CSV validation and transaction reports into data analysis, an API, PostgreSQL persistence, integration tests, and exploratory notebooks.
+The learning sequence moves from native Python, through FastAPI, data foundations and ML, to
+LLM applications, retrieval, bounded agent workflows, and production operations. The Banking AI Lab
+evolves through the foundational modules from CSV validation and transaction reports into data
+analysis, an API, PostgreSQL persistence, integration tests, and exploratory notebooks. Advanced
+modules use separate focused exercises; they do not silently add a completed AI feature to the lab.
 
 - [Roadmap](docs/roadmap.md)
 - [Learning rules](docs/learning-rules.md)
 - [Exercise testing model](docs/testing-exercises.md)
+- [Neutral practice in all eight modules](docs/neutral-practice.md)
 - [Java-to-Python cheat sheet](docs/java-to-python-cheatsheet.md)
 - [Module 04 — Machine Learning](modules/04_machine_learning/README.md)
 - [Module 05 — LLM Engineering](modules/05_llm_engineering/README.md)
@@ -87,6 +103,10 @@ The learning sequence moves from native Python, through production FastAPI and d
 
 ## Principles
 
-Learn by changing starter code, keeping test expectations intact, and recording your own progress. Examples use synthetic banking, payment, support-ticket, document, and LLM-style data; no real customer or financial-account data belongs in this repository.
+Learn by changing starter code, keeping test expectations intact, and recording your own progress.
+Examples use synthetic banking, payment, document, library, weather, and LLM-style data; no real
+customer or financial-account data belongs here. ML uses local synthetic datasets; LLM applications
+use offline doubles. LangGraph/MCP examples run locally. Production exercises simulate release,
+budget, privacy and rollout policies; they do not deploy services or prove live model quality.
 
 See [LICENSE](LICENSE) for the MIT license.

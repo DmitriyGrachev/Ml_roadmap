@@ -1,0 +1,1 @@
+"""Authorized museum tool dispatch."""

@@ -11,6 +11,13 @@ uv sync --all-groups
 ```
 
 This creates the one repository environment at `.venv`. Do not create a second environment per module.
+After updating the course, run the same command again: Module 04 uses scikit-learn, included in
+the shared dependency lock. Module 05 uses offline provider doubles and needs no API key,
+model download, or paid account.
+Module 07 includes LangGraph and the MCP SDK in this same environment. Its demonstrations are
+local: no external MCP server or model account is required. Module 08 simulates operational
+policies and does not require cloud infrastructure. Dependency versions are pinned by `uv.lock`.
+The local LangGraph example explicitly disables LangSmith tracing and needs no tracing account.
 
 ## 3. Open the project in PyCharm
 

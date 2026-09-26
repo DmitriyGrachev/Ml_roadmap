@@ -1,7 +1,8 @@
 # Learning progress
 
 Edit a marker as you learn: `[ ]` not started, `[~]` in progress, `[x]` complete.
-The checklist follows the exact Module 01–03 lesson order and remains manually owned.
+The checklist follows the exact Module 01–08 lesson order and remains manually owned.
+Passing template checks does not complete lessons or the student-owned exercises for you.
 
 ## Module 01 — Python core
 
@@ -37,3 +38,48 @@ The checklist follows the exact Module 01–03 lesson order and remains manually
 - [ ] data-statistics
 - [ ] data-splits
 - [ ] data-fraud-metrics
+
+## Module 04 — Machine Learning
+
+- [ ] ml-problem-framing
+- [ ] ml-validation
+- [ ] ml-preprocessing
+- [ ] ml-models
+- [ ] ml-evaluation
+- [ ] ml-reproducibility
+
+## Module 05 — LLM Engineering
+
+- [ ] llm-interfaces
+- [ ] llm-prompt-contracts
+- [ ] llm-structured-outputs
+- [ ] llm-context-cost
+- [ ] llm-evaluation
+- [ ] llm-reliability-tools
+
+## Module 06 — Retrieval-Augmented Generation
+
+- [ ] rag-contracts
+- [ ] rag-ingestion
+- [ ] rag-retrieval
+- [ ] rag-hybrid
+- [ ] rag-grounding
+- [ ] rag-evaluation
+
+## Module 07 — Agents, workflows and MCP
+
+- [ ] agents-state
+- [ ] agents-tools
+- [ ] agents-loop
+- [ ] agents-checkpoints
+- [ ] agents-langgraph-mcp
+- [ ] agents-evaluation
+
+## Module 08 — Production AI and LLMOps
+
+- [ ] production-serving
+- [ ] production-releases
+- [ ] production-observability
+- [ ] production-resilience
+- [ ] production-privacy
+- [ ] production-rollout

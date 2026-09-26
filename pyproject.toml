@@ -15,6 +15,10 @@ dependencies = [
     "psycopg[binary]",
     "numpy",
     "pandas",
+    "scikit-learn",
+    "langgraph",
+    "langsmith",
+    "mcp",
     "uvicorn[standard]",
 ]
 
@@ -67,6 +71,11 @@ packages = [
     "modules.01_python_core",
     "modules.02_python_backend",
     "modules.03_data_foundations",
+    "modules.04_machine_learning",
+    "modules.05_llm_engineering",
+    "modules.06_rag",
+    "modules.07_agents",
+    "modules.08_production_ai",
     "banking_ai_lab",
     "support_api",
     "projects.banking_ai_lab.tests",
@@ -79,3 +88,7 @@ exclude = [
     "(^|/)review_me\\.py$",
     "(^|/)debugging/.*/broken\\.py$",
 ]
+
+[[tool.mypy.overrides]]
+module = ["sklearn.*"]
+ignore_missing_imports = true

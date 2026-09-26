@@ -63,12 +63,19 @@ LATER_EXERCISES = (
     "09_testing/exercises/mock_provider/README.md",
     "10_asyncio/exercises/fetch_quotes/README.md",
 )
+NEUTRAL_EXERCISES = (
+    "exercises/calendar_intervals/README.md",
+    "exercises/word_index/README.md",
+    "exercises/paged_stream/README.md",
+    "exercises/bounded_fetch/README.md",
+)
 ALL_PRACTICE = (
     FIRST_SPRINT_CODING
     + DEBUGGING_PRACTICE
     + CODE_REVIEW_PRACTICE
     + MINI_FEATURES
     + LATER_EXERCISES
+    + NEUTRAL_EXERCISES
 )
 LESSON_PRACTICE = {
     "00_environment": (),
@@ -198,7 +205,8 @@ def test_module_practice_map_has_the_exact_complete_inventory_once() -> None:
     assert len(CODE_REVIEW_PRACTICE) == 2
     assert len(MINI_FEATURES) == 1
     assert len(LATER_EXERCISES) == 6
-    assert len(set(ALL_PRACTICE)) == 21
+    assert len(NEUTRAL_EXERCISES) == 4
+    assert len(set(ALL_PRACTICE)) == 25
 
     discovered = {
         path.relative_to(MODULE_ROOT).as_posix()

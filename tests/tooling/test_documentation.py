@@ -70,10 +70,38 @@ PLANNED_LESSON_IDS = (
     "data-statistics",
     "data-splits",
     "data-fraud-metrics",
+    "ml-problem-framing",
+    "ml-validation",
+    "ml-preprocessing",
+    "ml-models",
+    "ml-evaluation",
+    "ml-reproducibility",
+    "llm-interfaces",
+    "llm-prompt-contracts",
+    "llm-structured-outputs",
+    "llm-context-cost",
+    "llm-evaluation",
+    "llm-reliability-tools",
+    "rag-contracts",
+    "rag-ingestion",
+    "rag-retrieval",
+    "rag-hybrid",
+    "rag-grounding",
+    "rag-evaluation",
+    "agents-state",
+    "agents-tools",
+    "agents-loop",
+    "agents-checkpoints",
+    "agents-langgraph-mcp",
+    "agents-evaluation",
+    "production-serving",
+    "production-releases",
+    "production-observability",
+    "production-resilience",
+    "production-privacy",
+    "production-rollout",
 )
-FUTURE_MODULES = (
-    "04_machine_learning",
-    "05_llm_engineering",
+FINAL_MODULES = (
     "06_rag",
     "07_agents",
     "08_production_ai",
@@ -81,7 +109,7 @@ FUTURE_MODULES = (
 MARKDOWN_LINK = re.compile(r"(?<!!)\[[^]]*\]\(([^)]+)\)")
 FENCED_CODE_BLOCK = re.compile(r"^```[^\n]*\n(.*?)^```[ \t]*$", re.MULTILINE | re.DOTALL)
 CHECKLIST_ENTRY = re.compile(r"^- \[[ ~x]\] ([a-z0-9-]+)$", re.MULTILINE)
-IMPLEMENTED_MODULE_RANGE = "Modules 01\N{EN DASH}03"
+IMPLEMENTED_MODULE_RANGE = "Modules 01\N{EN DASH}08"
 REPOSITORY_STRUCTURE_PATHS = (
     "modules/01_python_core/",
     "modules/02_python_backend/",
@@ -97,12 +125,6 @@ REPOSITORY_STRUCTURE_PATHS = (
     "src/roadmap_tools/",
     "tests/integration/",
 )
-CURRENT_PREREQUISITES = {
-    "04_machine_learning": ("Complete Modules 01\N{EN DASH}03", "planned Python core"),
-    "05_llm_engineering": ("implemented Python core and backend modules", "planned Python"),
-    "06_rag": ("implemented data foundations module", "planned data foundations"),
-    "08_production_ai": ("implemented backend and data foundations modules", "planned backend"),
-}
 
 
 def test_root_readme_exposes_every_learning_command() -> None:
@@ -188,7 +210,7 @@ def test_sqlalchemy_guide_labels_unconfigured_alembic_commands_as_conceptual() -
     assert "does not include an Alembic configuration" in lesson
 
 
-def test_progress_is_an_ordered_editable_module_01_to_03_checklist() -> None:
+def test_progress_is_an_ordered_editable_module_01_to_08_checklist() -> None:
     """Learners can update the implemented lesson sequence as they progress."""
     entries = CHECKLIST_ENTRY.findall(PROGRESS_PATH.read_text(encoding="utf-8"))
 
@@ -205,24 +227,40 @@ def test_progress_includes_every_loaded_catalog_lesson() -> None:
     assert lesson_ids <= entries
 
 
-def test_future_module_placeholders_describe_deferred_learning() -> None:
-    """Future modules remain useful roadmap entries without implying exercises exist."""
-    for module in FUTURE_MODULES:
+def test_final_modules_expose_complete_registered_lesson_sequences() -> None:
+    """RAG, agents and production must expose real lessons, not just starter directories."""
+    catalog = Catalog.load(REPOSITORY_ROOT)
+    for module in FINAL_MODULES:
+        module_root = REPOSITORY_ROOT / "modules" / module
         readme = (REPOSITORY_ROOT / "modules" / module / "README.md").read_text(encoding="utf-8")
-        assert "## Scope" in readme
         assert "## Prerequisites" in readme
-        assert "## Planned outcomes" in readme
-        assert "Exercises are intentionally deferred." in readme
-
-
-def test_future_module_prerequisites_distinguish_completed_and_planned_work() -> None:
-    """Implemented foundations must not be presented as future prerequisites."""
-    for module, (current_phrase, stale_phrase) in CURRENT_PREREQUISITES.items():
-        readme = (REPOSITORY_ROOT / "modules" / module / "README.md").read_text(encoding="utf-8")
-        prerequisites = _markdown_section(readme, "Prerequisites")
-
-        assert current_phrase in prerequisites, module
-        assert stale_phrase not in prerequisites, module
+        lessons = [
+            item
+            for item in catalog.items
+            if item.kind == "lesson" and item.readme.is_relative_to(module_root)
+        ]
+        assert len(lessons) == 6, module
+        for lesson in lessons:
+            content = lesson.readme.read_text(encoding="utf-8")
+            for heading in (
+                "Goal",
+                "Java mental model",
+                "Python model",
+                "Key concepts",
+                "Example",
+                "Exercises",
+                "Self-check",
+                "Done when",
+            ):
+                assert f"## {heading}" in content, lesson.identifier
+            assert (lesson.readme.parent / "example.py").is_file()
+        exercises = [
+            item
+            for item in catalog.items
+            if item.kind == "exercise" and item.readme.is_relative_to(module_root)
+        ]
+        assert len(exercises) == 8, module
+        assert "The full lesson sequence is deferred." not in readme
 
 
 def _relative_markdown_targets(document: Path) -> tuple[Path, ...]:

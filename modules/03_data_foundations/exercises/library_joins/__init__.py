@@ -1,0 +1,1 @@
+"""Validated Pandas joins practice."""

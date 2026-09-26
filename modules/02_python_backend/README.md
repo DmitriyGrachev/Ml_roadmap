@@ -36,6 +36,9 @@ uv run pytest modules/02_python_backend/examples -q
 
 The later lessons introduce isolated payment-contract, router, error-mapping, fan-out, and persistence exercises. Keep their starter boundaries unsolved.
 
+A standalone Medium exercise, [Search a library catalog](exercises/library_search/README.md),
+adds neutral-domain practice with filtering, stable sorting, pagination, and API validation.
+
 ## Self-check
 
 1. Which object represents an HTTP route group?
@@ -47,3 +50,11 @@ The later lessons introduce isolated payment-contract, router, error-mapping, fa
 ## Done when
 
 You can navigate the nine lessons, explain their order, and run the support example without Docker.
+
+## Additional neutral-domain practice
+
+- [Build a room booking API](exercises/room_booking_api/README.md) — validation, status codes, and overlap conflicts.
+- [Serve a conditional document](exercises/conditional_cache/README.md) — content-derived ETags and HTTP 304.
+- [Store equipment with SQLAlchemy](exercises/equipment_repository/README.md) — local transactions and repository queries.
+
+These Medium exercises run locally and include automated behavioral tests.

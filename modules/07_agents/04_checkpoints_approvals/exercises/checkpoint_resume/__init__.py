@@ -1,0 +1,1 @@
+"""Resume an approved checkpoint."""

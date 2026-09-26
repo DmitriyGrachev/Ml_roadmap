@@ -35,6 +35,9 @@ uv run mypy -p modules.03_data_foundations --exclude 'notebooks'
 
 Exercises arrive alongside their lessons. Keep examples as reference for mechanics, not as implementations to copy into a starter boundary.
 
+The standalone Medium exercise [Summarize weather observations](exercises/weather_quality/README.md)
+practices quality rules, deduplication, and station-level aggregation on neutral data.
+
 ## Self-check
 
 1. Why can vectorized work be clearer than a loop?
@@ -47,3 +50,11 @@ Exercises arrive alongside their lessons. Keep examples as reference for mechani
 
 You can explain the purpose of each lesson, run its deterministic example, and pass the
 documented package-mode type check without changing tracked data.
+
+## Additional neutral-domain practice
+
+- [Pool grayscale image blocks](exercises/image_pooling/README.md) — NumPy reshape and spatial reduction axes.
+- [Report library loans](exercises/library_joins/README.md) — Pandas key validation and many-to-one joins.
+- [Summarize paired observations](exercises/paired_observations/README.md) — aligned missing values, covariance, and correlation.
+
+These Medium exercises add independent synthetic inputs and focused automated tests.

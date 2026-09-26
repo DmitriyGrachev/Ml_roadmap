@@ -223,6 +223,33 @@ readme = "modules/01_python_core/10_asyncio/exercises/fetch_quotes/README.md"
 tests = ["modules/01_python_core/10_asyncio/exercises/fetch_quotes/test_starter.py"]
 
 [[items]]
+id = "python-calendar-intervals"
+title = "Merge calendar intervals"
+kind = "exercise"
+readme = "modules/01_python_core/exercises/calendar_intervals/README.md"
+tests = ["modules/01_python_core/exercises/calendar_intervals/test_starter.py"]
+[[items]]
+id = "python-word-index"
+title = "Build a word index"
+kind = "exercise"
+readme = "modules/01_python_core/exercises/word_index/README.md"
+tests = ["modules/01_python_core/exercises/word_index/test_starter.py"]
+
+[[items]]
+id = "python-paged-stream"
+title = "Batch a one-shot stream"
+kind = "exercise"
+readme = "modules/01_python_core/exercises/paged_stream/README.md"
+tests = ["modules/01_python_core/exercises/paged_stream/test_starter.py"]
+
+[[items]]
+id = "python-bounded-fetch"
+title = "Bound concurrent station fetches"
+kind = "exercise"
+readme = "modules/01_python_core/exercises/bounded_fetch/README.md"
+tests = ["modules/01_python_core/exercises/bounded_fetch/test_starter.py"]
+
+[[items]]
 id = "backend-fastapi"
 title = "01 \u2014 FastAPI application and routers"
 kind = "lesson"
@@ -335,6 +362,33 @@ readme = "modules/02_python_backend/09_docker_delivery/README.md"
 tests = ["modules/02_python_backend/tests/test_lesson_contracts.py"]
 
 [[items]]
+id = "backend-library-search"
+title = "Search a library catalog"
+kind = "exercise"
+readme = "modules/02_python_backend/exercises/library_search/README.md"
+tests = ["modules/02_python_backend/exercises/library_search/test_starter.py"]
+[[items]]
+id = "backend-room-booking-api"
+title = "Build a room booking API"
+kind = "exercise"
+readme = "modules/02_python_backend/exercises/room_booking_api/README.md"
+tests = ["modules/02_python_backend/exercises/room_booking_api/test_starter.py"]
+
+[[items]]
+id = "backend-conditional-cache"
+title = "Serve a conditional document"
+kind = "exercise"
+readme = "modules/02_python_backend/exercises/conditional_cache/README.md"
+tests = ["modules/02_python_backend/exercises/conditional_cache/test_starter.py"]
+
+[[items]]
+id = "backend-equipment-repository"
+title = "Store equipment with SQLAlchemy"
+kind = "exercise"
+readme = "modules/02_python_backend/exercises/equipment_repository/README.md"
+tests = ["modules/02_python_backend/exercises/equipment_repository/test_starter.py"]
+
+[[items]]
 id = "data-numpy"
 title = "NumPy arrays and vectorization"
 kind = "lesson"
@@ -438,6 +492,516 @@ title = "Fraud ranking metrics"
 kind = "exercise"
 readme = "modules/03_data_foundations/06_fraud_metrics/exercises/ranking_metrics/README.md"
 tests = ["modules/03_data_foundations/06_fraud_metrics/exercises/ranking_metrics/test_starter.py"]
+
+[[items]]
+id = "data-weather-quality"
+title = "Summarize weather observations"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/weather_quality/README.md"
+tests = ["modules/03_data_foundations/exercises/weather_quality/test_starter.py"]
+
+[[items]]
+id = "data-image-pooling"
+title = "Pool grayscale image blocks"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/image_pooling/README.md"
+tests = ["modules/03_data_foundations/exercises/image_pooling/test_starter.py"]
+
+[[items]]
+id = "data-library-joins"
+title = "Report library loans"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/library_joins/README.md"
+tests = ["modules/03_data_foundations/exercises/library_joins/test_starter.py"]
+
+[[items]]
+id = "data-paired-observations"
+title = "Summarize paired observations"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/paired_observations/README.md"
+tests = ["modules/03_data_foundations/exercises/paired_observations/test_starter.py"]
+
+[[items]]
+id = "ml-problem-framing"
+title = "Problem framing and baselines"
+kind = "lesson"
+readme = "modules/04_machine_learning/01_problem_framing/README.md"
+tests = ["modules/04_machine_learning/01_problem_framing"]
+
+[[items]]
+id = "ml-validation"
+title = "Validation that matches the prediction setting"
+kind = "lesson"
+readme = "modules/04_machine_learning/02_validation/README.md"
+tests = ["modules/04_machine_learning/02_validation"]
+
+[[items]]
+id = "ml-group-safe-split"
+title = "Group-safe sensor split"
+kind = "exercise"
+readme = "modules/04_machine_learning/02_validation/exercises/group_safe_split/README.md"
+tests = ["modules/04_machine_learning/02_validation/exercises/group_safe_split/test_starter.py"]
+
+[[items]]
+id = "ml-preprocessing"
+title = "Leakage-free preprocessing"
+kind = "lesson"
+readme = "modules/04_machine_learning/03_preprocessing/README.md"
+tests = ["modules/04_machine_learning/03_preprocessing"]
+
+[[items]]
+id = "ml-mixed-feature-pipeline"
+title = "Mixed-feature park-visit pipeline"
+kind = "exercise"
+readme = "modules/04_machine_learning/03_preprocessing/exercises/mixed_feature_pipeline/README.md"
+tests = ["modules/04_machine_learning/03_preprocessing/exercises/mixed_feature_pipeline/test_starter.py"]
+
+[[items]]
+id = "ml-models"
+title = "Linear models, trees and validation-based selection"
+kind = "lesson"
+readme = "modules/04_machine_learning/04_models/README.md"
+tests = ["modules/04_machine_learning/04_models"]
+
+[[items]]
+id = "ml-model-comparison"
+title = "Validation model comparison"
+kind = "exercise"
+readme = "modules/04_machine_learning/04_models/exercises/model_comparison/README.md"
+tests = ["modules/04_machine_learning/04_models/exercises/model_comparison/test_starter.py"]
+
+[[items]]
+id = "ml-evaluation"
+title = "Metrics and error slices"
+kind = "lesson"
+readme = "modules/04_machine_learning/05_evaluation/README.md"
+tests = ["modules/04_machine_learning/05_evaluation"]
+
+[[items]]
+id = "ml-reproducibility"
+title = "Reproducibility and artifact provenance"
+kind = "lesson"
+readme = "modules/04_machine_learning/06_reproducibility/README.md"
+tests = ["modules/04_machine_learning/06_reproducibility"]
+
+[[items]]
+id = "ml-evaluation-report"
+title = "Reproducible evaluation report"
+kind = "exercise"
+readme = "modules/04_machine_learning/06_reproducibility/exercises/evaluation_report/README.md"
+tests = ["modules/04_machine_learning/06_reproducibility/exercises/evaluation_report/test_starter.py"]
+
+[[items]]
+id = "ml-time-series-split"
+title = "Chronological weather split with a gap"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/time_series_split/README.md"
+tests = ["modules/04_machine_learning/exercises/time_series_split/test_starter.py"]
+
+[[items]]
+id = "ml-multiclass-report"
+title = "Explicit-label wildlife classification report"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/multiclass_report/README.md"
+tests = ["modules/04_machine_learning/exercises/multiclass_report/test_starter.py"]
+
+[[items]]
+id = "ml-threshold-policy"
+title = "Weather-alert threshold policy"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/threshold_policy/README.md"
+tests = ["modules/04_machine_learning/exercises/threshold_policy/test_starter.py"]
+
+[[items]]
+id = "llm-interfaces"
+title = "LLM interfaces"
+kind = "lesson"
+readme = "modules/05_llm_engineering/01_llm_interfaces/README.md"
+tests = ["modules/05_llm_engineering/tests/test_examples.py"]
+
+[[items]]
+id = "llm-prompt-contracts"
+title = "Prompt contracts"
+kind = "lesson"
+readme = "modules/05_llm_engineering/02_prompt_contracts/README.md"
+tests = ["modules/05_llm_engineering/tests/test_examples.py"]
+
+[[items]]
+id = "llm-prompt-messages"
+title = "Library reference messages"
+kind = "exercise"
+readme = "modules/05_llm_engineering/02_prompt_contracts/exercises/prompt_messages/README.md"
+tests = ["modules/05_llm_engineering/02_prompt_contracts/exercises/prompt_messages/test_starter.py"]
+
+[[items]]
+id = "llm-structured-outputs"
+title = "Structured outputs"
+kind = "lesson"
+readme = "modules/05_llm_engineering/03_structured_outputs/README.md"
+tests = ["modules/05_llm_engineering/tests/test_examples.py"]
+
+[[items]]
+id = "llm-event-contract"
+title = "Museum event contract"
+kind = "exercise"
+readme = "modules/05_llm_engineering/03_structured_outputs/exercises/event_contract/README.md"
+tests = ["modules/05_llm_engineering/03_structured_outputs/exercises/event_contract/test_starter.py"]
+
+[[items]]
+id = "llm-context-cost"
+title = "Context and cost"
+kind = "lesson"
+readme = "modules/05_llm_engineering/04_context_and_cost/README.md"
+tests = ["modules/05_llm_engineering/tests/test_examples.py"]
+
+[[items]]
+id = "llm-context-budget"
+title = "Nature-guide context budget"
+kind = "exercise"
+readme = "modules/05_llm_engineering/04_context_and_cost/exercises/context_budget/README.md"
+tests = ["modules/05_llm_engineering/04_context_and_cost/exercises/context_budget/test_starter.py"]
+
+[[items]]
+id = "llm-evaluation"
+title = "Evaluation"
+kind = "lesson"
+readme = "modules/05_llm_engineering/05_evaluation/README.md"
+tests = ["modules/05_llm_engineering/tests/test_examples.py"]
+
+[[items]]
+id = "llm-answer-evaluation"
+title = "Library answer evaluation"
+kind = "exercise"
+readme = "modules/05_llm_engineering/05_evaluation/exercises/answer_evaluation/README.md"
+tests = ["modules/05_llm_engineering/05_evaluation/exercises/answer_evaluation/test_starter.py"]
+
+[[items]]
+id = "llm-reliability-tools"
+title = "Reliability and tools"
+kind = "lesson"
+readme = "modules/05_llm_engineering/06_reliability_and_tools/README.md"
+tests = ["modules/05_llm_engineering/tests/test_examples.py"]
+
+[[items]]
+id = "llm-bounded-retry"
+title = "Bounded provider retries"
+kind = "exercise"
+readme = "modules/05_llm_engineering/06_reliability_and_tools/exercises/bounded_retry/README.md"
+tests = ["modules/05_llm_engineering/06_reliability_and_tools/exercises/bounded_retry/test_starter.py"]
+
+[[items]]
+id = "llm-context-packing"
+title = "Priority-aware library context packing"
+kind = "exercise"
+readme = "modules/05_llm_engineering/exercises/context_packing/README.md"
+tests = ["modules/05_llm_engineering/exercises/context_packing/test_starter.py"]
+
+[[items]]
+id = "llm-response-cache"
+title = "Versioned response cache with expiry"
+kind = "exercise"
+readme = "modules/05_llm_engineering/exercises/response_cache/README.md"
+tests = ["modules/05_llm_engineering/exercises/response_cache/test_starter.py"]
+
+[[items]]
+id = "llm-stream-assembly"
+title = "Assemble a museum answer stream"
+kind = "exercise"
+readme = "modules/05_llm_engineering/exercises/stream_assembly/README.md"
+tests = ["modules/05_llm_engineering/exercises/stream_assembly/test_starter.py"]
+
+[[items]]
+id = "rag-contracts"
+title = "Retrieval contracts and provenance"
+kind = "lesson"
+readme = "modules/06_rag/01_retrieval_contracts/README.md"
+tests = ["modules/06_rag/01_retrieval_contracts"]
+
+[[items]]
+id = "rag-ingestion"
+title = "Ingestion, chunking and index lifecycle"
+kind = "lesson"
+readme = "modules/06_rag/02_ingestion_chunking/README.md"
+tests = ["modules/06_rag/02_ingestion_chunking"]
+
+[[items]]
+id = "rag-text-chunking"
+title = "Chunk documents with overlap"
+kind = "exercise"
+readme = "modules/06_rag/exercises/text_chunking/README.md"
+tests = ["modules/06_rag/exercises/text_chunking/test_starter.py"]
+
+[[items]]
+id = "rag-retrieval"
+title = "Lexical and dense retrieval"
+kind = "lesson"
+readme = "modules/06_rag/03_lexical_dense_retrieval/README.md"
+tests = ["modules/06_rag/03_lexical_dense_retrieval"]
+
+[[items]]
+id = "rag-vector-search"
+title = "Authorized vector search"
+kind = "exercise"
+readme = "modules/06_rag/03_lexical_dense_retrieval/exercises/vector_search/README.md"
+tests = ["modules/06_rag/03_lexical_dense_retrieval/exercises/vector_search/test_starter.py"]
+
+[[items]]
+id = "rag-hybrid"
+title = "Hybrid retrieval and reranking"
+kind = "lesson"
+readme = "modules/06_rag/04_hybrid_reranking/README.md"
+tests = ["modules/06_rag/04_hybrid_reranking"]
+
+[[items]]
+id = "rag-rank-fusion"
+title = "Reciprocal rank fusion"
+kind = "exercise"
+readme = "modules/06_rag/04_hybrid_reranking/exercises/reciprocal_rank_fusion/README.md"
+tests = ["modules/06_rag/04_hybrid_reranking/exercises/reciprocal_rank_fusion/test_starter.py"]
+
+[[items]]
+id = "rag-grounding"
+title = "Grounded answers and citation checks"
+kind = "lesson"
+readme = "modules/06_rag/05_grounded_answers/README.md"
+tests = ["modules/06_rag/05_grounded_answers"]
+
+[[items]]
+id = "rag-citation-validation"
+title = "Evidence citation validation"
+kind = "exercise"
+readme = "modules/06_rag/05_grounded_answers/exercises/citation_validation/README.md"
+tests = ["modules/06_rag/05_grounded_answers/exercises/citation_validation/test_starter.py"]
+
+[[items]]
+id = "rag-evaluation"
+title = "Retrieval and answer evaluation"
+kind = "lesson"
+readme = "modules/06_rag/06_rag_evaluation/README.md"
+tests = ["modules/06_rag/06_rag_evaluation"]
+
+[[items]]
+id = "rag-retrieval-evaluation"
+title = "Retrieval evaluation by query"
+kind = "exercise"
+readme = "modules/06_rag/06_rag_evaluation/exercises/retrieval_evaluation/README.md"
+tests = ["modules/06_rag/06_rag_evaluation/exercises/retrieval_evaluation/test_starter.py"]
+
+[[items]]
+id = "rag-index-sync"
+title = "Plan a library index refresh"
+kind = "exercise"
+readme = "modules/06_rag/exercises/index_sync/README.md"
+tests = ["modules/06_rag/exercises/index_sync/test_starter.py"]
+
+[[items]]
+id = "rag-context-diversity"
+title = "Diversify retrieved museum evidence"
+kind = "exercise"
+readme = "modules/06_rag/exercises/context_diversity/README.md"
+tests = ["modules/06_rag/exercises/context_diversity/test_starter.py"]
+
+[[items]]
+id = "rag-retrieval-regression"
+title = "Guard query-level retrieval regressions"
+kind = "exercise"
+readme = "modules/06_rag/exercises/retrieval_regression/README.md"
+tests = ["modules/06_rag/exercises/retrieval_regression/test_starter.py"]
+
+[[items]]
+id = "agents-state"
+title = "Workflow state"
+kind = "lesson"
+readme = "modules/07_agents/01_workflows_state/README.md"
+tests = ["modules/07_agents/tests/test_examples.py"]
+
+[[items]]
+id = "agents-workflow-schedule"
+title = "Schedule a bounded workflow"
+kind = "exercise"
+readme = "modules/07_agents/exercises/workflow_schedule/README.md"
+tests = ["modules/07_agents/exercises/workflow_schedule/test_starter.py"]
+
+[[items]]
+id = "agents-tools"
+title = "Tools and permissions"
+kind = "lesson"
+readme = "modules/07_agents/02_tools_permissions/README.md"
+tests = ["modules/07_agents/tests/test_examples.py"]
+
+[[items]]
+id = "agents-tool-dispatch"
+title = "Authorized museum tool dispatch"
+kind = "exercise"
+readme = "modules/07_agents/02_tools_permissions/exercises/tool_dispatch/README.md"
+tests = ["modules/07_agents/02_tools_permissions/exercises/tool_dispatch/test_starter.py"]
+
+[[items]]
+id = "agents-loop"
+title = "Bounded agents"
+kind = "lesson"
+readme = "modules/07_agents/03_bounded_agents/README.md"
+tests = ["modules/07_agents/tests/test_examples.py"]
+
+[[items]]
+id = "agents-bounded-loop"
+title = "Bounded exhibit assistant"
+kind = "exercise"
+readme = "modules/07_agents/03_bounded_agents/exercises/bounded_loop/README.md"
+tests = ["modules/07_agents/03_bounded_agents/exercises/bounded_loop/test_starter.py"]
+
+[[items]]
+id = "agents-checkpoints"
+title = "Checkpoints and approvals"
+kind = "lesson"
+readme = "modules/07_agents/04_checkpoints_approvals/README.md"
+tests = ["modules/07_agents/tests/test_examples.py"]
+
+[[items]]
+id = "agents-checkpoint-resume"
+title = "Resume an approved checkpoint"
+kind = "exercise"
+readme = "modules/07_agents/04_checkpoints_approvals/exercises/checkpoint_resume/README.md"
+tests = ["modules/07_agents/04_checkpoints_approvals/exercises/checkpoint_resume/test_starter.py"]
+
+[[items]]
+id = "agents-langgraph-mcp"
+title = "LangGraph and MCP"
+kind = "lesson"
+readme = "modules/07_agents/05_langgraph_mcp/README.md"
+tests = ["modules/07_agents/tests/test_examples.py"]
+
+[[items]]
+id = "agents-evaluation"
+title = "Evaluation and handoffs"
+kind = "lesson"
+readme = "modules/07_agents/06_evaluation_handoffs/README.md"
+tests = ["modules/07_agents/tests/test_examples.py"]
+
+[[items]]
+id = "agents-trace-evaluation"
+title = "Evaluate workflow traces"
+kind = "exercise"
+readme = "modules/07_agents/06_evaluation_handoffs/exercises/trace_evaluation/README.md"
+tests = ["modules/07_agents/06_evaluation_handoffs/exercises/trace_evaluation/test_starter.py"]
+
+[[items]]
+id = "agents-plan-validation"
+title = "Validate a museum tool plan"
+kind = "exercise"
+readme = "modules/07_agents/exercises/plan_validation/README.md"
+tests = ["modules/07_agents/exercises/plan_validation/test_starter.py"]
+
+[[items]]
+id = "agents-handoff-packet"
+title = "Prepare a permission-filtered library handoff"
+kind = "exercise"
+readme = "modules/07_agents/exercises/handoff_packet/README.md"
+tests = ["modules/07_agents/exercises/handoff_packet/test_starter.py"]
+
+[[items]]
+id = "agents-tool-result-routing"
+title = "Route a museum tool result"
+kind = "exercise"
+readme = "modules/07_agents/exercises/tool_result_routing/README.md"
+tests = ["modules/07_agents/exercises/tool_result_routing/test_starter.py"]
+
+[[items]]
+id = "production-serving"
+title = "Serving contracts and lifecycle"
+kind = "lesson"
+readme = "modules/08_production_ai/01_serving_contracts/README.md"
+tests = ["modules/08_production_ai/01_serving_contracts/test_example.py"]
+
+[[items]]
+id = "production-releases"
+title = "Release gates and continuous evaluation"
+kind = "lesson"
+readme = "modules/08_production_ai/02_releases_evaluation/README.md"
+tests = ["modules/08_production_ai/02_releases_evaluation/test_example.py"]
+
+[[items]]
+id = "production-release-gate"
+title = "Compare paired release evaluations"
+kind = "exercise"
+readme = "modules/08_production_ai/02_releases_evaluation/exercises/release_gate/README.md"
+tests = ["modules/08_production_ai/02_releases_evaluation/exercises/release_gate/test_starter.py"]
+
+[[items]]
+id = "production-observability"
+title = "Operational signals and service objectives"
+kind = "lesson"
+readme = "modules/08_production_ai/03_observability/README.md"
+tests = ["modules/08_production_ai/03_observability/test_example.py"]
+
+[[items]]
+id = "production-request-metrics"
+title = "Report request reliability and latency"
+kind = "exercise"
+readme = "modules/08_production_ai/exercises/request_metrics/README.md"
+tests = ["modules/08_production_ai/exercises/request_metrics/test_starter.py"]
+
+[[items]]
+id = "production-resilience"
+title = "Budgets, deadlines and resilience"
+kind = "lesson"
+readme = "modules/08_production_ai/04_budgets_resilience/README.md"
+tests = ["modules/08_production_ai/04_budgets_resilience/test_example.py"]
+
+[[items]]
+id = "production-budget-reservation"
+title = "Track a request budget ledger"
+kind = "exercise"
+readme = "modules/08_production_ai/04_budgets_resilience/exercises/budget_reservation/README.md"
+tests = ["modules/08_production_ai/04_budgets_resilience/exercises/budget_reservation/test_starter.py"]
+
+[[items]]
+id = "production-privacy"
+title = "Privacy and operational security"
+kind = "lesson"
+readme = "modules/08_production_ai/05_privacy_security/README.md"
+tests = ["modules/08_production_ai/05_privacy_security/test_example.py"]
+
+[[items]]
+id = "production-redact-events"
+title = "Minimize structured event logs"
+kind = "exercise"
+readme = "modules/08_production_ai/05_privacy_security/exercises/redact_events/README.md"
+tests = ["modules/08_production_ai/05_privacy_security/exercises/redact_events/test_starter.py"]
+
+[[items]]
+id = "production-rollout"
+title = "Rollouts, rollback and incident response"
+kind = "lesson"
+readme = "modules/08_production_ai/06_rollout_incidents/README.md"
+tests = ["modules/08_production_ai/06_rollout_incidents/test_example.py"]
+
+[[items]]
+id = "production-rollout-decision"
+title = "Decide a bounded canary rollout"
+kind = "exercise"
+readme = "modules/08_production_ai/06_rollout_incidents/exercises/rollout_decision/README.md"
+tests = ["modules/08_production_ai/06_rollout_incidents/exercises/rollout_decision/test_starter.py"]
+[[items]]
+id = "production-artifact-manifest"
+title = "Check a library artifact manifest"
+kind = "exercise"
+readme = "modules/08_production_ai/exercises/artifact_manifest/README.md"
+tests = ["modules/08_production_ai/exercises/artifact_manifest/test_starter.py"]
+
+[[items]]
+id = "production-error-budget"
+title = "Account for a catalog service error budget"
+kind = "exercise"
+readme = "modules/08_production_ai/exercises/error_budget/README.md"
+tests = ["modules/08_production_ai/exercises/error_budget/test_starter.py"]
+
+[[items]]
+id = "production-retention-policy"
+title = "Plan library record retention"
+kind = "exercise"
+readme = "modules/08_production_ai/exercises/retention_policy/README.md"
+tests = ["modules/08_production_ai/exercises/retention_policy/test_starter.py"]
 
 [[items]]
 id = "banking-ai-lab"

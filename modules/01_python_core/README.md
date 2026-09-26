@@ -21,6 +21,11 @@ map to move from focused drills to the mini-feature.
 
 ## Practice map
 
+### Standalone Medium exercise
+
+- [Merge calendar intervals](exercises/calendar_intervals/README.md) — combine
+  overlapping appointments with validation and immutable interval records.
+
 ### First sprint — 10 coding exercises
 
 - [Detect duplicate transactions](02_collections/exercises/detect_duplicates/README.md)
@@ -58,3 +63,9 @@ map to move from focused drills to the mini-feature.
 - [Fetch quotes concurrently](10_asyncio/exercises/fetch_quotes/README.md)
 
 Run all runnable examples with `uv run pytest modules/01_python_core/tests -q`.
+
+### Additional neutral-domain practice
+
+- [Build a word index](exercises/word_index/README.md) — Beginner: sets, dictionaries, and text.
+- [Batch a one-shot stream](exercises/paged_stream/README.md) — Medium: lazy generic iterators.
+- [Bound concurrent station fetches](exercises/bounded_fetch/README.md) — Medium: asyncio limits and cleanup.
