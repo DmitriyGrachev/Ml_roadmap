@@ -7,9 +7,56 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+import pytest
+
 from roadmap_tools.catalog import Catalog
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
+
+
+@pytest.mark.parametrize(
+    "identifier",
+    [
+        "data-paired-model-comparison",
+        "data-randomized-experiment",
+        "ml-knn-mechanics",
+        "ml-tabular-study",
+        "data-release-study",
+        "ml-evaluation-case",
+        "production-product-study",
+        "rag-ranking-study",
+        "ml-forecasting-intro",
+        "python-interview-patterns",
+        "backend-analytics-sql",
+    ],
+)
+def test_new_base_exercises_block_network(identifier: str, tmp_path: Path) -> None:
+    """An accidental network call in any new base exercise fails visibly."""
+    item = Catalog.load(REPOSITORY_ROOT).get(identifier)
+    guard = item.readme.parent / "conftest.py"
+    assert guard.is_file(), f"Missing offline fixture for {identifier}"
+    (tmp_path / "conftest.py").write_bytes(guard.read_bytes())
+    (tmp_path / "test_offline.py").write_text(
+        "import socket\nimport pytest\n"
+        "def test_socket_entry_points():\n"
+        "    with pytest.raises((AssertionError, RuntimeError), match='(?i)offline'):\n"
+        "        socket.create_connection(None)\n"
+        "    with socket.socket() as connection:\n"
+        "        with pytest.raises((AssertionError, RuntimeError), match='(?i)offline'):\n"
+        "            connection.connect(None)\n"
+        "        with pytest.raises((AssertionError, RuntimeError), match='(?i)offline'):\n"
+        "            connection.connect_ex(None)\n",
+        encoding="utf-8",
+    )
+    # Invalid addresses cannot open a real connection even if the guard is removed.
+    result = subprocess.run(
+        [sys.executable, "-m", "pytest", "-q", str(tmp_path / "test_offline.py")],
+        cwd=tmp_path,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 @dataclass(frozen=True)
@@ -485,6 +532,21 @@ EXPECTED_CATALOG = (
         "modules/03_data_foundations/exercises/paired_observations/test_starter.py",
     ),
     item(
+        "data-paired-model-comparison",
+        "exercise",
+        "modules/03_data_foundations/exercises/paired_model_comparison/README.md",
+        "modules/03_data_foundations/exercises/paired_model_comparison/test_starter.py",
+        "modules/03_data_foundations/exercises/paired_model_comparison/test_evidence.py",
+        "modules/03_data_foundations/exercises/paired_model_comparison/test_example.py",
+    ),
+    item(
+        "data-randomized-experiment",
+        "exercise",
+        "modules/03_data_foundations/exercises/randomized_experiment/README.md",
+        "modules/03_data_foundations/exercises/randomized_experiment/test_starter.py",
+        "modules/03_data_foundations/exercises/randomized_experiment/test_example.py",
+    ),
+    item(
         "ml-problem-framing",
         "lesson",
         "modules/04_machine_learning/01_problem_framing/README.md",
@@ -904,9 +966,126 @@ EXPECTED_CATALOG = (
         "projects/banking_ai_lab/README.md",
         "projects/banking_ai_lab",
     ),
+    item(
+        "ml-training-bridge",
+        "lesson",
+        "modules/04_machine_learning/07_training_bridge/README.md",
+        "modules/04_machine_learning/07_training_bridge/test_bridge.py",
+    ),
+    item(
+        "ml-knn-mechanics",
+        "exercise",
+        "modules/04_machine_learning/exercises/knn_mechanics/README.md",
+        "modules/04_machine_learning/exercises/knn_mechanics/test_starter.py",
+        "modules/04_machine_learning/exercises/knn_mechanics/test_example.py",
+    ),
+    item(
+        "ml-tabular-study",
+        "exercise",
+        "modules/04_machine_learning/exercises/tabular_study/README.md",
+        "modules/04_machine_learning/exercises/tabular_study/test_starter.py",
+        "modules/04_machine_learning/exercises/tabular_study/test_example.py",
+        "modules/04_machine_learning/exercises/tabular_study/test_evidence.py",
+    ),
+    item(
+        "lab-pytorch",
+        "lab",
+        "labs/01_pytorch_foundations/README.md",
+        "labs/01_pytorch_foundations/test_example.py",
+        "labs/01_pytorch_foundations/test_starter.py",
+        "labs/01_pytorch_foundations/test_report.py",
+    ),
+    item(
+        "lab-training-resume",
+        "exercise",
+        "labs/01_pytorch_foundations/exercises/resume_training/README.md",
+        "labs/01_pytorch_foundations/exercises/resume_training/test_starter.py",
+        "labs/01_pytorch_foundations/exercises/resume_training/test_evidence.py",
+        "labs/01_pytorch_foundations/exercises/resume_training/test_smoke.py",
+    ),
+    item(
+        "lab-huggingface",
+        "lab",
+        "labs/02_huggingface_models/README.md",
+        "labs/02_huggingface_models/test_example.py",
+        "labs/02_huggingface_models/test_starter.py",
+        "labs/02_huggingface_models/test_protocol.py",
+    ),
+    item(
+        "lab-attention-mechanics",
+        "exercise",
+        "labs/02_huggingface_models/attention_mechanics/README.md",
+        "labs/02_huggingface_models/attention_mechanics/test_starter.py",
+        "labs/02_huggingface_models/attention_mechanics/test_example.py",
+    ),
+    item(
+        "lab-training-diagnostics",
+        "exercise",
+        "labs/01_pytorch_foundations/debugging/README.md",
+        "labs/01_pytorch_foundations/debugging/test_starter.py",
+        "labs/01_pytorch_foundations/debugging/test_cases.py",
+        "labs/01_pytorch_foundations/debugging/test_evidence.py",
+    ),
+    item(
+        "data-release-study",
+        "exercise",
+        "modules/03_data_foundations/exercises/data_release/README.md",
+        "modules/03_data_foundations/exercises/data_release/test_starter.py",
+        "modules/03_data_foundations/exercises/data_release/test_generate.py",
+        "modules/03_data_foundations/exercises/data_release/test_evidence.py",
+    ),
+    item(
+        "ml-evaluation-case",
+        "exercise",
+        "modules/04_machine_learning/exercises/evaluation_case/README.md",
+        "modules/04_machine_learning/exercises/evaluation_case/test_starter.py",
+        "modules/04_machine_learning/exercises/evaluation_case/test_case.py",
+        "modules/04_machine_learning/exercises/evaluation_case/test_evidence.py",
+        "tests/tooling/test_open_control_evidence.py",
+    ),
+    item(
+        "production-product-study",
+        "exercise",
+        "modules/08_production_ai/exercises/product_study/README.md",
+        "modules/08_production_ai/exercises/product_study/test_starter.py",
+        "modules/08_production_ai/exercises/product_study/test_evidence.py",
+        "tests/tooling/test_open_control_evidence.py",
+    ),
+    item(
+        "rag-ranking-study",
+        "exercise",
+        "modules/06_rag/exercises/ranking_study/README.md",
+        "modules/06_rag/exercises/ranking_study/test_starter.py",
+        "modules/06_rag/exercises/ranking_study/test_evidence.py",
+    ),
+    item(
+        "ml-forecasting-intro",
+        "exercise",
+        "modules/04_machine_learning/exercises/forecasting_intro/README.md",
+        "modules/04_machine_learning/exercises/forecasting_intro/test_starter.py",
+        "modules/04_machine_learning/exercises/forecasting_intro/test_example.py",
+        "modules/04_machine_learning/exercises/forecasting_intro/test_evidence.py",
+    ),
+    item(
+        "python-interview-patterns",
+        "exercise",
+        "modules/01_python_core/exercises/interview_patterns/README.md",
+        "modules/01_python_core/exercises/interview_patterns/test_starter.py",
+        "modules/01_python_core/exercises/interview_patterns/test_instrumentation.py",
+    ),
+    item(
+        "backend-analytics-sql",
+        "exercise",
+        "modules/02_python_backend/exercises/analytics_sql/README.md",
+        "modules/02_python_backend/exercises/analytics_sql/test_starter.py",
+        "modules/02_python_backend/exercises/analytics_sql/test_queries.py",
+    ),
 )
 
 LESSON_IDS = tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind == "lesson")
+PROGRESS_IDS = tuple(
+    entry.identifier for entry in EXPECTED_CATALOG if entry.kind in {"lesson", "lab"}
+)
 FIRST_SPRINT_IDS = (
     "python-detect-duplicates",
     "python-group-by-user",
@@ -957,12 +1136,12 @@ def test_catalog_is_the_complete_ordered_roadmap() -> None:
     assert tuple(item.kind for item in catalog.items) == tuple(
         entry.kind for entry in EXPECTED_CATALOG
     )
-    assert len(catalog.items) == 145
-    assert len(LESSON_IDS) == 56
+    assert len(catalog.items) == 162
+    assert len(LESSON_IDS) == 57
     assert len(FIRST_SPRINT_IDS) == 15
     assert len(LATER_PYTHON_PRACTICE_IDS) == 6
-    assert len(BACKEND_EXERCISE_IDS) == 11
-    assert len(DATA_EXERCISE_IDS) == 13
+    assert len(BACKEND_EXERCISE_IDS) == 12
+    assert len(DATA_EXERCISE_IDS) == 16
     assert tuple(item.identifier for item in catalog.items if item.kind == "project") == (
         "banking-ai-lab",
     )
@@ -1019,7 +1198,7 @@ def test_progress_and_status_cover_every_lesson_in_roadmap_order() -> None:
         for line in (REPOSITORY_ROOT / "progress.md").read_text(encoding="utf-8").splitlines()
         if line.startswith(("- [ ] ", "- [~] ", "- [x] "))
     )
-    assert progress_entries == LESSON_IDS
+    assert progress_entries == PROGRESS_IDS
 
     result = subprocess.run(
         [sys.executable, "scripts/learn.py", "status"],
@@ -1030,4 +1209,4 @@ def test_progress_and_status_cover_every_lesson_in_roadmap_order() -> None:
     )
 
     assert result.returncode == 0, result.stderr
-    assert tuple(line[4:] for line in result.stdout.splitlines()) == LESSON_IDS
+    assert tuple(line[4:] for line in result.stdout.splitlines()) == PROGRESS_IDS

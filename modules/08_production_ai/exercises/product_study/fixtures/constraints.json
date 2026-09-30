@@ -1,0 +1,15 @@
+{
+  "catalog": [
+    {"id":"catalog","description":"Поиск библиотечных изданий","roles":["visitor","reader","staff"]},
+    {"id":"loans","description":"Выдача, возврат и продление","roles":["reader","staff"]},
+    {"id":"accounts","description":"Помощь с личным кабинетом","roles":["reader","staff"]},
+    {"id":"acquisitions","description":"Внутренние заявки на закупку","roles":["staff"]}
+  ],
+  "fallback": null,
+  "execution": "offline CPU",
+  "network_allowed": false,
+  "max_cost_units_total": 100,
+  "max_latency_ms_per_request": 1000,
+  "cost_definition": "1 unit = one catalog entry examined; count every examination, including repeated ones",
+  "timing_definition": "elapsed wall-clock milliseconds for request routing, including per-request preprocessing; report startup separately"
+}

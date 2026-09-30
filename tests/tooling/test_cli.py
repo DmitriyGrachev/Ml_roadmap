@@ -132,6 +132,19 @@ def test_preserves_pytest_exit_code(tmp_path: Path) -> None:
     assert exit_code == 5
 
 
+def test_validate_env_suggests_base_install_without_training_group(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
+) -> None:
+    monkeypatch.setattr("roadmap_tools.cli.shutil.which", lambda command: None)
+
+    exit_code = _main(["validate-env"], tmp_path, unexpected_runner)
+
+    assert exit_code == 1
+    output = capsys.readouterr().out
+    assert "uv sync --locked" in output
+    assert "all-groups" not in output
+
+
 def test_rejects_escaping_catalog_path_without_running_tests(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:

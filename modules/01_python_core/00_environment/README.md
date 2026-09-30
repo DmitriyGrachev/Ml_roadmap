@@ -10,7 +10,7 @@ Think Maven wrapper plus a selected SDK. Unlike Maven, `uv` manages both Python 
 
 ## Python model
 
-Use `uv sync --all-groups` once, then run tools through `uv run` so every command uses the project environment.
+Use `uv sync --locked` once, then run tools through `uv run` so every command uses the lightweight project environment. Model libraries are an optional later step in the [training environment guide](../../../docs/compute-guide.md).
 
 ## Key concepts
 

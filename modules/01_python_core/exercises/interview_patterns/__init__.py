@@ -1,0 +1,1 @@
+"""Compact Python interview variations."""

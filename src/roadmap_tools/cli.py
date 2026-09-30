@@ -8,13 +8,14 @@ import shutil
 import subprocess
 import sys
 from collections.abc import Callable, Sequence
+from importlib import metadata
 from pathlib import Path
 
 from roadmap_tools.catalog import Catalog, CatalogError
 
 ProcessRunner = Callable[[Sequence[str]], int]
 _PROGRESS_ENTRY = re.compile(r"^- \[([ ~x])\] (.+)$")
-_CORRECTIVE_COMMAND = "uv sync --all-groups"
+_CORRECTIVE_COMMAND = "uv sync --locked"
 
 
 def main(argv: Sequence[str] | None = None, repository_root: Path | None = None) -> int:
@@ -43,7 +44,9 @@ def _main(argv: Sequence[str], repository_root: Path, run_process: ProcessRunner
         return _list_items(catalog)
     if arguments.command == "status":
         return _show_status(root)
-    return _run_item_tests(catalog, arguments.identifier, run_process)
+    return _run_item_tests(
+        catalog, arguments.identifier, run_process, strict=arguments.command == "check"
+    )
 
 
 def _build_parser() -> argparse.ArgumentParser:
@@ -54,6 +57,8 @@ def _build_parser() -> argparse.ArgumentParser:
     subcommands.add_parser("status", help="show checklist entries from progress.md")
     test_parser = subcommands.add_parser("test", help="run tests for a curriculum item")
     test_parser.add_argument("identifier")
+    check_parser = subcommands.add_parser("check", help="strictly check a curriculum item")
+    check_parser.add_argument("identifier")
     return parser
 
 
@@ -100,7 +105,9 @@ def _show_status(repository_root: Path) -> int:
     return 0
 
 
-def _run_item_tests(catalog: Catalog, identifier: str, run_process: ProcessRunner) -> int:
+def _run_item_tests(
+    catalog: Catalog, identifier: str, run_process: ProcessRunner, *, strict: bool = False
+) -> int:
     try:
         item = catalog.get(identifier)
     except CatalogError:
@@ -111,7 +118,17 @@ def _run_item_tests(catalog: Catalog, identifier: str, run_process: ProcessRunne
         print(message)
         return 2
 
-    command = [sys.executable, "-m", "pytest", *(str(path) for path in item.tests)]
+    if strict and item.requires_training:
+        try:
+            metadata.version("torch")
+        except metadata.PackageNotFoundError:
+            print("Training dependency torch is unavailable. Run: uv sync --group training")
+            return 2
+
+    command = [sys.executable, "-m", "pytest"]
+    if strict:
+        command.extend(["-p", "roadmap_tools.strict_check"])
+    command.extend(str(path) for path in item.tests)
     return run_process(command)
 
 

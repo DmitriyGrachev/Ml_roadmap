@@ -7,10 +7,10 @@ Install Python 3.12 or newer and `uv` on Windows. Open PowerShell in the reposit
 ## 2. Create the shared environment
 
 ```powershell
-uv sync --all-groups
+uv sync --locked
 ```
 
-This creates the one repository environment at `.venv`. Do not create a second environment per module.
+This creates the base repository environment at `.venv`. No per-module environment is needed.
 After updating the course, run the same command again: Module 04 uses scikit-learn, included in
 the shared dependency lock. Module 05 uses offline provider doubles and needs no API key,
 model download, or paid account.
@@ -51,3 +51,12 @@ uv run mypy
 ```
 
 Return to the [repository overview](../README.md) for the workflow and roadmap.
+
+## Первая модельная волна
+
+После необходимых Python/data уроков откройте [мост](../modules/04_machine_learning/07_training_bridge/README.md).
+Для двух labs явно установите `uv sync --locked --group training` и используйте
+`uv run --group training ...`. В группе только необходимые CPU PyTorch/HF packages;
+обычный `uv sync` без них. Старое `--all-groups` теперь включает и training.
+Веса и датасеты эта установка не загружает. Полные команды и ограничения —
+в [compute guide](compute-guide.md). Существующие модели упражнений не решены за вас.

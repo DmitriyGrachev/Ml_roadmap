@@ -30,6 +30,7 @@ after the design and decision threshold are frozen. A seed is one part of reprod
 | [04 Models](04_models/README.md) | Is extra complexity justified? | [Validation model comparison](04_models/exercises/model_comparison/README.md) |
 | [05 Evaluation](05_evaluation/README.md) | Where and how does the model fail? | Error-slice interpretation, then evaluation report |
 | [06 Reproducibility](06_reproducibility/README.md) | Can another person reproduce and trust the result? | [Reproducible evaluation report](06_reproducibility/exercises/evaluation_report/README.md) |
+| [07 Мост к обучению](07_training_bridge/README.md) | Как loss и градиент связывают NumPy с autograd? | Один векторный шаг; затем [PyTorch lab](../../labs/01_pytorch_foundations/README.md) |
 
 ## Example
 
@@ -69,5 +70,6 @@ Additional practice after the related lessons:
 
 ## Done when
 
-You can run all six examples, complete the seven exercises, justify a baseline and split,
-explain an error slice, and hand another person a versioned report with data provenance.
+You can run the six original examples and the training-bridge example, complete the seven
+original exercises plus the bridge task, justify a baseline and split, explain an error slice,
+and hand another person a versioned report with data provenance.

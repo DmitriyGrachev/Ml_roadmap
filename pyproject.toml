@@ -23,6 +23,11 @@ dependencies = [
 ]
 
 [dependency-groups]
+training = [
+    "torch==2.14.0",
+    "transformers==5.17.0",
+    "datasets==5.0.1",
+]
 dev = [
     "pytest",
     "pytest-asyncio",
@@ -38,13 +43,26 @@ dev = [
 [tool.uv.build-backend]
 module-name = "roadmap_tools"
 
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.uv.sources]
+torch = { index = "pytorch-cpu" }
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
 [tool.pytest.ini_options]
 addopts = ["--import-mode=importlib"]
-testpaths = ["tests", "modules", "projects"]
+testpaths = ["tests", "modules", "projects", "labs"]
 xfail_strict = true
 markers = [
     "student_exercise: marks a student starter exercise as expected incomplete",
     "postgres: marks tests that require PostgreSQL",
+    "optional_live: explicit live experiment; not run by default",
+    "optional_gpu: optional device experiment; not required for CPU credit",
 ]
 
 [tool.ruff]

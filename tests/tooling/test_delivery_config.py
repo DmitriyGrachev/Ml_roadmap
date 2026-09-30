@@ -34,6 +34,31 @@ def test_docker_build_context_excludes_local_and_secret_files() -> None:
     }
 
     assert {".git", ".venv", ".env", ".idea", "**/__pycache__", "*.db"} <= patterns
+    assert {
+        ".venv-training",
+        ".model-cache",
+        ".cache/roadmap-huggingface",
+        "artifacts",
+        "*.safetensors",
+        "*.pt",
+        "*.pth",
+    } <= patterns
+
+
+def test_training_stack_is_opt_in_and_minimal() -> None:
+    with (REPOSITORY_ROOT / "pyproject.toml").open("rb") as project_file:
+        project = tomllib.load(project_file)
+
+    groups = project["dependency-groups"]
+    assert set(project["tool"]["uv"]["default-groups"]) == {"dev"}
+    assert {requirement.split("==")[0] for requirement in groups["training"]} == {
+        "torch",
+        "transformers",
+        "datasets",
+    }
+    base = project["project"]["dependencies"] + groups["dev"]
+    heavy = ("torch", "transformers", "datasets", "mlflow", "peft", "vllm")
+    assert not any(requirement.startswith(heavy) for requirement in base)
 
 
 def test_compose_example_binds_postgres_only_to_loopback() -> None:

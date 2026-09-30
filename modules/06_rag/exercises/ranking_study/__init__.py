@@ -1,0 +1,1 @@
+"""Compact offline ranking study."""

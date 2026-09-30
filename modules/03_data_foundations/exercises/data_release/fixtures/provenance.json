@@ -1,0 +1,10 @@
+{
+  "origin": "handwritten local synthetic teaching fixture; no external or personal data",
+  "license": "CC0-1.0",
+  "records": 8,
+  "sources": {
+    "source_a.csv": "ca46a0d7ffd9c6bac71e0810aa41f2c2d244f29b13d94d0d3b7235a1be1e6a5f",
+    "source_b.jsonl": "ab4f54a4a8ad64f9bec5b79b19f2e6122c0356a2cbba6e253a8d945919686e45",
+    "labels.csv": "8437acece1211d5b55a1ebf7267c73615f315a584f3c2713f9bd0665eec869c0"
+  }
+}

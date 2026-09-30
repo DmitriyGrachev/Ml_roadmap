@@ -2,6 +2,13 @@
 .gitignore
 .gitattributes
 .venv
+.venv-training
+.model-cache
+.cache/roadmap-huggingface
+artifacts
+*.safetensors
+*.pt
+*.pth
 .env
 .env.*
 !.env.example

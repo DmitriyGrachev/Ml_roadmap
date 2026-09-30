@@ -54,9 +54,33 @@ def test_load_returns_immutable_resolved_catalog_item(tmp_path: Path) -> None:
         kind="lesson",
         readme=(tmp_path / "modules/01_python_core/02_collections/README.md").resolve(),
         tests=((tmp_path / "modules/01_python_core/02_collections").resolve(),),
+        requires_training=False,
     )
     with pytest.raises(AttributeError):
         item.title = "Changed"  # type: ignore[misc]
+
+
+def test_load_accepts_lab_with_training_requirement(tmp_path: Path) -> None:
+    make_valid_module(tmp_path)
+    write_catalog(
+        tmp_path,
+        VALID_ITEM.replace('kind = "lesson"', 'kind = "lab"') + "requires_training = true\n",
+    )
+
+    item = Catalog.load(tmp_path).get("python-collections")
+
+    assert item.kind == "lab"
+    assert item.requires_training is True
+
+
+def test_load_rejects_non_boolean_training_requirement(tmp_path: Path) -> None:
+    make_valid_module(tmp_path)
+    write_catalog(tmp_path, VALID_ITEM + 'requires_training = "true"\n')
+
+    with pytest.raises(CatalogError) as raised:
+        Catalog.load(tmp_path)
+
+    assert raised.value.field == "requires_training"
 
 
 def test_items_preserves_toml_catalog_order(tmp_path: Path) -> None:

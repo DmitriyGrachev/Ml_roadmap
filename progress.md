@@ -83,3 +83,9 @@ Passing template checks does not complete lessons or the student-owned exercises
 - [ ] production-resilience
 - [ ] production-privacy
 - [ ] production-rollout
+
+## Первая модельная волна — самостоятельное прохождение
+
+- [ ] ml-training-bridge
+- [ ] lab-pytorch
+- [ ] lab-huggingface

@@ -44,6 +44,7 @@ STARTER_PATHS = (
     "05_async_endpoints/exercises/provider_fanout/starter.py",
     "06_sqlalchemy/exercises/transaction_repository/starter.py",
     "07_postgresql/exercises/postgres_query/starter.py",
+    "exercises/analytics_sql/starter.py",
     "exercises/conditional_cache/starter.py",
     "exercises/equipment_repository/starter.py",
     "exercises/library_search/starter.py",

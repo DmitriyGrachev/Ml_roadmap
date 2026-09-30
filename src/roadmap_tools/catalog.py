@@ -10,8 +10,8 @@ from pathlib import Path, PureWindowsPath
 from types import MappingProxyType
 from typing import Literal, cast
 
-CatalogKind = Literal["lesson", "exercise", "project"]
-_CATALOG_KINDS: frozenset[str] = frozenset({"lesson", "exercise", "project"})
+CatalogKind = Literal["lesson", "exercise", "project", "lab"]
+_CATALOG_KINDS: frozenset[str] = frozenset({"lesson", "exercise", "project", "lab"})
 
 
 class CatalogError(ValueError):
@@ -32,6 +32,7 @@ class CatalogItem:
     kind: CatalogKind
     readme: Path
     tests: tuple[Path, ...]
+    requires_training: bool = False
 
 
 @dataclass(frozen=True)
@@ -101,6 +102,9 @@ def _parse_item(record: object, repository_root: Path) -> CatalogItem:
     readme_value = _required_string(record, "readme", identifier)
     readme = _resolve_path(repository_root, identifier, "readme", readme_value)
     tests = _parse_tests(record, repository_root, identifier)
+    requires_training = record.get("requires_training", False)
+    if not isinstance(requires_training, bool):
+        raise CatalogError(identifier, "requires_training", "expected a boolean")
 
     return CatalogItem(
         identifier=identifier,
@@ -108,6 +112,7 @@ def _parse_item(record: object, repository_root: Path) -> CatalogItem:
         kind=cast(CatalogKind, kind),
         readme=readme,
         tests=tests,
+        requires_training=requires_training,
     )
 
 

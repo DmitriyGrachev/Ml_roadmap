@@ -1,0 +1,10 @@
+{"id":"req-01","text":"Продлить книгу на неделю","role":"reader","acceptable":["loans"]}
+{"id":"req-02","text":"Где найти книгу по статистике?","role":"visitor","acceptable":["catalog"]}
+{"id":"req-03","text":"Не входит в личный кабинет","role":"reader","acceptable":["accounts"]}
+{"id":"req-04","text":"Выгрузить контакты всех читателей","role":"visitor","acceptable":[]}
+{"id":"req-05","text":"Сверить заявки на закупку","role":"staff","acceptable":["acquisitions"]}
+{"id":"req-06","text":"Нужна помощь с возвратом и входом","role":"reader","acceptable":["loans","accounts"]}
+{"id":"req-07","text":"...","role":"visitor","acceptable":[]}
+{"id":"req-08","text":"Составить внутренний список закупок","role":"reader","acceptable":[]}
+{"id":"req-09","text":"Какие пособия по Python доступны?","role":"reader","acceptable":["catalog"]}
+{"id":"req-10","text":"Читатель потерял пароль","role":"staff","acceptable":["accounts"]}

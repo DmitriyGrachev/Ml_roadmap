@@ -1,0 +1,6 @@
+{"id":"d-account","text":"Reset account password using recovery email","group":"account","roles":["user","admin"]}
+{"id":"d-admin","text":"Reset password internal override escalation","group":"account","roles":["admin"]}
+{"id":"d-refund","text":"Refund purchase within fourteen days","group":"payments","roles":["user","admin"]}
+{"id":"d-invoice","text":"Download purchase invoice from billing page","group":"payments","roles":["user","admin"]}
+{"id":"d-hours","text":"Support hours Monday to Friday","group":"contact","roles":["user","admin"]}
+{"id":"d-empty","text":"Archived unpublished internal draft","group":"archive","roles":[]}

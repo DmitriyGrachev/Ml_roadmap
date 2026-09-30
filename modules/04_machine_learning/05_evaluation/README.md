@@ -43,6 +43,8 @@ the later classification report without implementing its calculations.
 Explain which route needs more investigation in the example, then implement the
 [evaluation report](../06_reproducibility/exercises/evaluation_report/README.md) after
 the reproducibility lesson. Keep the threshold explicit in every comparison.
+Для самостоятельной проверки calibration, FP/FN slices и повторного inference пройдите
+[табличное исследование](../exercises/tabular_study/README.md) после его prerequisites.
 
 ## Self-check
 

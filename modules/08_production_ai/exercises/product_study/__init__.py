@@ -1,0 +1,1 @@
+"""Open product control."""

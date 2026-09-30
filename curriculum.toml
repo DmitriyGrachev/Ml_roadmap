@@ -522,6 +522,27 @@ readme = "modules/03_data_foundations/exercises/paired_observations/README.md"
 tests = ["modules/03_data_foundations/exercises/paired_observations/test_starter.py"]
 
 [[items]]
+id = "data-paired-model-comparison"
+title = "Compare paired model losses"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/paired_model_comparison/README.md"
+tests = [
+    "modules/03_data_foundations/exercises/paired_model_comparison/test_starter.py",
+    "modules/03_data_foundations/exercises/paired_model_comparison/test_evidence.py",
+    "modules/03_data_foundations/exercises/paired_model_comparison/test_example.py",
+]
+
+[[items]]
+id = "data-randomized-experiment"
+title = "Aggregate randomized experiment units"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/randomized_experiment/README.md"
+tests = [
+    "modules/03_data_foundations/exercises/randomized_experiment/test_starter.py",
+    "modules/03_data_foundations/exercises/randomized_experiment/test_example.py",
+]
+
+[[items]]
 id = "ml-problem-framing"
 title = "Problem framing and baselines"
 kind = "lesson"
@@ -1009,3 +1030,157 @@ title = "Banking AI Lab"
 kind = "project"
 readme = "projects/banking_ai_lab/README.md"
 tests = ["projects/banking_ai_lab"]
+
+[[items]]
+id = "ml-training-bridge"
+title = "От NumPy к обучению модели"
+kind = "lesson"
+readme = "modules/04_machine_learning/07_training_bridge/README.md"
+tests = ["modules/04_machine_learning/07_training_bridge/test_bridge.py"]
+
+[[items]]
+id = "ml-knn-mechanics"
+title = "Геометрия расстояний и ручной kNN"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/knn_mechanics/README.md"
+tests = [
+    "modules/04_machine_learning/exercises/knn_mechanics/test_starter.py",
+    "modules/04_machine_learning/exercises/knn_mechanics/test_example.py",
+]
+
+[[items]]
+id = "ml-tabular-study"
+title = "Самостоятельное табличное исследование"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/tabular_study/README.md"
+tests = [
+    "modules/04_machine_learning/exercises/tabular_study/test_starter.py",
+    "modules/04_machine_learning/exercises/tabular_study/test_example.py",
+    "modules/04_machine_learning/exercises/tabular_study/test_evidence.py",
+]
+
+[[items]]
+id = "lab-pytorch"
+title = "Лабораторная 01 — основы PyTorch"
+kind = "lab"
+readme = "labs/01_pytorch_foundations/README.md"
+tests = ["labs/01_pytorch_foundations/test_example.py", "labs/01_pytorch_foundations/test_starter.py", "labs/01_pytorch_foundations/test_report.py"]
+requires_training = true
+
+[[items]]
+id = "lab-training-resume"
+title = "Продолжение той же траектории обучения"
+kind = "exercise"
+readme = "labs/01_pytorch_foundations/exercises/resume_training/README.md"
+tests = [
+    "labs/01_pytorch_foundations/exercises/resume_training/test_starter.py",
+    "labs/01_pytorch_foundations/exercises/resume_training/test_evidence.py",
+    "labs/01_pytorch_foundations/exercises/resume_training/test_smoke.py",
+]
+requires_training = true
+
+[[items]]
+id = "lab-huggingface"
+title = "Лабораторная 02 — модели Hugging Face"
+kind = "lab"
+readme = "labs/02_huggingface_models/README.md"
+tests = ["labs/02_huggingface_models/test_example.py", "labs/02_huggingface_models/test_starter.py", "labs/02_huggingface_models/test_protocol.py"]
+requires_training = true
+
+[[items]]
+id = "lab-attention-mechanics"
+title = "Механика attention: маски и градиенты"
+kind = "exercise"
+readme = "labs/02_huggingface_models/attention_mechanics/README.md"
+tests = [
+    "labs/02_huggingface_models/attention_mechanics/test_starter.py",
+    "labs/02_huggingface_models/attention_mechanics/test_example.py",
+]
+requires_training = true
+
+[[items]]
+id = "lab-training-diagnostics"
+title = "Контроль №3 — расследование обучения"
+kind = "exercise"
+readme = "labs/01_pytorch_foundations/debugging/README.md"
+tests = [
+    "labs/01_pytorch_foundations/debugging/test_starter.py",
+    "labs/01_pytorch_foundations/debugging/test_cases.py",
+    "labs/01_pytorch_foundations/debugging/test_evidence.py",
+]
+requires_training = true
+
+[[items]]
+id = "data-release-study"
+title = "Неудобные данные: контроль выпуска"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/data_release/README.md"
+tests = [
+    "modules/03_data_foundations/exercises/data_release/test_starter.py",
+    "modules/03_data_foundations/exercises/data_release/test_generate.py",
+    "modules/03_data_foundations/exercises/data_release/test_evidence.py",
+]
+
+[[items]]
+id = "ml-evaluation-case"
+title = "Контроль: надёжность оценки"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/evaluation_case/README.md"
+tests = [
+    "modules/04_machine_learning/exercises/evaluation_case/test_starter.py",
+    "modules/04_machine_learning/exercises/evaluation_case/test_case.py",
+    "modules/04_machine_learning/exercises/evaluation_case/test_evidence.py",
+    "tests/tooling/test_open_control_evidence.py",
+]
+
+[[items]]
+id = "production-product-study"
+title = "Контроль: выбор продуктового решения"
+kind = "exercise"
+readme = "modules/08_production_ai/exercises/product_study/README.md"
+tests = [
+    "modules/08_production_ai/exercises/product_study/test_starter.py",
+    "modules/08_production_ai/exercises/product_study/test_evidence.py",
+    "tests/tooling/test_open_control_evidence.py",
+]
+
+[[items]]
+id = "rag-ranking-study"
+title = "Компактное исследование ранжирования"
+kind = "exercise"
+readme = "modules/06_rag/exercises/ranking_study/README.md"
+tests = [
+    "modules/06_rag/exercises/ranking_study/test_starter.py",
+    "modules/06_rag/exercises/ranking_study/test_evidence.py",
+]
+
+[[items]]
+id = "ml-forecasting-intro"
+title = "Введение в прогноз на один день"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/forecasting_intro/README.md"
+tests = [
+    "modules/04_machine_learning/exercises/forecasting_intro/test_starter.py",
+    "modules/04_machine_learning/exercises/forecasting_intro/test_example.py",
+    "modules/04_machine_learning/exercises/forecasting_intro/test_evidence.py",
+]
+
+[[items]]
+id = "python-interview-patterns"
+title = "Компактные Python-вариации для интервью"
+kind = "exercise"
+readme = "modules/01_python_core/exercises/interview_patterns/README.md"
+tests = [
+    "modules/01_python_core/exercises/interview_patterns/test_starter.py",
+    "modules/01_python_core/exercises/interview_patterns/test_instrumentation.py",
+]
+
+[[items]]
+id = "backend-analytics-sql"
+title = "Аналитический SQL на событиях и поддержке"
+kind = "exercise"
+readme = "modules/02_python_backend/exercises/analytics_sql/README.md"
+tests = [
+    "modules/02_python_backend/exercises/analytics_sql/test_starter.py",
+    "modules/02_python_backend/exercises/analytics_sql/test_queries.py",
+]

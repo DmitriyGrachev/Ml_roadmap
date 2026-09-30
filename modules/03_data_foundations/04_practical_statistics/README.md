@@ -24,6 +24,8 @@ Mean, median, population variance, standard deviation, percentiles, distribution
 
 Later exercises use their own payment-alert inputs for a statistical profile and Bayes calculation; this lesson supplies mechanics, not answers.
 
+Продолжение: [парное сравнение потерь моделей](../exercises/paired_model_comparison/README.md) и [рандомизированный A/A–A/B пример](../exercises/randomized_experiment/README.md).
+
 ## Self-check
 
 1. Why can median be more robust than mean?

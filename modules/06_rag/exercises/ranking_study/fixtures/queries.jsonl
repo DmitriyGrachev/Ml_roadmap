@@ -1,0 +1,6 @@
+{"id":"q-reset","text":"reset password","group":"account-help","roles":["user"]}
+{"id":"q-recover","text":"recover account password","group":"account-help","roles":["user"]}
+{"id":"q-return","text":"refund my purchase","group":"purchase-help","roles":["user"]}
+{"id":"q-bill","text":"purchase invoice","group":"purchase-help","roles":["user"]}
+{"id":"q-hours","text":"when is support open","group":"contact-help","roles":["user"]}
+{"id":"q-contact","text":"contact support weekdays","group":"contact-help","roles":["user"]}

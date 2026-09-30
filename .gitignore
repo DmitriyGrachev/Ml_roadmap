@@ -17,3 +17,10 @@ reports/
 generated-reports/
 data/derived/
 derived-data/
+.venv-training/
+.model-cache/
+.cache/roadmap-huggingface/
+artifacts/
+*.safetensors
+*.pt
+*.pth

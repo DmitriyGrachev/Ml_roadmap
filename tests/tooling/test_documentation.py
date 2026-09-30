@@ -32,7 +32,7 @@ SHARED_DOCUMENTS = (
     REPOSITORY_ROOT / "docs" / "java-to-python-cheatsheet.md",
 )
 REQUIRED_COMMANDS = (
-    "uv sync --all-groups",
+    "uv sync --locked",
     "uv run python scripts/learn.py validate-env",
     "uv run python scripts/learn.py list",
     "uv run python scripts/learn.py status",
@@ -100,6 +100,9 @@ PLANNED_LESSON_IDS = (
     "production-resilience",
     "production-privacy",
     "production-rollout",
+    "ml-training-bridge",
+    "lab-pytorch",
+    "lab-huggingface",
 )
 FINAL_MODULES = (
     "06_rag",
@@ -119,7 +122,9 @@ REPOSITORY_STRUCTURE_PATHS = (
     "modules/06_rag/",
     "modules/07_agents/",
     "modules/08_production_ai/",
+    "labs/",
     "projects/banking_ai_lab/",
+    "projects/document_intelligence_lab/",
     "datasets/",
     "scripts/",
     "src/roadmap_tools/",
@@ -259,7 +264,8 @@ def test_final_modules_expose_complete_registered_lesson_sequences() -> None:
             for item in catalog.items
             if item.kind == "exercise" and item.readme.is_relative_to(module_root)
         ]
-        assert len(exercises) == 8, module
+        expected_exercises = 9 if module in {"06_rag", "08_production_ai"} else 8
+        assert len(exercises) == expected_exercises, module
         assert "The full lesson sequence is deferred." not in readme
 
 
