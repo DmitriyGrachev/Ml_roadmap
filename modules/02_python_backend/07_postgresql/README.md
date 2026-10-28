@@ -28,6 +28,10 @@ Read `ROADMAP_POSTGRES_URL` only for opt-in checks. Keep generic repository beha
 
 ## Example
 
+Перед PostgreSQL-специфичными проверками: [связный SQL-разбор с маленькими таблицами](sql_basics.md)
+→ [самостоятельный latest-valid запрос](../exercises/sql_foundations/README.md).
+Его offline SQLite tests не засчитывают PostgreSQL runtime.
+
 When no URL is configured, a PostgreSQL test should skip with `Set ROADMAP_POSTGRES_URL and run: docker compose up -d postgres`. Before running that exact command, use PowerShell from the repository root to copy the nested example with `Copy-Item modules/02_python_backend/09_docker_delivery/compose.example.yaml compose.yaml`. After the checks, run `docker compose down --volumes` and `Remove-Item compose.yaml`.
 
 ## Exercises

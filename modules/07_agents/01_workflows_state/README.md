@@ -1,5 +1,7 @@
 # Workflow state
 
+Подробное объяснение и G-01 trace: [теория 01](theory.md).
+
 ## Goal
 
 Represent a task as explicit state and legal transitions before introducing model-selected

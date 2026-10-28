@@ -1,5 +1,8 @@
 # 06 — SQLAlchemy 2.x models and sessions
 
+Подробный разбор: [сессия, flush, commit и rollback на настоящем SQLite](theory.md).
+[Демонстрация меток](walkthrough.py) показывает состояния отдельно от student repository.
+
 ## Goal
 
 Persist typed domain records with SQLAlchemy 2.x while treating a session as a bounded unit of work.

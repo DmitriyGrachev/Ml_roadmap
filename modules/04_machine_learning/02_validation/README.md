@@ -1,5 +1,7 @@
 # Validation that matches the prediction setting
 
+Начните с [разобранной теории validation](theory.md), затем запустите пример и переходите к упражнению.
+
 ## Goal
 
 Separate model fitting, design decisions and the final estimate of generalization.

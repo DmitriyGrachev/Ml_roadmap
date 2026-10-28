@@ -65,3 +65,16 @@ uv run pytest modules/03_data_foundations/exercises/weather_quality -q -rx
 
 Behavioral tests are expected incomplete (`xfail`) until implemented. Completion
 means all behavioral tests pass without expected-incomplete results.
+
+## Дополнительная практика EDA — ручная проверка
+
+После урока о качестве данных и EDA перейдите к отдельному
+[практикуму по погодным наблюдениям](eda_practice.md) с вымышленным локальным
+набором данных. Та же схема `station`, `day`, `temperature_c`, `rainfall_mm`
+используется для четырёх графиков. Для каждого вопроса потребуется объяснить,
+какие строки подходят и что график позволяет и не позволяет заключить.
+
+Существующий check `data-weather-quality` проверяет только контракт функции
+`summarize_weather`, описанный выше. Код EDA, рисунки, решения о качестве
+данных и их интерпретация проверяются человеком по списку в практикуме.
+Это не дополнительные автоматические критерии данного упражнения.

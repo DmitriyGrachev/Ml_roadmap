@@ -1,0 +1,22 @@
+# 05. Минимум данных и достаточное расследование
+
+Практический вопрос: после неизвестного результата reminder хочется сохранить «всё» — полный запрос, ответ, checkpoint и текст справочника. Какие данные действительно нужны для диагноза? Перед чтением [операционного JSON](../walkthrough.py) предскажите, встретятся ли там `approval_target` или `pickup_at`.
+
+**Интуиция.** Как в обычном backend, application principal и права определяет сервис, а не текст запроса. У AI появляются ещё границы: вход в модель, retrieved source, tool result, trace и потенциально чужое хранилище telemetry. **Schema** описывает форму данных; **visibility** источника и **read permission** текущего principal — отдельные решения. Источник или модель могут вернуть грамматически правильную инструкцию, но это не выдаёт право выполнить её. См. [Agent tools and permissions](../../07_agents/02_tools_permissions/theory.md) и [RAG access boundary](../../06_rag/05_grounded_answers/theory.md).
+
+**Разобранный сценарий.** Module 07 trace содержит точные аргументы локального proposal и JSON checkpoint для resume. Их сохраняют в teacher A output по отдельному заданию, но [Part B](../walkthrough.py) экспортирует только `run_id`, release ID, outcome, steps, attempts, simulated latency и счётчики видов событий. Там нет текста ответа, tool arguments, approval digest, checkpoint или скрытой цепочки рассуждений. Это **redacted event** для агрегирования, не доказательство отсутствия всех чувствительных значений: даже разрешённое поле `run_id` в реальном продукте может быть коррелируемым. Доступ к checkpoint с параметрами действия нужен существенно уже, чем к агрегированным metrics; хранение и удаление этих двух классов нельзя считать одинаковыми.
+
+| Граница | Минимально нужное здесь | Отдельная проверка |
+| --- | --- | --- |
+| Public guide → ответ | Публичный G-01 revision/source ID | Право чтения *до* передачи текста модели |
+| Authenticated user → tool | Проверенный principal и конкретная операция | Schema, допустимые значения, scope, approval на те же аргументы |
+| Workflow → event/log | Run/release ID, outcome code, counters | Redaction, доступ, срок хранения, cardinality |
+| Resume storage | Версия и безопасное состояние с точным approval target | Подлинное происхождение, минимизация и ограниченный read access |
+
+Существующий [privacy example](example.py) использует доверенные fixture principals и проверяет tenant/scope до чтения музейной записи; настоящую аутентификацию он не реализует. [Redact events](exercises/redact_events/README.md), ID `production-redact-events`, оставляет реализацию схемы логов ученику. [Retention policy](../exercises/retention_policy/README.md), ID `production-retention-policy`, отдельно разбирает сроки и hold; это не юридическое заключение. При удалении исходного текста проверяйте также caches, индексы и производные события. Raw prompt, секреты, полные исключения и скрытые reasoning logs не нужны для наших метрик. Telemetry exporters тоже проверяют на утечки, даже если собственный `print` чист.
+
+Операционный сигнал не всегда является сигналом качества. Если распределение входов изменилось (**input drift**), сначала проверьте состав запросов, версии preprocessing/source и правила сбора. Если изменилась схема, проверьте долю отклонённых входов и совместимость версии; это может объяснить рост технических ошибок без изменения модели. Если пришли запоздалые labels, соедините их с исходными request/release, оцените coverage и selection bias, затем сравните качество на сопоставимых группах. Сам по себе drift не доказывает падение качества и не повод автоматически переобучать по одной синтетической точке.
+
+Типичная ошибка — считать allowlist полей гарантией приватности или принять текст retrieved page как новую политику разрешений. Самостоятельная вариация: после подтверждения в checkpoint поменяли `pickup_at`; какие данные надо проверить, прежде чем исполнить действие, и какую минимальную запись сохранить о блокировке? Ученик предлагает проверку и доступ, а не заполняет наш JSON.
+
+Источники: OpenTelemetry, [Handling sensitive data](https://opentelemetry.io/docs/security/handling-sensitive-data/), англ., о полях telemetry и очистке; Google ML Crash Course, [Monitoring pipelines](https://developers.google.com/machine-learning/crash-course/production-ml-systems/monitoring), англ., о наблюдении за входами и качеством. Оба источника применяются к проектному решению; локальный fixture не подтверждает защищённость внешнего сервиса.

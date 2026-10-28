@@ -1,5 +1,7 @@
 # Module 05 — LLM Engineering
 
+Начните с [теоретического маршрута и преподавательской трассы](01_llm_interfaces/theory.md), затем читайте теорию рядом с каждым уроком. Это сопровождает прежние упражнения, не меняя их контрактов.
+
 ## Goal
 
 Build the application layer around a language model: explicit requests, validated outputs,
@@ -27,12 +29,12 @@ orchestration are reserved for later modules.
 
 | Lesson | Practical outcome | Medium practice |
 | --- | --- | --- |
-| [01 — Interfaces](01_llm_interfaces/README.md) | Swap a deterministic fake behind a typed provider boundary | Apply the interface in lesson 06 |
-| [02 — Prompt contracts](02_prompt_contracts/README.md) | Keep task instructions separate from quoted reference data | [Library reference messages](02_prompt_contracts/exercises/prompt_messages/README.md) |
-| [03 — Structured outputs](03_structured_outputs/README.md) | Separate schema checks from semantic and evidence checks | [Museum event contract](03_structured_outputs/exercises/event_contract/README.md) |
-| [04 — Context and cost](04_context_and_cost/README.md) | Reserve output capacity and compute supplied-rate estimates | [Nature-guide context budget](04_context_and_cost/exercises/context_budget/README.md) |
-| [05 — Evaluation](05_evaluation/README.md) | Evaluate answer and refusal slices alongside latency and cost | [Library answer evaluation](05_evaluation/exercises/answer_evaluation/README.md) |
-| [06 — Reliability and tools](06_reliability_and_tools/README.md) | Bound retries and validate permission before a tool read | [Bounded provider retries](06_reliability_and_tools/exercises/bounded_retry/README.md) |
+| [01 — Interfaces](01_llm_interfaces/README.md) · [теория](01_llm_interfaces/theory.md) | Swap a deterministic fake behind a typed provider boundary | Apply the interface in lesson 06 |
+| [02 — Prompt contracts](02_prompt_contracts/README.md) · [теория](02_prompt_contracts/theory.md) | Keep task instructions separate from quoted reference data | [Library reference messages](02_prompt_contracts/exercises/prompt_messages/README.md) |
+| [03 — Structured outputs](03_structured_outputs/README.md) · [теория](03_structured_outputs/theory.md) | Separate schema checks from semantic and evidence checks | [Museum event contract](03_structured_outputs/exercises/event_contract/README.md) |
+| [04 — Context and cost](04_context_and_cost/README.md) · [теория](04_context_and_cost/theory.md) | Reserve output capacity and compute supplied-rate estimates | [Nature-guide context budget](04_context_and_cost/exercises/context_budget/README.md) |
+| [05 — Evaluation](05_evaluation/README.md) · [теория](05_evaluation/theory.md) | Evaluate answer and refusal slices alongside latency and cost | [Library answer evaluation](05_evaluation/exercises/answer_evaluation/README.md) |
+| [06 — Reliability and tools](06_reliability_and_tools/README.md) · [теория](06_reliability_and_tools/theory.md) | Bound retries and validate permission before a tool read | [Bounded provider retries](06_reliability_and_tools/exercises/bounded_retry/README.md) |
 
 ## Example
 

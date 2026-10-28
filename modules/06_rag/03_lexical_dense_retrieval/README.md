@@ -2,6 +2,9 @@
 
 ## Goal
 
+The [Russian TF-IDF versus dense-retrieval explanation](theory.md) includes computed
+scores from the separate teacher walkthrough and an OOV diagnostic.
+
 Compare exact vocabulary matching with vector similarity and select authorized evidence
 before truncating to a candidate budget. Treat retrieval quality as an empirical question.
 

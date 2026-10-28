@@ -5,6 +5,16 @@
 Explain what a metric rewards and which rows the model fails on. Connect a threshold to
 the cost of unnecessary watering versus missed dry plants before final test evaluation.
 
+Начните с [теории и ручного расчёта](theory.md): единицы MAE/RMSE,
+confusion matrix, score/вероятность/метка, AP и ROC-AUC, калибровка,
+стоимость порога и поддержка групп. Затем запустите короткий пример ниже.
+
+После базовых метрик пройдите [bias and fairness](bias.md): selection,
+measurement и label bias, групповые знаменатели, неопределённость и конфликт
+критериев на синтетических технических датчиках. Там же исполняемый опыт
+со сменой состава выборки и отдельный [student TODO](../exercises/bias_slices/README.md)
+(`ml-bias-slices`). Это дополнение не выбирает порог и не выдаёт fairness PASS.
+
 ## Java mental model
 
 A headline metric resembles an average endpoint latency: it can hide an unusable subgroup.

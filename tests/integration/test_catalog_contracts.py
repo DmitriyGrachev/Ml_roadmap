@@ -28,6 +28,11 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
         "ml-forecasting-intro",
         "python-interview-patterns",
         "backend-analytics-sql",
+        "python-control-flow",
+        "data-experiment-design",
+        "ml-representation-study",
+        "ml-bias-slices",
+        "backend-sql-foundations",
     ],
 )
 def test_new_base_exercises_block_network(identifier: str, tmp_path: Path) -> None:
@@ -1080,6 +1085,43 @@ EXPECTED_CATALOG = (
         "modules/02_python_backend/exercises/analytics_sql/test_starter.py",
         "modules/02_python_backend/exercises/analytics_sql/test_queries.py",
     ),
+    item(
+        "document-a1-reproduction",
+        "exercise",
+        "projects/document_intelligence_lab/part_a1/exercise/README.md",
+        "projects/document_intelligence_lab/part_a1/exercise/test_starter.py",
+        "projects/document_intelligence_lab/part_a1/exercise/test_evidence.py",
+    ),
+    item(
+        "python-control-flow",
+        "exercise",
+        "modules/01_python_core/00_environment/practice/README.md",
+        "modules/01_python_core/00_environment/practice/test_starter.py",
+    ),
+    item(
+        "data-experiment-design",
+        "exercise",
+        "modules/03_data_foundations/exercises/experiment_design/README.md",
+        "modules/03_data_foundations/exercises/experiment_design/test_starter.py",
+    ),
+    item(
+        "ml-representation-study",
+        "exercise",
+        "modules/04_machine_learning/exercises/representation_study/README.md",
+        "modules/04_machine_learning/exercises/representation_study/test_starter.py",
+    ),
+    item(
+        "ml-bias-slices",
+        "exercise",
+        "modules/04_machine_learning/exercises/bias_slices/README.md",
+        "modules/04_machine_learning/exercises/bias_slices/test_starter.py",
+    ),
+    item(
+        "backend-sql-foundations",
+        "exercise",
+        "modules/02_python_backend/exercises/sql_foundations/README.md",
+        "modules/02_python_backend/exercises/sql_foundations/test_starter.py",
+    ),
 )
 
 LESSON_IDS = tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind == "lesson")
@@ -1136,12 +1178,12 @@ def test_catalog_is_the_complete_ordered_roadmap() -> None:
     assert tuple(item.kind for item in catalog.items) == tuple(
         entry.kind for entry in EXPECTED_CATALOG
     )
-    assert len(catalog.items) == 162
+    assert len(catalog.items) == 168
     assert len(LESSON_IDS) == 57
     assert len(FIRST_SPRINT_IDS) == 15
     assert len(LATER_PYTHON_PRACTICE_IDS) == 6
-    assert len(BACKEND_EXERCISE_IDS) == 12
-    assert len(DATA_EXERCISE_IDS) == 16
+    assert len(BACKEND_EXERCISE_IDS) == 13
+    assert len(DATA_EXERCISE_IDS) == 17
     assert tuple(item.identifier for item in catalog.items if item.kind == "project") == (
         "banking-ai-lab",
     )
@@ -1175,6 +1217,27 @@ def test_catalog_contains_each_required_task_inventory_exactly_once() -> None:
     ):
         assert len(inventory) == len(set(inventory))
         assert all(identifiers.count(identifier) == 1 for identifier in inventory)
+
+
+def test_five_gap_practices_do_not_expand_legacy_check_directories() -> None:
+    catalog = Catalog.load(REPOSITORY_ROOT)
+    new_ids = {
+        "python-control-flow",
+        "data-experiment-design",
+        "ml-representation-study",
+        "ml-bias-slices",
+        "backend-sql-foundations",
+    }
+    for new_id in new_ids:
+        new_tests = catalog.get(new_id).tests
+        for legacy in catalog.items:
+            if legacy.identifier in new_ids:
+                continue
+            for target in legacy.tests:
+                assert all(
+                    test != target and not (target.is_dir() and test.is_relative_to(target))
+                    for test in new_tests
+                ), f"{new_id} unexpectedly expands {legacy.identifier}"
 
 
 def test_learning_cli_list_matches_the_catalog_order() -> None:

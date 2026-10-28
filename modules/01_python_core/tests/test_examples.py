@@ -63,6 +63,48 @@ def test_object_example_distinguishes_identity_from_equality() -> None:
     assert same_value is True
 
 
+def test_object_walkthrough_reports_aliasing_mutation_and_rebinding(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    namespace = load_example(MODULE_ROOT / "01_object_model" / "example.py")
+    cast(Callable[[], None], namespace["main"])()
+
+    # Copying at step 1 or mutating rather than rebinding at step 3 breaks this trace.
+    assert capsys.readouterr().out.splitlines()[1:4] == [
+        "1: ['draft'] ['draft'] True",
+        "2: ['draft', 'review'] ['draft', 'review'] True",
+        "3: ['draft', 'review'] ['archived'] False",
+    ]
+
+
+def test_object_walkthrough_copy_is_equal_but_independently_mutable(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    namespace = load_example(MODULE_ROOT / "01_object_model" / "example.py")
+    cast(Callable[[], None], namespace["main"])()
+
+    # Replacing .copy() with assignment would share the final append with labels.
+    assert capsys.readouterr().out.splitlines()[4:6] == [
+        "4: ['draft', 'review'] False True",
+        "5: ['draft', 'review'] ['draft', 'review', 'done']",
+    ]
+
+
+def test_object_walkthrough_distinguishes_missing_empty_and_nonempty_values(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    namespace = load_example(MODULE_ROOT / "01_object_model" / "example.py")
+    cast(Callable[[], None], namespace["main"])()
+
+    # Using bool(value) as an absence test would collapse None and an empty list.
+    assert capsys.readouterr().out.splitlines()[6:] == [
+        "missing: True False",
+        "empty: False False",
+        "present: False True",
+        "text: False True",
+    ]
+
+
 def test_typing_example_uses_a_data_protocol_and_normalizes_values() -> None:
     path = MODULE_ROOT / "04_typing" / "example.py"
     namespace = load_example(path)

@@ -3,6 +3,11 @@
 `backend-analytics-sql` · материалы READY · одна локальная SQL-вариация.
 Реализация ученика TODO; защита REQUIRES_REVIEW.
 
+Дополнение после первого корректного запроса: [план, индекс и честное измерение](plan_theory.md).
+Независимый [parcel demo](plan_demo.py) показывает EXPLAIN QUERY PLAN, повторные
+timings и равенство строк до/после одного индекса. Он не содержит решения
+аналитического запроса и не расширяет существующий автоматический зачёт.
+
 Напишите в `starter.py` функцию `analytics_query() -> str`, возвращающую **один**
 запрос SQLite. Редактируйте только `starter.py`; `fixtures.py` создаёт маленькую
 временную базу для тестов, а `test_queries.py` проверяет её входы. Не создавайте
@@ -45,8 +50,8 @@ user_id TEXT, status TEXT)` хранит обращения. Все поля к�
 ## Запуск и защита
 
 ```powershell
-uv run python scripts/learn.py test backend-analytics-sql
-uv run python scripts/learn.py check backend-analytics-sql
+uv run --no-sync python scripts/learn.py test backend-analytics-sql
+uv run --no-sync python scripts/learn.py check backend-analytics-sql
 ```
 
 `test` допускает xfail только от TODO; `check` требует выполненный запрос.

@@ -49,6 +49,7 @@ STARTER_PATHS = (
     "exercises/equipment_repository/starter.py",
     "exercises/library_search/starter.py",
     "exercises/room_booking_api/starter.py",
+    "exercises/sql_foundations/starter.py",
 )
 
 

@@ -2,37 +2,70 @@
 
 ## Goal
 
-Use modern annotations to document boundaries and express structural compatibility.
+Научиться читать аннотации как обещания для читателя и статического анализатора,
+а затем объяснить, почему объект подходит к `Protocol` без явного наследования.
+Начните с [теории и разбора примера](theory.md); достаточно пройти
+[Object Model](../01_object_model/README.md), [Collections](../02_collections/README.md)
+и [Functions](../03_functions/README.md). Модель имён и объектов повторять не нужно.
 
 ## Java mental model
 
-Generic types and interfaces are familiar. A Python `Protocol` is structural: matching methods matter even without an explicit `implements` declaration.
+Java-интерфейс обычно требует явного `implements`. Python `Protocol` задаёт
+ожидаемую форму объекта: статический анализатор проверяет подходящие члены и их
+типы даже у класса, который никогда не называл протокол. Аннотация не становится
+автоматической проверкой во время выполнения.
 
 ## Python model
 
-Use built-in generic forms such as `list[str]`, unions with `|`, `None` for optional values, `Literal` for a fixed value set, aliases for readable shapes, and protocols at external boundaries.
+Во время выполнения тип есть у объекта, а аннотация описывает ожидаемые значения
+имени или границу функции. `list[str]`, `str | None`, `Literal`, псевдоним типа,
+`Callable` и `Protocol` выражают разные части этого ожидания.
+См. [разбор записей](theory.md#notation).
 
 ## Key concepts
 
-Type hints support readers and static tools but do not enforce runtime validation themselves. Keep annotations precise where callers depend on a contract.
+Подсказки типов (type hints) помогают людям, редактору и статическому анализатору
+вроде mypy; сами по себе они не проверяют входные данные при запуске.
+Для `str | None` ветку с `None` нужно отделить до строковой операции. Структурная
+совместимость протокола зависит от формы доступных членов, а не от наследования.
+[Таблица совместимости](theory.md#shape) показывает это на конкретных объектах.
 
 ## Example
 
-Run `uv run python modules/01_python_core/04_typing/example.py` to normalize labels supplied through a read-only `LabelSource` protocol.
+Из корня репозитория запустите `uv run python modules/01_python_core/04_typing/example.py`.
+В уже установленном базовом окружении доступен автономный вариант:
+
+```powershell
+uv run --offline --no-sync python modules/01_python_core/04_typing/example.py
+```
+
+[Неизменённый пример](example.py) нормализует метки через доступное только для
+чтения свойство `LabelSource.labels`. [Пошаговая трассировка и ожидаемый вывод](theory.md#trace)
+показывают, почему `SupportTicket` подходит к этому протоколу.
 
 ## Exercises
 
-- [Delegate through a payment-processor protocol](exercises/payment_processor_protocol/README.md)
+Сначала сделайте прогнозы из теории. Затем
+[передайте вызов через протокол платёжного процессора](exercises/payment_processor_protocol/README.md)
+(`python-payment-processor-protocol`). Там снова нужна структурная совместимость,
+но граница задаётся методом `authorize(payment)`, а не свойством `labels`.
+Следуйте требованиям упражнения к числу вызовов, возвращённому объекту и исключениям.
+Успешный запуск демонстрации не отмечает progress за вас.
 
 ## Self-check
 
-1. What does `str | None` mean?
-2. Are hints runtime validation?
-3. What makes a protocol structural?
-4. Why use a type alias?
-5. When is `Callable` appropriate?
-6. What contract does `Literal["ready", "failed"]` communicate?
+Ответьте до открытия [пояснений](theory.md#answers):
+
+1. Если функция объявлена `def title() -> str`, а вернула `7`, остановит ли её сама аннотация при запуске? Что сообщит статический анализатор?
+2. Для `names: list[str] = ["a"]` что произойдёт при `names.append(3)` во время выполнения и что скажет анализатор?
+3. Почему после проверки `if value is None: return "missing"` можно вызвать `value.strip()` для `value: str | None`? Что изменится, если убрать проверку?
+4. Какие значения допускает `Literal["ready", "failed"]` в статическом контракте? Отклонит ли сама аннотация строку `"pending"` при запуске?
+5. Что ожидает `Callable[[str], int]`? Подойдёт ли функция с одним параметром `str`, возвращающая `str`?
+6. Подойдёт ли к `LabelSource` класс без наследования, у которого есть читаемое `labels: tuple[str, ...]`? А класс, у которого есть только `name: str`? Объясните границу статической проверки.
+7. Что вернёт `normalize_labels(SupportTicket(" Billing ", "urgent", "billing"))`, что напечатает `main()` и почему порядок именно такой?
 
 ## Done when
 
-You can explain why a class can satisfy a protocol without naming it.
+Вы можете предсказать результат нового примера с `None` и метками, объяснить
+каждую аннотацию урока и обосновать совместимость с `Protocol` по его членам.
+После этого переходите к существующему упражнению, не копируя демонстрацию.

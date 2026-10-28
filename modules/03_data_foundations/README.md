@@ -12,6 +12,17 @@ NumPy and Pandas are not Java collection libraries: their useful operations desc
 
 Work through the lessons in order, run each `example.py`, then use the later exercises to implement the same mechanics on separate synthetic payment data.
 
+После NumPy продолжайте [Pandas](02_pandas_core/README.md) →
+[качество данных](03_data_quality/README.md) →
+[практическую статистику](04_practical_statistics/README.md), затем остальные уроки
+в прежнем порядке. Между качеством данных и статистикой полезна боковая практика:
+[разобранный EDA и Matplotlib](03_data_quality/eda.md) →
+[самостоятельный погодный практикум](exercises/weather_quality/eda_practice.md).
+Это сопровождение существующих уроков, не новые CLI ID. Для построения графиков
+явно подключите `uv sync --locked --group visualization`; эту opt-in часть можно
+отложить и продолжать базовую статистику без Matplotlib. Чтение EDA и обсуждение
+вопросов к данным сами по себе установки графической библиотеки не требуют.
+
 ## Key concepts
 
 Arrays, tabular transformations, quality checks, descriptive statistics, temporal splits, and imbalanced-class metrics form one workflow.

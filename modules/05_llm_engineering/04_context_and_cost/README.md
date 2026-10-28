@@ -1,5 +1,7 @@
 # Context and cost
 
+Разбор состава запроса и резерва вывода: [теория урока](theory.md).
+
 ## Goal
 
 Fit useful evidence inside a known request budget while retaining output capacity and

@@ -1,5 +1,7 @@
 # Prompt contracts
 
+Разбор запроса, контекста и границ доверия: [теория урока](theory.md).
+
 ## Goal
 
 Turn an underspecified text request into a versioned task contract with explicit evidence,

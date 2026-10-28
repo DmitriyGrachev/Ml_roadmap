@@ -1,5 +1,8 @@
 # Budgets, deadlines and resilience
 
+Read the connected [theory](theory.md) for G-01's unknown result and a small
+queue/deadline calculation; the budget ledger remains independent practice.
+
 ## Goal
 
 Bound work by time, concurrency, and cost before an expensive provider call starts.

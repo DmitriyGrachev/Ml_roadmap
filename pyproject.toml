@@ -23,10 +23,23 @@ dependencies = [
 ]
 
 [dependency-groups]
+visualization = [
+    "matplotlib==3.11.2",
+]
 training = [
     "torch==2.14.0",
     "transformers==5.17.0",
     "datasets==5.0.1",
+]
+tracking = [
+    "mlflow>=3.0,<4",
+]
+retrieval = [
+    "qdrant-client>=1.15,<2",
+]
+finetuning = [
+    {include-group = "training"},
+    "peft>=0.17,<1",
 ]
 dev = [
     "pytest",
@@ -97,6 +110,7 @@ packages = [
     "banking_ai_lab",
     "support_api",
     "projects.banking_ai_lab.tests",
+    "projects.document_intelligence_lab",
     "scripts",
     "tests",
 ]
@@ -109,4 +123,9 @@ exclude = [
 
 [[tool.mypy.overrides]]
 module = ["sklearn.*"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+# Plotting/training/PEFT are opt-in; installed packages still supply their own types.
+module = ["matplotlib.*", "torch.*", "peft.*"]
 ignore_missing_imports = true

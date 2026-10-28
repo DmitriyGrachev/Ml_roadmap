@@ -12,6 +12,8 @@ Functions are close to functional interfaces and lambdas. Python functions are f
 
 Pass functions, return them, capture configuration in closures, and choose positional-only, positional-or-keyword, keyword-only, and defaulted arguments deliberately.
 
+[Разбор вызова, замыканий и итерации с прогнозами](theory.md) продолжает этот вход в урок. Общие объекты и перепривязку имён напоминает [Object Model](../01_object_model/README.md).
+
 ## Key concepts
 
 `/` marks positional-only parameters and `*` marks keyword-only parameters. `*args` collects extra positional arguments into a tuple, while `**kwargs` collects extra keyword arguments into a dict. At a call site, the same markers unpack an iterable or mapping to forward arguments. Defaults are evaluated once, so avoid mutable defaults. `enumerate` supplies indexes and `zip` pairs aligned iterables. Prefer a named function when a lambda would hide business intent.
@@ -19,6 +21,7 @@ Pass functions, return them, capture configuration in closures, and choose posit
 ## Example
 
 Run `uv run python modules/01_python_core/03_functions/example.py` to send a notification through a formatting callback.
+Полный вывод и путь аргумента через callback разобраны в [теории](theory.md#example).
 
 ## Exercises
 
@@ -36,6 +39,8 @@ Run `uv run python modules/01_python_core/03_functions/example.py` to send a not
 5. When is a named function clearer than a lambda?
 6. What do `enumerate` and `zip` provide?
 7. What do `*args` and `**kwargs` collect, and how do the same markers forward values?
+
+Сначала ответьте на новом примере, затем откройте [объяснения](theory.md#answers).
 
 ## Done when
 

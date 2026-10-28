@@ -1,5 +1,7 @@
 # Evaluation
 
+Разбор качества, задержки и стоимости: [теория урока](theory.md).
+
 ## Goal
 
 Make a release decision from explicit quality, latency, and cost criteria instead of a few

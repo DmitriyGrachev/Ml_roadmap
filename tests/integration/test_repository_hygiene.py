@@ -88,6 +88,11 @@ EXPECTED_MULTI_BOUNDARIES = {
 }
 
 EXPECTED_EXERCISE_BOUNDARIES = {
+    "python-control-flow": {"count_long_labels"},
+    "data-experiment-design": {"bonferroni_rejections"},
+    "ml-representation-study": {"reconstruct_from_components"},
+    "ml-bias-slices": {"grouped_slices"},
+    "backend-sql-foundations": {"latest_valid_measurements_sql"},
     "python-detect-duplicates": {"find_duplicate_ids"},
     "python-group-by-user": {"group_amounts_by_user"},
     "python-provider-frequency": {"provider_frequencies"},
@@ -195,6 +200,7 @@ EXPECTED_EXERCISE_BOUNDARIES = {
     "production-artifact-manifest": {"validate_manifest"},
     "production-error-budget": {"summarize_error_budget"},
     "production-retention-policy": {"plan_retention"},
+    "document-a1-reproduction": {"run_reproduction"},
 }
 
 EXPECTED_BANKING_BOUNDARIES = {

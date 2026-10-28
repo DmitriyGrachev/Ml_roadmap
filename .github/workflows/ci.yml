@@ -1,0 +1,121 @@
+name: Offline curriculum checks
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+    inputs:
+      local_runtime_checks:
+        description: Also check local MLflow, Qdrant and PEFT (no model downloads)
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: curriculum-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HF_HUB_OFFLINE: "1"
+  HF_DATASETS_OFFLINE: "1"
+  TRANSFORMERS_OFFLINE: "1"
+  HF_HUB_DISABLE_TELEMETRY: "1"
+  TOKENIZERS_PARALLELISM: "false"
+  MLFLOW_DISABLE_TELEMETRY: "1"
+
+jobs:
+  base:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.17"
+          python-version: "3.12.14"
+          enable-cache: true
+      - name: Locked light environment
+        run: uv sync --locked
+      - name: Repository health, not student credit
+        run: uv run --no-sync python -m pytest
+      - name: Ruff
+        run: uv run --no-sync python -m ruff check .
+      - name: Formatting
+        run: uv run --no-sync python -m ruff format --check .
+      - name: Types
+        run: uv run --no-sync python -m mypy
+      - name: Document artifact smoke
+        run: uv run --no-sync python -m pytest projects/document_intelligence_lab/part_a1/test_demo.py -q
+
+  training-offline:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      UV_PROJECT_ENVIRONMENT: .venv-training
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.17"
+          python-version: "3.12.14"
+          enable-cache: true
+      - name: Explicit CPU training environment
+        run: uv sync --locked --group training
+      - name: Local tensors and random models only
+        run: uv run --no-sync python -m pytest labs projects/document_intelligence_lab/part_a -q
+      - name: Training types
+        run: uv run --no-sync python -m mypy -p labs -p projects.document_intelligence_lab
+
+  local-runtimes:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.local_runtime_checks }}
+    runs-on: windows-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - group: tracking
+            target: projects/document_intelligence_lab/tracking_intro
+            package: projects.document_intelligence_lab.tracking_intro
+            mlflow: "1"
+            qdrant: "0"
+            peft: "0"
+          - group: retrieval
+            target: labs/03_real_rag
+            package: labs.03_real_rag
+            mlflow: "0"
+            qdrant: "1"
+            peft: "0"
+          - group: finetuning
+            target: labs/04_llm_finetuning
+            package: labs.04_llm_finetuning
+            mlflow: "0"
+            qdrant: "0"
+            peft: "1"
+    env:
+      UV_PROJECT_ENVIRONMENT: .venv-runtime
+      ROADMAP_RUN_MLFLOW: ${{ matrix.mlflow }}
+      ROADMAP_RUN_QDRANT: ${{ matrix.qdrant }}
+      ROADMAP_RUN_PEFT: ${{ matrix.peft }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: "0.12.17"
+          python-version: "3.12.14"
+          enable-cache: true
+      - name: Explicit isolated runtime group
+        run: uv sync --locked --group ${{ matrix.group }}
+      - name: Actual local integration
+        run: uv run --no-sync python -m pytest ${{ matrix.target }} -q
+      - name: Runtime types
+        run: uv run --no-sync python -m mypy -p ${{ matrix.package }}

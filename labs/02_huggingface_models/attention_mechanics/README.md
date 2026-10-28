@@ -4,6 +4,8 @@ ID: `lab-attention-mechanics`. Prerequisites: [lab-huggingface](../README.md)
 и [data-numpy](../../../modules/03_data_foundations/01_numpy/README.md).
 Это отдельное упражнение после lab02; старые задания и `starter.py` lab02 не меняются.
 Обязательные проверки работают на CPU и без сети.
+Перед реализацией полезно пройти [разбор токенов, масок и одной головы](../theory.md):
+там показаны промежуточные числа и отличие boolean-масок библиотечных API.
 
 ## От текста к loss
 

@@ -1,5 +1,8 @@
 # Privacy and operational security
 
+Read the connected [theory](theory.md) for the G-01 event/checkpoint boundary
+before the separate redaction and retention exercises.
+
 ## Goal
 
 Minimize data crossing service, model, retrieval, and telemetry boundaries while retaining

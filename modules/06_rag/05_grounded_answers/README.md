@@ -2,6 +2,9 @@
 
 ## Goal
 
+The [Russian context and citation explanation](theory.md) follows the G-01 passage
+through revision checks, a bounded context and a prepared illustrative answer.
+
 Assemble a bounded evidence context and distinguish citation integrity from semantic
 support. Define when the application should abstain or request a narrower question.
 

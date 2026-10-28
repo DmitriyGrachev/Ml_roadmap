@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="550" viewBox="0 0 760 550" role="img" aria-labelledby="title desc">
+  <title id="title">Шаг 4: неглубокая копия создаёт отдельный список</title>
+  <desc id="desc">После copied = labels.copy() имя labels связано с L1 ['draft', 'review'], alias с L2 ['archived'], а copied с отдельным списком L3 ['draft', 'review']. Содержимое L1 и L3 одинаково, но это разные списки. Связи строковых элементов опущены.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 L9 5 L1 9 Z" fill="#314b63"/></marker>
+  </defs>
+  <rect width="760" height="550" rx="12" fill="#fffdf8"/>
+  <text x="40" y="43" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#192f43">4. Неглубокая копия</text>
+  <text x="40" y="86" font-family="Consolas, 'Courier New', monospace" font-size="19" fill="#192f43">copied = labels.copy()</text>
+  <text x="40" y="120" font-family="Arial, sans-serif" font-size="17" fill="#405364">Создан новый внешний список L3 с тем же содержимым.</text>
+  <text x="70" y="157" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#405364">Имена</text>
+  <text x="458" y="157" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#405364">Объекты</text>
+  <rect x="60" y="181" width="194" height="50" rx="8" fill="#eaf2f8" stroke="#59728a" stroke-width="2"/>
+  <rect x="60" y="277" width="194" height="50" rx="8" fill="#eaf2f8" stroke="#59728a" stroke-width="2"/>
+  <rect x="60" y="373" width="194" height="50" rx="8" fill="#eaf2f8" stroke="#59728a" stroke-width="2"/>
+  <text x="78" y="214" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">labels</text>
+  <text x="78" y="310" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">alias</text>
+  <text x="78" y="406" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">copied</text>
+  <path d="M254 206 L438 206" fill="none" stroke="#314b63" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M254 302 L438 302" fill="none" stroke="#314b63" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M254 398 L438 398" fill="none" stroke="#314b63" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="440" y="171" width="260" height="70" rx="10" fill="#f5f8e9" stroke="#667b3f" stroke-width="2"/>
+  <rect x="440" y="267" width="260" height="70" rx="10" fill="#f5f8e9" stroke="#667b3f" stroke-width="2"/>
+  <rect x="440" y="363" width="260" height="70" rx="10" fill="#f5f8e9" stroke="#667b3f" stroke-width="2"/>
+  <text x="459" y="199" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#26371c">L1 · прежний список</text>
+  <text x="459" y="226" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">['draft', 'review']</text>
+  <text x="459" y="295" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#26371c">L2 · другой список</text>
+  <text x="459" y="322" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">['archived']</text>
+  <text x="459" y="391" font-family="Arial, sans-serif" font-size="18" font-weight="700" fill="#26371c">L3 · копия списка</text>
+  <text x="459" y="418" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">['draft', 'review']</text>
+  <text x="40" y="467" font-family="Consolas, 'Courier New', monospace" font-size="16" fill="#192f43">copied is labels → False; copied == labels → True</text>
+  <text x="40" y="494" font-family="Arial, sans-serif" font-size="16" fill="#405364">Связи строковых элементов на схеме не показаны.</text>
+  <text x="40" y="523" font-family="Arial, sans-serif" font-size="16" fill="#405364">Условная схема, не снимок памяти.</text>
+</svg>

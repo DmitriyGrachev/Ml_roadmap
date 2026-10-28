@@ -1,5 +1,7 @@
 # Checkpoints and approvals
 
+Сериализованное состояние и replay: [теория 04](theory.md).
+
 ## Goal
 
 Resume paused work only when the expected snapshot and exact approved operation still

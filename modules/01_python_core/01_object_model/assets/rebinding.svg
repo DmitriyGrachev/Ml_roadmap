@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="426" viewBox="0 0 760 426" role="img" aria-labelledby="title desc">
+  <title id="title">Шаг 3: имя alias перепривязано к другому списку</title>
+  <desc id="desc">После alias = ['archived'] имя labels связано со старым списком L1 ['draft', 'review'], а alias — с новым списком L2 ['archived'].</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 L9 5 L1 9 Z" fill="#314b63"/></marker>
+  </defs>
+  <rect width="760" height="426" rx="12" fill="#fffdf8"/>
+  <text x="40" y="43" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#192f43">3. Перепривязка имени</text>
+  <text x="40" y="86" font-family="Consolas, 'Courier New', monospace" font-size="19" fill="#192f43">alias = ['archived']</text>
+  <text x="40" y="120" font-family="Arial, sans-serif" font-size="17" fill="#405364">Имя alias теперь связано с новым списком L2.</text>
+  <text x="70" y="157" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#405364">Имена</text>
+  <text x="458" y="157" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#405364">Объекты</text>
+  <rect x="60" y="188" width="194" height="52" rx="8" fill="#eaf2f8" stroke="#59728a" stroke-width="2"/>
+  <rect x="60" y="298" width="194" height="52" rx="8" fill="#eaf2f8" stroke="#59728a" stroke-width="2"/>
+  <text x="78" y="222" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">labels</text>
+  <text x="78" y="332" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">alias</text>
+  <path d="M254 214 L438 214" fill="none" stroke="#314b63" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M254 324 L438 324" fill="none" stroke="#314b63" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="440" y="176" width="260" height="77" rx="10" fill="#f5f8e9" stroke="#667b3f" stroke-width="2"/>
+  <rect x="440" y="286" width="260" height="77" rx="10" fill="#f5f8e9" stroke="#667b3f" stroke-width="2"/>
+  <text x="459" y="205" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#26371c">L1 · прежний список</text>
+  <text x="459" y="236" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">['draft', 'review']</text>
+  <text x="459" y="315" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#26371c">L2 · новый список</text>
+  <text x="459" y="346" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">['archived']</text>
+  <text x="40" y="401" font-family="Arial, sans-serif" font-size="16" fill="#405364">Условная схема, не снимок памяти.</text>
+</svg>

@@ -1,5 +1,7 @@
 # Evaluation and handoffs
 
+Матрица исходов teacher walkthrough: [теория 06](theory.md).
+
 ## Goal
 
 Evaluate the path a workflow took and preserve useful context when another worker or a

@@ -1,5 +1,7 @@
 # Tools and permissions
 
+Разбор schema, прав и exact approval: [теория 02](theory.md).
+
 ## Goal
 
 Treat a model-proposed tool call as untrusted input and let application code decide whether

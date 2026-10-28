@@ -5,6 +5,10 @@
 Make a result traceable to exact inputs, environment, code, split and settings. Recognize
 that model loading is a trust decision separate from checking evaluation quality.
 
+Начните с [теории и сквозной преподавательской демонстрации](theory.md):
+раздельные development/test решения, сохранённые предсказания, schema,
+preprocessing, конфигурация и граница доверия при reload.
+
 ## Java mental model
 
 A trained artifact is not just a compiled class. It includes learned state whose meaning
@@ -25,7 +29,8 @@ objects, though applications must still validate the data they consume.
 - Never load untrusted pickle or joblib artifacts: deserialization can execute code.
 - Load trusted models only in the documented environment; cross-version compatibility is not guaranteed.
 - A hash detects a byte change, but authenticity needs a trusted source or signature.
-- This module emits metadata only and does not serialize or load a model artifact.
+- Старый `example.py` выдаёт только метаданные и не сериализует модель;
+  отдельная teacher-демонстрация показывает сохранение и reload собственного артефакта.
 
 References: [model persistence and trust](https://scikit-learn.org/stable/model_persistence.html)
 and [controlling randomness](https://scikit-learn.org/stable/common_pitfalls.html#controlling-randomness).
@@ -39,6 +44,22 @@ uv run python modules/04_machine_learning/06_reproducibility/example.py
 The example fingerprints literal sensor CSV bytes and records a local experiment manifest.
 It deliberately has no file-loading or pickle pathway. The exercise adds a complete
 validated classification report and slice metrics.
+
+## Сквозная преподавательская демонстрация
+
+После прогноза в [теории](theory.md#4-сквозная-преподавательская-демонстрация)
+запустите два синтетических сценария в **новый** каталог из корня репозитория:
+
+```powershell
+uv run --offline --no-sync python -m modules.04_machine_learning.06_reproducibility.classical_demo --output reports/classical-demo-01
+```
+
+Существующий каталог не перезаписывается; `--plots` добавляет необязательные
+графики при установленной группе `visualization`. Итоги, split IDs, метрики и
+предсказания сохраняются в `cycling/` и `sensors/`. Это готовый пример на
+учебных данных, а не отчёт ученика. Старый `example.py` остаётся краткой
+демонстрацией только metadata. Подробнее о выборе модели, калибровке и
+проверке reload — [в теории](theory.md).
 
 ## Exercises
 

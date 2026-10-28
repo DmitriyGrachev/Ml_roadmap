@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source_id": "author-library-v1",
+      "permission": "Written specifically for this repository; no external documents or personal data.",
+      "license": "CC0-1.0",
+      "origin": "Synthetic public-library notices authored independently for learner reproduction.",
+      "license_scope": "Only the texts and annotations in this fixture, not repository source code."
+    }
+  ],
+  "annotation_policy": "Classify the main action: borrowing/return/renewal -> borrowing; entry/hours/closures -> access; invitation to a scheduled activity -> event. Multiple actions need review."
+}

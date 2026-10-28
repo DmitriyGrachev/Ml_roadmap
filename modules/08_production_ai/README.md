@@ -7,6 +7,11 @@ data-access, and release policies. Six local lessons connect serving contracts t
 evaluation, telemetry, budgets, privacy, and incident response. Eight Medium exercises
 use museum and library services, including the existing request-metrics exercise.
 
+Read the connected [Production AI theory](01_serving_contracts/theory.md) after the
+[Agents scenario](../07_agents/01_workflows_state/theory.md). The
+[offline operations walkthrough](walkthrough.py) reuses its fixed G-01 cases and writes
+teacher evidence only to a fresh directory requested with `--output-dir`.
+
 ## Prerequisites
 
 Complete the implemented backend and data foundations modules, then

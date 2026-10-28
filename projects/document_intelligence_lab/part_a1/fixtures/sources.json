@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source_id": "author-shapes-v1",
+      "permission": "Written specifically for this repository; no external documents or personal data.",
+      "license": "CC0-1.0",
+      "origin": "Synthetic shape inventory authored for the A1 teacher mechanics.",
+      "license_scope": "Only the texts and annotations in this fixture, not repository source code."
+    }
+  ],
+  "annotation_policy": "One explicitly named shape is the label. Color/size are irrelevant. Multiple shapes or no shape are excluded for review."
+}

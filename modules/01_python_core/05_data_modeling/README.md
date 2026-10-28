@@ -4,6 +4,12 @@
 
 Model domain values with dataclasses, composition, properties, and focused behavior.
 
+[Теория: объект-значение, конструктор и границы frozen](theory.md) — разбор
+`PageSpan` с прогнозами, отдельными пробами Decimal/ASCII и командами запуска.
+После чтения объясните инвариант на новом значении, затем переходите к
+существующему `python-payment-model`. Авторская демонстрация не заполняет стартер
+и не меняет progress.
+
 ## Java mental model
 
 A frozen dataclass resembles a record. It is not a complete substitute for Java's inheritance and constructor-validation conventions.

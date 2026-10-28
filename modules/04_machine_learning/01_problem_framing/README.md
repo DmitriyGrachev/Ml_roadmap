@@ -1,5 +1,7 @@
 # Problem framing and baselines
 
+Начните с [разобранной теории постановки задачи](theory.md), затем запустите пример и сформулируйте собственный контракт из раздела Exercises.
+
 ## Goal
 
 Specify the unit of prediction, available features, target, prediction time and success

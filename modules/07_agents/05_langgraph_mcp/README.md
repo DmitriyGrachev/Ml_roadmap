@@ -1,5 +1,7 @@
 # LangGraph and MCP
 
+Соответствие API локального примера: [теория 05](theory.md).
+
 ## Goal
 
 Use a real local workflow graph and a real in-process tool protocol connection while

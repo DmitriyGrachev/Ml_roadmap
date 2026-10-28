@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="330" viewBox="0 0 900 330" role="img" aria-labelledby="title desc">
+  <title id="title">Sampling composition changes overall accuracy</title>
+  <desc id="desc">Horizontal axis: synthetic rows, zero to twenty. Before: A eight, B four; accuracy eight of twelve. After: A eight, B twelve; accuracy twelve of twenty. Slice accuracies stay A 0.75, B 0.50. One outlined block is four rows, not independent evidence.</desc>
+  <rect width="900" height="330" fill="#f8fafc"/>
+  <g font-family="Arial, sans-serif" fill="#172554">
+    <text x="26" y="32" font-size="21">Same slice accuracy, different sampling composition</text>
+    <text x="26" y="59" font-size="15">A accuracy = 0.75  |  B accuracy = 0.50  |  one block = 4 synthetic rows</text>
+    <text x="26" y="116" font-size="18">before</text>
+    <text x="26" y="187" font-size="18">after</text>
+    <g stroke="#ffffff" stroke-width="3">
+      <path d="M150 85h96v46h-96z M246 85h96v46h-96z M150 156h96v46h-96z M246 156h96v46h-96z" fill="#1d4ed8"/>
+      <path d="M342 85h96v46h-96z M342 156h96v46h-96z M438 156h96v46h-96z M534 156h96v46h-96z" fill="#9a3412"/>
+    </g>
+    <g fill="white" text-anchor="middle" font-size="18">
+      <text x="198" y="115">A</text><text x="294" y="115">A</text><text x="390" y="115">B</text>
+      <text x="198" y="186">A</text><text x="294" y="186">A</text><text x="390" y="186">B</text><text x="486" y="186">B</text><text x="582" y="186">B</text>
+    </g>
+    <text x="657" y="116" font-size="18">8 / 12 = 0.667</text>
+    <text x="657" y="187" font-size="18">12 / 20 = 0.600</text>
+    <text x="657" y="82" font-size="15">Overall accuracy</text>
+    <path d="M150 223H630" stroke="#172554"/>
+    <g text-anchor="middle" font-size="14">
+      <text x="150" y="247">0</text><text x="246" y="247">4</text><text x="342" y="247">8</text><text x="438" y="247">12</text><text x="534" y="247">16</text><text x="630" y="247">20</text>
+      <text x="390" y="271">Synthetic rows (count)</text>
+    </g>
+    <text x="26" y="309" font-size="15">Repeating a pattern changes weights; it does not add independent evidence.</text>
+  </g>
+</svg>

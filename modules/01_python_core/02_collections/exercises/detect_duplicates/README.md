@@ -23,6 +23,12 @@ Edit only `modules/01_python_core/02_collections/exercises/detect_duplicates/sta
 - Return each repeated ID once as a `set[str]`.
 - Return an empty set for empty input or when all IDs are unique.
 
+Здесь iterable — источник элементов для обхода. В отличие от списка, одноразовый
+генератор (one-shot generator) выдаёт элементы постепенно и не начинает обход
+заново после исчерпания. Писать собственный генератор в этом задании не требуется;
+подробный механизм будет в [уроке 07](../../../07_iterators_generators/README.md).
+Эта ссылка — будущее пояснение, не новый prerequisite текущего упражнения.
+
 ## Acceptance criteria
 
 Repeated IDs are detected without consuming the input twice, validation remains active, and the tests pass.

@@ -1,5 +1,46 @@
 # Module 04 — Machine Learning
 
+## Как проходить углублённую теорию (пакет 4)
+
+Откройте [01 Problem framing](01_problem_framing/README.md), затем его русскую
+теорию. Двигайтесь по существующим урокам 01 → 02 → 03 → 04 → 05 → 06:
+сначала прогноз и ручной пример, затем запуск, собственная вариация и прежнее
+упражнение. Ссылки на `theory.md` стоят в каждом README; ID и prerequisites
+не изменены. До обучения нужны NumPy/Pandas/качество данных и статистика
+из Module 03 — [пакет 3](../03_data_foundations/04_practical_statistics/README.md)
+повторно не переписывается.
+
+В уроке 06 есть [две преподавательские демонстрации](06_reproducibility/theory.md)
+с реальным fit, выбором на development, замороженным test и save/reload.
+Из корня проекта, после `uv sync --locked`, выберите **новую** папку:
+
+```powershell
+uv run --offline --no-sync python -m modules.04_machine_learning.06_reproducibility.classical_demo --output reports/classical-demo-01
+```
+
+Для необязательных графиков: `uv sync --locked --group visualization`, затем
+та же команда с `--plots` и **другим новым** именем папки. Запуск не скачивает
+модели/датасеты и не заполняет ученические отчёты. Baseline, малая synthetic
+выборка и успешные tests не доказывают качество на реальных данных.
+
+Существующие задания: `ml-group-safe-split`, `ml-mixed-feature-pipeline`,
+`ml-model-comparison`, `ml-threshold-policy`, `ml-evaluation-report`; далее
+[самостоятельное исследование](exercises/tabular_study/README.md) и
+[открытый контроль оценки](exercises/evaluation_case/README.md) согласно их
+prerequisites. `test ID` допускает незавершённые xfail; `check ID` требует
+реализации **этого** прежнего контракта. Ответы на вопросы теории проверяются
+вручную; новых автоматических зачётов текста нет.
+
+Затем [07 Training bridge](07_training_bridge/README.md) →
+[PyTorch](../../labs/01_pytorch_foundations/README.md). Механика kNN в уроке 04
+понятна до моста, но самостоятельный `ml-knn-mechanics` сохраняет prerequisite
+`ml-training-bridge`. Сопровождение [PyTorch](../../labs/01_pytorch_foundations/theory.md)
+и [HF/Transformers](../../labs/02_huggingface_models/theory.md) уже подготовлено
+в пакете 5; это не означает выполненную ученическую лабораторную.
+
+[Покрытие пакета 4](../../docs/wave2-coverage.md#theory-packet-4) ·
+[Проверки и ограничения](../../docs/theory-packet-4-verification.md).
+
 ## Goal
 
 Turn a prediction question into a defensible supervised-learning experiment. Use small,
@@ -7,7 +48,11 @@ local datasets about parks, plants, weather and sensors; no downloads or API key
 
 ## Prerequisites
 
-Complete Modules 01–03: Python core, production Python, and data foundations. You should be comfortable reading tabular data, checking data quality, and explaining leakage, class imbalance, and the limits of accuracy.
+Нужны Python core (collections, functions, typing, I/O и testing) и Data Foundations:
+NumPy/Pandas, качество данных, статистика, split/leakage и метрики. Умейте читать
+табличные данные и объяснять дисбаланс классов и ограничения accuracy.
+Module 02 (backend/API) можно проходить параллельно: он понадобится для serving,
+но не является условием первого ML-эксперимента или PyTorch lab.
 
 ## Java mental model
 

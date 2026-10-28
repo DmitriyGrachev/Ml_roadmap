@@ -1,5 +1,48 @@
 # Roadmap
 
+Дополнение 28.10.2026: [пять сохранённых пробелов объяснения и практики](wave2-coverage.md#coverage-gaps-20261028)
+получили [теорию, демонстрации и пять отдельных упражнений](five-gaps-verification.md).
+PostgreSQL/container runtime остаётся NOT_RUN; освоение не отмечено.
+Отдельно — [первый Windows/Ollama generator опыт](superpowers/specs/2026-10-28-local-generator-design.md).
+Первый [lexical + Qwen2.5 smoke измерен](local-generator-verification.md);
+dense+LLM и общая оценка качества ещё NOT_RUN. Это не меняет ваш
+progress, старые prerequisites/ID/check и начало обучения с Python Core.
+
+Весь оставшийся объём сведён в [12 пакетов реализации](superpowers/plans/2026-10-11-remaining-roadmap.md):
+объяснения → наглядный разбор → самостоятельная практика → проверка.
+Это план авторской работы, не новые пройденные уроки и не замена маршруту ниже.
+
+Первый пакет **R01 подготовлен**: [value objects](../modules/01_python_core/05_data_modeling/theory.md),
+[atomic I/O](../modules/01_python_core/06_exceptions_io/theory.md),
+[тесты, traceback и самостоятельный перенос](../modules/01_python_core/09_testing/theory.md).
+[Проверки и порядок работы](r01-verification.md) отделяют готовность материалов от
+освоения учеником. Также подготовлен [R02: backend и SQL](r02-verification.md).
+Продолжение — [Document Intelligence](../projects/document_intelligence_lab/README.md):
+A1 → CPU API → encoder comparison → RAG → serving/lifecycle → защита.
+Существующие зачёты и progress сохранены; добавлен только отдельный exercise
+`document-a1-reproduction`. [R12 — только пути специализации](superpowers/plans/2026-10-11-remaining-roadmap.md#r12),
+без новых лабораторных. Локальные teacher проверки не означают прохождение проекта
+или прохождение реального проекта. Отдельное [локальное продолжение](local-runtime-continuation.md)
+проверяет настоящие MLflow/Qdrant/PEFT API, сохранение и восстановление.
+Теперь отдельно измерен [MiniLM CLS retrieval](../labs/03_real_rag/verification.md#minilm-local)
+на пяти фиксированных teacher queries. Это не качество генератора,
+generalization pretrained моделей или полный production lifecycle.
+
+Согласованный [план пяти следующих этапов](ai-ml-extension-plan.md#five-stage-plan)
+развивает существующие материалы; актуальная готовность разделена в плане R01–R12.
+Git, Linux и технический
+английский исключены из новых учебных тем. Текущий старт и зачёты не изменены.
+
+Уточнение плана: [20 коротких блоков с теорией и визуальными опорами](ai-ml-extension-plan.md#small-practice-plan)
+и [ресурсный профиль RTX 5060 Laptop](compute-guide.md#rtx5060-profile).
+Это разбиение будущей работы и переиспользование готового, не 20 новых exercise ID.
+По уточнению пользователя [vLLM в Linux обязателен](ai-ml-extension-plan.md#required-vllm)
+после этапа 4 и prerequisites serving lab, до специализаций. Его теория, клиент и
+offline tests подготовлены. По вашему решению 11.10.2026 запуск **DEFERRED_ENV / NOT_RUN**
+до появления Linux/WSL; он не блокирует остальные локальные опыты и не засчитан.
+Основной предложенный путь — Ubuntu/WSL2 на RTX 5060;
+[альтернатива без Windows](compute-guide.md#vllm-linux-route) — нативный Linux host.
+
 This roadmap develops an experienced Java and Spring engineer's Python and AI engineering skills
 through active work rather than broad survey material.
 The first implemented learning wave covers Modules 01–03, extended by complete Modules 04–08.
@@ -15,9 +58,13 @@ preprocessing, regression и evaluation → [короткий мост](../modul
 
 | Маршрут | Порядок после общей базы | Приоритет / готовность |
 | --- | --- | --- |
-| Applied AI | [PyTorch foundations](../labs/01_pytorch_foundations/README.md) → [HF models](../labs/02_huggingface_models/README.md) → modules05/06 → real RAG → bounded workflows → deployment | первые две labs CORE/READY; offline verification отдельно; real RAG/deployment PLANNED |
+| Applied AI | [PyTorch foundations](../labs/01_pytorch_foundations/README.md) → [HF models](../labs/02_huggingface_models/README.md) → modules05/06 → Module 07 bounded workflows → Module 08 эксплуатационные основы | первые две labs CORE/READY; modules05–08 локальные; real RAG/deployment — будущие PLANNED ветки |
 | ML Engineering | PyTorch → HF + небольшой encoder adaptation → experiments → SFT/LoRA → lifecycle | PyTorch/HF CORE, adaptation ML-DEPTH; tracking/SFT/lifecycle PLANNED |
 | Backend/API | module02 можно проходить параллельно с data/ML | CORE для serving, не блокирует первое обучение модели |
+
+Будущие real RAG и deployment не являются обязательными prerequisites для
+подготовленных локальных Modules 07–08. HF/attention помогает понимать LLM,
+но его дополнительная ссылка не требует установки `training` для Modules 05–08.
 
 READY означает, что инструкции и незаполненные контракты подготовлены.
 VERIFIED применяется только с [записью среды, команд и границ](wave1-verification.md).
@@ -33,7 +80,8 @@ VERIFIED применяется только с [записью среды, ко
 ## Wave 2 — углубление и самостоятельная практика
 
 [Карта фактического покрытия](wave2-coverage.md) перечисляет 14 новых exercise ID
-с точными README/prerequisites. Каталог: 162 материала, включая 102 exercises,
+с точными README/prerequisites. С учётом последующего A1-практикума текущий каталог:
+163 материала, включая 103 exercises,
 57 lessons, две labs и один project. Материалы READY; свежие результаты технической
 проверки — в [журнале](wave2-verification.md). TODO ученика не выполнены,
 его эксперименты NOT_RUN, содержательная защита REQUIRES_REVIEW.

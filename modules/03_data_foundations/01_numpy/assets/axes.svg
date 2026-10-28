@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="780" viewBox="0 0 1120 780" role="img" aria-labelledby="title desc">
+  <title id="title">NumPy: какая ось исчезает при sum</title>
+  <desc id="desc">Исходный a равен [[2, 4, 6], [8, 10, 12]], shape (2, 3). sum(axis=0) складывает строки по каждому столбцу и даёт [10, 14, 18], shape (3,). sum(axis=1) складывает столбцы в каждой строке и даёт [12, 30], shape (2,). С keepdims=True результат второго вычисления равен [[12], [30]], shape (2, 1): свёрнутая ось сохраняется с длиной 1.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 L9 5 L1 9 Z" fill="#314b63"/></marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #192f43; font-size: 20px; }
+      .code { font-family: Consolas, 'Courier New', monospace; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 23px; font-weight: 700; }
+      .small { font-size: 18px; fill: #405364; }
+      .number { font-family: Consolas, 'Courier New', monospace; font-size: 24px; text-anchor: middle; }
+      .cell { fill: #eaf2f8; stroke: #59728a; stroke-width: 1.5; }
+      .result { fill: #f5f8e9; stroke: #667b3f; stroke-width: 1.5; }
+      .arrow { fill: none; stroke: #314b63; stroke-width: 2.5; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="780" rx="14" fill="#fffdf8"/>
+  <text x="40" y="51" class="title">Оси и reduction: какую размерность сворачиваем?</text>
+  <text x="40" y="93" class="code">a = [[2, 4, 6], [8, 10, 12]]     shape = (2, 3)</text>
+
+  <rect x="40" y="128" width="490" height="395" rx="12" fill="#ffffff" stroke="#c7d2da"/>
+  <text x="64" y="167" class="heading">axis=0 → складываем строки</text>
+  <text x="64" y="199" class="small">По одному итогу на каждый столбец.</text>
+  <g>
+    <rect x="120" y="227" width="86" height="56" class="cell"/><rect x="206" y="227" width="86" height="56" class="cell"/><rect x="292" y="227" width="86" height="56" class="cell"/>
+    <rect x="120" y="283" width="86" height="56" class="cell"/><rect x="206" y="283" width="86" height="56" class="cell"/><rect x="292" y="283" width="86" height="56" class="cell"/>
+    <text x="163" y="263" class="number">2</text><text x="249" y="263" class="number">4</text><text x="335" y="263" class="number">6</text>
+    <text x="163" y="319" class="number">8</text><text x="249" y="319" class="number">10</text><text x="335" y="319" class="number">12</text>
+    <path d="M163 346 V390" class="arrow"/><path d="M249 346 V390" class="arrow"/><path d="M335 346 V390" class="arrow"/>
+    <rect x="120" y="398" width="86" height="56" class="result"/><rect x="206" y="398" width="86" height="56" class="result"/><rect x="292" y="398" width="86" height="56" class="result"/>
+    <text x="163" y="434" class="number">10</text><text x="249" y="434" class="number">14</text><text x="335" y="434" class="number">18</text>
+  </g>
+  <text x="64" y="494" class="code">a.sum(axis=0) → shape (3,)</text>
+
+  <rect x="558" y="128" width="522" height="395" rx="12" fill="#ffffff" stroke="#c7d2da"/>
+  <text x="582" y="167" class="heading">axis=1 → складываем столбцы</text>
+  <text x="582" y="199" class="small">По одному итогу на каждую строку.</text>
+  <g>
+    <rect x="600" y="227" width="80" height="56" class="cell"/><rect x="680" y="227" width="80" height="56" class="cell"/><rect x="760" y="227" width="80" height="56" class="cell"/>
+    <rect x="600" y="283" width="80" height="56" class="cell"/><rect x="680" y="283" width="80" height="56" class="cell"/><rect x="760" y="283" width="80" height="56" class="cell"/>
+    <text x="640" y="263" class="number">2</text><text x="720" y="263" class="number">4</text><text x="800" y="263" class="number">6</text>
+    <text x="640" y="319" class="number">8</text><text x="720" y="319" class="number">10</text><text x="800" y="319" class="number">12</text>
+    <path d="M850 255 H922" class="arrow"/><path d="M850 311 H922" class="arrow"/>
+    <rect x="932" y="227" width="82" height="56" class="result"/><rect x="932" y="283" width="82" height="56" class="result"/>
+    <text x="973" y="263" class="number">12</text><text x="973" y="319" class="number">30</text>
+  </g>
+  <text x="582" y="395" class="code">[12, 30]</text>
+  <text x="582" y="431" class="small">Здесь вектор показан вертикально;</text>
+  <text x="582" y="458" class="small">его shape всё равно (2,), а не (2, 1).</text>
+  <text x="582" y="494" class="code">a.sum(axis=1) → shape (2,)</text>
+
+  <rect x="40" y="550" width="1040" height="190" rx="12" fill="#f5f8e9" stroke="#667b3f"/>
+  <text x="64" y="590" class="heading">keepdims=True → ось остаётся с длиной 1</text>
+  <text x="64" y="631" class="code">a.sum(axis=1, keepdims=True)</text>
+  <text x="64" y="668" class="code">[[12], [30]] → shape (2, 1)</text>
+  <text x="64" y="708" class="small">Те же суммы; теперь это двумерный массив.</text>
+  <path d="M697 645 H812" class="arrow"/>
+  <rect x="834" y="605" width="100" height="54" class="result"/><rect x="834" y="659" width="100" height="54" class="result"/>
+  <text x="884" y="641" class="number">12</text><text x="884" y="695" class="number">30</text>
+  <text x="958" y="639" class="small">2 строки</text><text x="958" y="671" class="small">1 столбец</text>
+</svg>

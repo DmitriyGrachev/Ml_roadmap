@@ -1,5 +1,7 @@
 # Leakage-free preprocessing
 
+Начните с [разобранной теории preprocessing](theory.md), затем запустите пример и переходите к упражнению.
+
 ## Goal
 
 Fit missing-value handling, scaling, category encoding and the estimator as one pipeline.

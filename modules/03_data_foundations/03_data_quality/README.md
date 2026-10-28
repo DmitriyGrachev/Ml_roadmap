@@ -2,36 +2,61 @@
 
 ## Goal
 
-Measure missing, duplicate, invalid, and unexpected data before an analysis or model relies on it.
+Measure defects before changing data or trusting a summary. Start with the
+[theory companion](theory.md), which traces this lesson's four-document example.
+Prerequisite: [Pandas core](../02_pandas_core/README.md) (`data-pandas`),
+especially columns, masks, `isna`, and `duplicated`.
 
 ## Java mental model
 
-Validation is not only a DTO-construction concern: a DataFrame can contain a mixture of valid, missing, and duplicated values that needs aggregate evidence.
+Checking one DTO does not describe a batch. A DataFrame can hold valid and
+defective rows together. State what one row and its key mean, then count each
+rule explicitly. ID uniqueness differs from comparing every field of a record.
 
 ## Python model
 
-Use null-aware operations and duplicate masks to produce an explicit quality report; decide whether a transformation may mutate its caller before writing it.
+Inspect schema and source values first. Build Boolean masks, report their
+counts, and only then decide which transformations are justified. In Pandas 3,
+Copy-on-Write affects mutation behavior, not the choice of quality policy.
 
 ## Key concepts
 
-Missing values, duplicates, parsing, schema expectations, quality counts, mutation policy, and data contracts.
+Row unit, schema, key, missing versus blank and unparseable values, non-finite
+numbers, whole-row versus key duplicates, issue versus row counts, audited
+conversion, provenance, and mutation policy.
 
 ## Example
 
-`example.py` counts repeated document identifiers and missing language metadata in a small document intake batch.
+[`example.py`](example.py) counts repeated document IDs and missing language
+metadata in four intake rows. Its exact result is
+`{'duplicate_document_ids': 1, 'missing_language': 1}`. The
+[worked trace](theory.md#1-сначала-прогноз-потом-отчёт) explains both counts.
+Run from the repository root:
+
+```powershell
+uv run --offline --no-sync python modules/03_data_foundations/03_data_quality/example.py
+```
 
 ## Exercises
 
-The quality-report exercise has a wider transaction schema and additional invalid-value checks, so this document example does not expose its answer.
+Try [Transaction quality report](exercises/quality_report/README.md)
+(`data-quality-report`): it has a wider transaction schema and independent
+invalid-value checks. [Summarize weather observations](../exercises/weather_quality/README.md)
+(`data-weather-quality`) counts invalid *rows* before valid duplicate
+station/day keys. The teacher document example solves neither student TODO.
+
+Continue with [exploratory data analysis](eda.md) on support tickets, then the
+[weather EDA practicum](../exercises/weather_quality/eda_practice.md).
 
 ## Self-check
 
-1. Is an empty string necessarily a missing value?
-2. What does `duplicated` count by default?
-3. Why should quality counts be reproducible?
-4. When is it safer to return a copy?
-5. What quality check would you run before parsing timestamps?
+Answer the [seven questions](theory.md#8-проверка-и-перенос) before uncovering
+the hints. Explain on a new small input why `isna()` misses a blank string and
+why issue counts can exceed the number of bad rows.
 
 ## Done when
 
-You can distinguish duplicate records from missing fields and explain the chosen counting policy.
+You can name the row unit and key, reproduce the document counts, distinguish
+a repeated key from a repeated whole row, and state whether each report field
+counts issues or rows. You can explain where original values and conversion
+failures remain visible. Running the teacher example does not change progress.

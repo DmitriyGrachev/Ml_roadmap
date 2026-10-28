@@ -1,5 +1,8 @@
 # 02 — Pydantic request and response models
 
+Подробный разбор: [от JSON до правила поля и HTTP 422](theory.md).
+Нейтральная [демонстрация печатных пакетов](walkthrough.py) не реализует transaction TODO.
+
 ## Goal
 
 Describe API inputs and outputs with Pydantic 2 models so validation happens at the HTTP boundary.

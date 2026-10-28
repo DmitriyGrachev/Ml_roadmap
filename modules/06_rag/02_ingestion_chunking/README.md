@@ -2,6 +2,9 @@
 
 ## Goal
 
+Read the [Russian theory on normalization, paragraph chunks and revisions](theory.md)
+before using the existing update-plan example.
+
 Convert changing documents into traceable searchable units without leaving stale chunks
 behind. Retain the source, revision and extraction/chunking configuration for every unit.
 

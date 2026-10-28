@@ -19,7 +19,9 @@ Existing tasks and their contracts are unchanged.
 
 Start with the first lesson: [Environment and workflow](modules/01_python_core/00_environment/README.md).
 
-Then try the first coding exercise: [Detect duplicate transactions](modules/01_python_core/02_collections/exercises/detect_duplicates/README.md).
+Continue with [Object Model](modules/01_python_core/01_object_model/README.md), then
+[Collections](modules/01_python_core/02_collections/README.md), before the first coding
+exercise: [Detect duplicate transactions](modules/01_python_core/02_collections/exercises/detect_duplicates/README.md).
 
 For a neutral Beginner alternative after learning collections, start with
 [Build a word index](modules/01_python_core/exercises/word_index/README.md).
@@ -112,13 +114,19 @@ uv run --group training python scripts/learn.py check lab-huggingface
 Нетронутые student TODO и отсутствующие ученические отчёты означают ненулевой
 `check` — это ожидаемо, а не поломка установки. Offline smoke не доказывает качество
 настоящей модели. Model/data downloads — только ваша отдельная явная команда.
-[Real RAG/vector DB, tracking, PEFT, live model serving/lifecycle и нейтральный проект](docs/ai-ml-extension-plan.md)
-пока PLANNED, не реализованные лабораторные.
+[Продолжения R03–R11](docs/superpowers/plans/2026-10-11-remaining-roadmap.md)
+теперь включают локальные демонстрации, тесты и самостоятельные вариации.
+Это не завершённые учеником labs. Настоящие локальные MLflow registry, Qdrant и
+PEFT теперь имеют отдельные авторские runtime-опыты без скачивания моделей:
+[команды, результаты и ограничения](docs/local-runtime-continuation.md).
+Pretrained quality, cloud и hosted CI не проверены; vLLM отложен по вашему решению
+до появления Linux/WSL. [Предыдущие offline проверки](docs/remaining-roadmap-verification.md).
 
 ## Вторая волна: практика и самостоятельные контроли
 
-Добавлены 14 exercise ID: каталог содержит 162 материала (57 lessons, 102 exercises,
-2 labs, 1 project). [Карта второй волны](docs/wave2-coverage.md) даёт ссылки и
+Во второй волне добавлены 14 exercise ID; после отдельного A1-практикума текущий
+каталог содержит 163 материала (57 lessons, 103 exercises, 2 labs, 1 project).
+[Карта второй волны](docs/wave2-coverage.md) даёт ссылки и
 prerequisites для каждого нового задания; [порядок прохождения](docs/roadmap.md)
 связывает статистику, kNN/tabular, продолжения PyTorch/HF и четыре открытых контроля.
 Ranking и forecasting — короткие боковые ветки; глубокие специализации PLANNED.

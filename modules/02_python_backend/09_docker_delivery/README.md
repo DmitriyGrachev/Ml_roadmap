@@ -32,6 +32,10 @@ The later `Dockerfile.example` documents an application module placeholder and a
 
 ## Exercises
 
+Связный [практикум упаковки готового CPU API](container_practice.md): image/container,
+ports/mounts → явный build → HTTP → restart/reload. Материал подготовлен;
+реальный container runtime в текущей среде **NOT_RUN**.
+
 Review the [Dockerfile example](Dockerfile.example) and [Compose example](compose.example.yaml) after
 the persistence exercises, and never place credentials in an image or committed Compose file.
 

@@ -1,5 +1,9 @@
 # 08 — API, service, repository, and integration tests
 
+Подробный разбор: [setup → yield → teardown, включая ошибку](theory.md).
+[Авторская fixture](walkthrough.py) работает с заметками на полке; платёжную review-fixture
+по-прежнему исправляет ученик.
+
 ## Goal
 
 Test each boundary at the smallest useful level and prevent application state or dependency overrides from leaking between tests.

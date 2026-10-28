@@ -1,0 +1,15 @@
+# Dockerfile-specific context allowlist, resolved from repository root.
+**
+!pyproject.toml
+!uv.lock
+!src/
+!src/roadmap_tools/
+!src/roadmap_tools/experiment_evidence.py
+!projects/
+!projects/document_intelligence_lab/
+!projects/document_intelligence_lab/__init__.py
+!projects/document_intelligence_lab/contracts.py
+!projects/document_intelligence_lab/artifacts.py
+!projects/document_intelligence_lab/service/
+!projects/document_intelligence_lab/service/__init__.py
+!projects/document_intelligence_lab/service/app.py

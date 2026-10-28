@@ -1,0 +1,178 @@
+{
+  "schema_version": 1,
+  "labels": [
+    "circle",
+    "square",
+    "triangle"
+  ],
+  "records": [
+    {
+      "row_id": "s01",
+      "text": "red small circle",
+      "label": "circle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-1",
+      "content_sha256": "6340a8fd8cd16f9dfea2bb114b590fac33b3dffb4eb72c99ff78ffb3a0584815"
+    },
+    {
+      "row_id": "s02",
+      "text": "blue small square",
+      "label": "square",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-1",
+      "content_sha256": "f60c99562399fba0862babba29c73c60f1de7f99998067b43e71bd65af0794a2"
+    },
+    {
+      "row_id": "s03",
+      "text": "green small triangle",
+      "label": "triangle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-1",
+      "content_sha256": "dd6505a6b1cb6e6748adacde5c47b630bacc90c55ab27687205d1cb303e24727"
+    },
+    {
+      "row_id": "s04",
+      "text": "blue large circle",
+      "label": "circle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-2",
+      "content_sha256": "f1d0851f4c6b559b8abd9c319527f65e41bff8e7d4ff94bb4c883f098a27e34c"
+    },
+    {
+      "row_id": "s05",
+      "text": "green large square",
+      "label": "square",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-2",
+      "content_sha256": "988c127001259171a2a3717126b006ba8ee3f19259cb8199c519d6b7fe53d0d2"
+    },
+    {
+      "row_id": "s06",
+      "text": "red large triangle",
+      "label": "triangle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-2",
+      "content_sha256": "0ab5aeefc73e4caafbddb274f66540c499754a973a2cf7dcf86e06f66b8b1bcb"
+    },
+    {
+      "row_id": "s07",
+      "text": "green circle object",
+      "label": "circle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-3",
+      "content_sha256": "55b72c076bb75f7eff1ca9c7ebcf3fa3a7b61123d0859b15667fd89bde3dd89b"
+    },
+    {
+      "row_id": "s08",
+      "text": "red square object",
+      "label": "square",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-3",
+      "content_sha256": "ce34301d4940712c6e9c8f4b2a13067877df40d56f981e85b96842d0e03f0a51"
+    },
+    {
+      "row_id": "s09",
+      "text": "blue triangle object",
+      "label": "triangle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-3",
+      "content_sha256": "bdace3fbce9914650a7c5d7b6916efbccdf2de91583aacfb17d5c2d580de9952"
+    },
+    {
+      "row_id": "s10",
+      "text": "large red circle object",
+      "label": "circle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-4",
+      "content_sha256": "0af96924124ebc51dce3868338d656d9fcff6d2d826fa5ef694fb8ad69a5dc9e"
+    },
+    {
+      "row_id": "s11",
+      "text": "small green square object",
+      "label": "square",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-4",
+      "content_sha256": "22cddb1e46187936cb4b4dbd25164b8ba72460840a22a4f655af267205973b3c"
+    },
+    {
+      "row_id": "s12",
+      "text": "large blue triangle object",
+      "label": "triangle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-train-4",
+      "content_sha256": "bc2835e9b33e36160e6d8dceaeb37319c6b18556bbbb9e13c0f4b0e5c23d9584"
+    },
+    {
+      "row_id": "s13",
+      "text": "small blue circle object",
+      "label": "circle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-validation",
+      "content_sha256": "b55cd398a0b388263a19974a83f7543898eff01e179654704d48d0c4f51b7132"
+    },
+    {
+      "row_id": "s14",
+      "text": "large red square object",
+      "label": "square",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-validation",
+      "content_sha256": "103d89b6a2e7431573d15d24664d981585e05747f21b654b1a74ad4dc0b325ac"
+    },
+    {
+      "row_id": "s15",
+      "text": "small green triangle object",
+      "label": "triangle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-validation",
+      "content_sha256": "8d956db8f612281cd8e5f578f79e514b21ac4822cbe54973ecb8c49cf97af95c"
+    },
+    {
+      "row_id": "s16",
+      "text": "small red circle object",
+      "label": "circle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-test-1",
+      "content_sha256": "1bb61c02643f29f38e438334ed077e1b12f4fa33aba28ae50c25666cc952249d"
+    },
+    {
+      "row_id": "s17",
+      "text": "large green square object",
+      "label": "square",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-test-1",
+      "content_sha256": "513f85096372b33fed0ba25950b9e5c9fe92ff3e53f1306cfee152c3f98b3ae4"
+    },
+    {
+      "row_id": "s18",
+      "text": "small blue triangle object",
+      "label": "triangle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-test-1",
+      "content_sha256": "13b1af235f6720161d6750f31c4322a4888c13e3df6893bcbd4b590ef6f1022c"
+    },
+    {
+      "row_id": "s19",
+      "text": "green large circle object",
+      "label": "circle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-test-2",
+      "content_sha256": "b491eed9c50ff03b68238ee6b9c92e25a2f5720f7fd6f0e47eded410522b2639"
+    },
+    {
+      "row_id": "s20",
+      "text": "red small square object",
+      "label": "square",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-test-2",
+      "content_sha256": "50ea2d0e1388d0cbf41a955c5703fe00ae542f93ac091d9b4391d8b7f6d81c86"
+    },
+    {
+      "row_id": "s21",
+      "text": "blue large triangle object",
+      "label": "triangle",
+      "source_id": "author-shapes-v1",
+      "group_id": "lot-test-2",
+      "content_sha256": "a123aacca083c6cc9301fa027ea22a58ac60b8160c9d91525e13e5b334d194fa"
+    }
+  ]
+}

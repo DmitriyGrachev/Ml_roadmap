@@ -2,36 +2,61 @@
 
 ## Goal
 
-Use shapes, dtypes, masks, axes, and broadcasting to express numerical transformations clearly.
+Научиться предсказывать форму и значения результата, различать view/copy и оценивать
+память до вычисления. Начните с [последовательного объяснения](theory.md):
+§1–3 → §4–5 → §6–9. Это теория существующего `data-numpy`, не новый ID.
 
 ## Java mental model
 
-A NumPy array is not a `double[]` or `List<Double>`: it has one dtype and operations are normally applied across the whole array without boxing each value.
+Числовой NumPy array — не `List<Double>` и не Java `int[][]`: у него одна dtype и
+прямоугольная shape. Обычный Java-массив массивов допускает строки разной длины.
 
 ## Python model
 
-Create numeric arrays with an explicit dtype, inspect `shape`, and let compatible dimensions broadcast instead of writing nested loops.
+Сначала назовите смысл осей, затем dtype и форму, после — операцию. Совместимость
+форм не гарантирует правильного смысла. Представление может разделять данные
+с другим объектом массива: продолжение [Object Model](../../01_python_core/01_object_model/README.md).
 
 ## Key concepts
 
-Indexing, boolean masks, `reshape`, axes, aggregation, broadcasting, dot products, and vectorization.
+Shape, dtype, axis, indexing/masks, reshape, broadcasting, view/copy, vectorization
+и ограничения памяти. Предпосылки: Python Collections, Functions и базовый Typing.
 
 ## Example
 
-`example.py` reshapes two support SLA thresholds into a column and broadcasts a comparison across four response times, producing a boolean compliance matrix.
+[walkthrough.py](walkthrough.py) пошагово разбирает измерения двух датчиков: формы,
+выбор клеток, суммы, пороги, запись через view и оценку памяти. Сначала прогнозируйте
+результат по [теории и схемам](theory.md), затем запускайте из корня проекта:
+
+```powershell
+uv run --offline --no-sync python modules/03_data_foundations/01_numpy/walkthrough.py
+```
+
+Существующий [example.py](example.py) сохранён: два SLA сравниваются с четырьмя
+временами ответа, результат — булева матрица `(2, 4)`.
 
 ## Exercises
 
-The later payment-matrix exercise asks you to validate and scale a caller-provided amount matrix. It uses a different operation and shape contract from this fixed comparison example.
+Сначала [Payment matrix](exercises/payment_matrix/README.md), `data-payment-matrix`:
+формы, dtype, broadcasting, неизменность входа. Затем
+[Image pooling](../exercises/image_pooling/README.md), `data-image-pooling`:
+reshape, несколько осей и независимый результат. Условия и TODO не изменены.
+Прогнозы indexing/dtype/memory в теории — самостоятельная устная/черновая проверка,
+не новый автоматически зачтённый ID.
 
 ## Self-check
 
-1. What does an array shape `(2, 3)` describe?
-2. Why should a numeric dtype be explicit?
-3. Which dimensions must align for broadcasting?
-4. What does `axis=0` aggregate over?
-5. When is a boolean mask more readable than index arithmetic?
+1. Чем shape, ndim, size и len отличаются для `(2, 3)`?
+2. Как dtype влияет на дробные значения и память?
+3. Почему `a[:, 1]` и `a[:, 1:2]` имеют разные формы?
+4. Какую ось убирает `sum(axis=0)` и что меняет keepdims?
+5. Почему `(2, 1)` совместима с `(2, 3)`, а `(2,)` — нет?
+6. Как доказать, что срез разделяет память, а выбор списком индексов — нет?
+7. Что гарантирует и чего не гарантирует vectorization?
+8. Почему сумма nbytes всех представлений не равна памяти процесса?
 
 ## Done when
 
-You can predict the shape of a broadcasted result and explain why no Python loop is required.
+Вы прогнозируете новую вариацию до запуска и объясняете несовпадение, если оно было.
+Собственная реализация проходит `check` выбранного задания; объяснение памяти и
+индексации проверено человеком. Зелёные тесты teacher-примера не означают освоение.

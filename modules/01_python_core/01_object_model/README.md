@@ -2,38 +2,95 @@
 
 ## Goal
 
-Reason accurately about names, references, mutation, equality, truthiness, and `None`.
+Научиться предсказывать, что происходит с именами и объектами при присваивании,
+изменении и копировании. Результат урока — объяснение своими словами и схема,
+а не только успешный запуск тестов.
+
+Начните с [подробной теории на русском](theory.md). Достаточно завершить
+[настройку среды](../00_environment/README.md): нотация списка объяснена прямо
+в уроке. Collections и Functions заранее проходить не нужно.
+
+Маршрут: прочитать ситуацию → записать прогноз → разобрать четыре схемы →
+запустить пример → объяснить результат → перейти к практике после её prerequisites.
+Урок можно разделить на два захода: имена/объекты, затем типы/сравнение/`None`.
 
 ## Java mental model
 
-Java combines object references with declared static typing checked largely before runtime. Python's `is` is identity, while `==` is value comparison; it is not Java's `==` for object references.
+Java использует статическую типизацию (static typing): тип переменной ограничивает
+допустимые присваивания до запуска. Две Java-ссылки тоже могут вести к одному
+изменяемому списку, но переносить все правила на Python нельзя. Python `is`
+проверяет один ли это объект; `==` у списков сравнивает содержимое. Это не то же,
+что Java `==` для ссылок. Подробности — в [сопоставлении с Java](theory.md#java).
 
 ## Python model
 
-Python is dynamically typed: names bind to objects rather than keeping one declared type, and invalid operations fail at runtime. Mutating a list is observable through every name bound to that list, while rebinding changes only one name. Type hints help tools and readers without turning Python into Java's runtime model.
+Python — язык с динамической типизацией (dynamically typed): имя связывается
+с объектом, у которого есть тип. Изменение списка видно через все связанные
+с ним имена; перепривязка меняет связь только одного имени. Недопустимая операция
+может вызвать ошибку во время выполнения (runtime). Подсказки типов помогают
+редактору и mypy, но сами по себе не проверяют значения при запуске.
 
 ## Key concepts
 
-Use `is` for singleton checks such as `value is None`; use `==` for values. Empty containers are falsey, but distinguish an empty value from a missing value when the domain requires it. Python conventions such as `snake_case`, direct iteration, and clear truth tests support Pythonic style: readable code that follows the language's usual data model instead of imitating Java syntax.
+Главное различие: изменить объект (mutation) и связать имя с другим объектом
+(rebinding) — разные действия. Присваивание не означает копирование.
+Для проверки отсутствия значения используйте `value is None`; пустой список —
+существующее значение, хотя в условии он тоже ложный.
+
+Привычные соглашения Python (conventions) — имена `snake_case`, прямой обход
+элементов и осмысленные проверки условий — помогают писать идиоматично (pythonic).
+Это не требование сокращать код любой ценой: если нужно отличить отсутствие
+от пустоты, явное `is None` понятнее общей проверки истинности.
 
 ## Example
 
-Run `uv run python modules/01_python_core/01_object_model/example.py` to compare two equal but distinct support-ticket tag lists.
+Из корня репозитория запустите `uv run python modules/01_python_core/01_object_model/example.py`.
+
+Для гарантированно автономного запуска в уже установленном базовом окружении:
+
+```powershell
+uv run --offline --no-sync python modules/01_python_core/01_object_model/example.py
+```
+
+[Пример](example.py) сначала сохраняет старое сравнение двух равных, но разных
+списков меток, затем показывает шаги 1–5 и отличие `None` от пустого списка.
+[Ожидаемый вывод и разбор](theory.md#run) приведены рядом со схемами.
+GPU, модели, датасеты и дополнительные библиотеки не нужны.
+
+В PyCharm выберите `.venv\Scripts\python.exe`, рабочий каталог — корень проекта,
+откройте `example.py` и выполните Run. Для пошагового просмотра можно поставить
+breakpoint перед `labels = ["draft"]` внутри `main()` и идти Step Over.
+Функции-обёртки здесь нужны для запуска; изучение Functions не является условием урока.
 
 ## Exercises
 
-Predict which example operations mutate or rebind, then [continue to collection practice](../02_collections/README.md#exercises).
+Сначала предскажите вариацию из теории, затем
+[перейдите к Collections](../02_collections/README.md#exercises).
+[Подборка существующей практики](theory.md#practice) объясняет, какое задание
+подходит следующим и к каким вернуться после Functions/pytest. Новых ID нет.
+
+`test` остаётся проверкой работоспособности с допустимыми незавершёнными `xfail`;
+`check <ID>` — строгим зачётом выбранного задания. Успех тестов готовой
+демонстрации не доказывает ваше понимание. Progress заполняется вручную.
 
 ## Self-check
 
-1. What does `is` compare?
-2. What does `==` compare?
-3. Why prefer `is None`?
-4. Is an empty list truthy?
-5. What is the difference between mutation and rebinding?
-6. How does dynamic typing differ from Java static typing?
-7. What makes a style choice Pythonic rather than merely valid Python?
+1. После `left = ["note"]; right = left` сколько списков и сколько имён? Что меняет присваивание?
+2. Почему `left == right` не доказывает, что `left is right`?
+3. Чем `right.append("ready")` отличается от `right = ["ready"]` для имени `left`?
+4. Что гарантирует `copy()` для нашего списка строк? Изменит ли добавление в копию оригинал?
+5. Чем отличаются `None`, `[]` и `["draft"]` при `is None` и `bool(...)`?
+6. Меняет ли объект свой тип при `value = 1; value = "one"`? Что проверяют type hints?
+7. Что в этом примере переносится из Java, а что нет? Почему pythonic-код не всегда использует `if value`?
+
+Сначала ответьте без подсказок. Затем откройте
+[пояснения после своей попытки](theory.md#answers).
 
 ## Done when
 
-You can explain why two equal lists need not be the same object.
+Вы объясняете mutation/rebinding на новом примере, рисуете связи имён с объектами,
+отличаете `is` от `==`, отсутствие от пустоты и присваивание от копирования.
+После нужных prerequisites решаете выбранное существующее упражнение
+без копирования демонстрации. Проверки файлов не заменяют эти критерии.
+
+Для проверки самого материала: [отчёт автора о проверках пилота](../../../docs/object-model-pilot-verification.md).

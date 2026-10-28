@@ -1,0 +1,28 @@
+# 02. Что именно выпускаем и с чем сравниваем
+
+Практический вопрос: в G-01 изменили одно слово в правиле хранения. Если новый ответ выглядит лучше, можно ли откатить только текст ответа? До чтения результата предскажите: более быстрый кандидат с ошибкой в запрете ночного хранения должен пройти сравнение?
+
+**Интуиция.** Release — совместимый набор частей, а не строка `v2`. Как в Java-сервисе схема API и миграция данных связаны с бинарной версией, AI-функция связывает код, конфигурацию, источник, preprocessing, модель и протокол оценки. [Teacher manifest](../walkthrough.py) вычисляет SHA-256 по реальным байтам исходников A, операционной логики B и локальной проверки rollback, текста `G-01`, `pyproject.toml` и `uv.lock`. Канонические JSON-байты фиксируют также фактически выбранные полные A cases, их форму, учебный протокол и отдельно авторские baseline/candidate labels, simulated latency и schema facts. Manifest сообщает реально установленную реализацию/версию Python и версии четырёх установленных зависимостей; `null` для model/index/prompt/preprocessing artifacts означает, что workflow полностью scripted. Ни хеш lockfile, ни его совпадение с установленной средой здесь не проверяют соответствие всех пакетов lockfile. Это не выдуманный обученный классификатор или построенный RAG-индекс. SHA-256 помогает обнаружить изменение относительно *заранее доверенного* эталона; совпадение не устанавливает издателя или безопасность содержимого. Особенно опасна загрузка недоверенного pickle: см. [scikit-learn model persistence, security limitations](https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations).
+
+| Идентификатор | Малый классификатор | RAG-приложение | Этот teacher сценарий |
+| --- | --- | --- | --- |
+| Код, config, зависимости, вход/выход | Нужны | Нужны | Код A, среда, fixture contract |
+| Веса модели + preprocessing | Нужны совместно | Только если применимо к конкретным моделям | Отсутствуют |
+| Prompt/tool contract | Обычно нет | По применимости | Сценарный алгоритм A, scripted proposal |
+| Corpus/index revision | Обычно нет | Нужны | Один фиксированный текст G-01; индекса нет |
+| Labels, scorer, held-out case IDs | Нужны для оценки | Нужны с рубрикой ответа/цитат | Четыре авторских reference labels |
+
+**Фиксируем протокол до результатов.** У локального сравнения четыре paired IDs `answer`, `denied`, `refused`, `success` из уже написанных кейсов A. Слово `heldout` здесь означает фиксированный список для учебного сравнения; эти кейсы не являются действительно невиданными данными. Базовая scripted fixture на всех четырёх получает `True`; критический ID — `answer`, содержащий запрет ночного хранения. Правило: у кандидата должны быть все четыре метки, ни одной регрессии относительно baseline, simulated p95 не выше 30 ms, а прежний bundle должен читать сохранённую схему и иметь доступный artifact. В коде константа `EVALUATION_PROTOCOL` стоит перед кандидатами и отдельно хешируется. Это фиксированный порядок *внутри teacher кода*, не доказательство исторической preregistration до просмотра результатов. Четыре authored labels — иллюстрация сравнения, не live feedback, измеренное качество модели или доказательство обобщения на популяции.
+
+| Авторский кандидат | Метки на тех же IDs | Simulated p95 | Совместимость | Локальный вывод |
+| --- | --- | ---: | --- | --- |
+| faster_critical_regression | `answer=False`, остальные `True` | 20 ms | Да | `reject` |
+| missing_required_label | `answer=None`, остальные `True` | 20 ms | Да | `hold_insufficient_evidence` |
+| compatible_complete_fixture | Все `True` | 20 ms | Да | `locally_eligible` |
+| incompatible_rollback | Все `True` | 20 ms | Старая версия читает schema 1, записана 2 | `block_incompatible` |
+
+Сначала выровняйте **case identity** и версии rubric/labels, потом сравнивайте пары и необходимые группы. Нет метки — нет свидетельства успеха; ускорение не перекрывает критическую регрессию. `locally_eligible` значит лишь «проходит эти локальные условия»; в реальном выпуске понадобятся репрезентативная held-out выборка, проверка происхождения и мониторинг после запуска. Механизм совместимости берётся из существующего [`rollback_preflight`](../06_rollout_incidents/example.py). Учебный [release example](example.py) дополнительно проверяет непересечение development и holdout. Повторная настройка на held-out делает его development данными.
+
+Для воспроизводимого inference храните идентичности исходного ввода, release и preprocessing; для сравнения — неизменный evaluation protocol; для отката — доступный прежний bundle и совместимую схему. `MLflow` и `DVC` могут позже помочь вести соответствующие записи и версии данных, но здесь они не установлены и не запущены. Ошибка — считать hash подписью или менять порог после просмотра кандидата. Самостоятельная вариация: старая версия не понимает новую схему 2. Предложите проверку совместимости и способ ограничения риска, не угадывая единственный «правильный» выпуск. В [задании release gate](exercises/release_gate/README.md), ID `production-release-gate`, нужно самостоятельно реализовать другой общий алгоритм по slice; [artifact manifest](../exercises/artifact_manifest/README.md), ID `production-artifact-manifest`, оставляет проверку metadata и bytes ученику. См. также [ML reproducibility](../../04_machine_learning/06_reproducibility/theory.md) и [RAG evaluation](../../06_rag/06_rag_evaluation/theory.md).
+
+Источник: scikit-learn, [Model persistence: security and maintainability limitations](https://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations), англ., о границе доверия при загрузке сохранённой модели.

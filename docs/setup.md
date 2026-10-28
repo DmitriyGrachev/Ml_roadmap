@@ -35,7 +35,8 @@ The untouched exercise helper reports an expected-incomplete result. That is an 
 ## 5. Start the roadmap
 
 The first lesson is [Environment and workflow](../modules/01_python_core/00_environment/README.md).
-The first coding exercise is
+Continue with [Object Model](../modules/01_python_core/01_object_model/README.md)
+and [Collections](../modules/01_python_core/02_collections/README.md). The first coding exercise after these lessons is
 [Detect duplicate transactions](../modules/01_python_core/02_collections/exercises/detect_duplicates/README.md).
 
 List the implemented catalog entries with `uv run python scripts/learn.py list`, run an item's tests

@@ -1,5 +1,7 @@
 # Structured outputs
 
+Разбор пяти отдельных проверок completion: [теория урока](theory.md).
+
 ## Goal
 
 Accept model output only after explicit structural and application-specific checks, while

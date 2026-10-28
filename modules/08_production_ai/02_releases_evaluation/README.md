@@ -1,5 +1,8 @@
 # Release gates and continuous evaluation
 
+Read the connected [theory](theory.md) for the G-01 manifest and fixed local
+comparison before working through this lesson's independent release gate.
+
 ## Goal
 
 Compare frozen candidate and baseline releases on the same cases, while distinguishing an

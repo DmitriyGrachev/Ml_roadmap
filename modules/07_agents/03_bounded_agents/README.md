@@ -1,5 +1,7 @@
 # Bounded agents
 
+Разбор retry, unknown outcome и трёх лимитов: [теория 03](theory.md).
+
 ## Goal
 
 Build a finite model/tool loop whose stop conditions and audit trail are application policy,

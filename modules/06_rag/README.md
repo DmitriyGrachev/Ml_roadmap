@@ -27,6 +27,17 @@ vectors demonstrate geometry, not pretrained semantics or real retrieval quality
 
 ## Key concepts
 
+The [Russian theory path](01_retrieval_contracts/theory.md) follows one bicycle-service
+guide from source to evaluated answer. Its [offline teacher walkthrough](walkthrough.py)
+computes TF-IDF ranks and writes only to a fresh output directory:
+
+```powershell
+python -m modules.06_rag.walkthrough --output generated-reports/my-fresh-rag-trace
+```
+
+The answers in that trace are prepared illustrations, not model generation. The
+existing examples and exercise contracts below remain independent.
+
 | Lesson | Practice |
 | --- | --- |
 | [01 Retrieval contracts and provenance](01_retrieval_contracts/README.md) | Write a query and evidence contract |

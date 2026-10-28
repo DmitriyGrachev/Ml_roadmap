@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="350" viewBox="0 0 760 350" role="img" aria-labelledby="title desc">
+  <title id="title">Шаг 2: изменение общего списка</title>
+  <desc id="desc">После alias.append('review') имена labels и alias всё ещё связаны с одним объектом L1; теперь его содержимое ['draft', 'review'].</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 L9 5 L1 9 Z" fill="#314b63"/></marker>
+  </defs>
+  <rect width="760" height="350" rx="12" fill="#fffdf8"/>
+  <text x="40" y="43" font-family="Arial, sans-serif" font-size="25" font-weight="700" fill="#192f43">2. Изменение списка</text>
+  <text x="40" y="86" font-family="Consolas, 'Courier New', monospace" font-size="19" fill="#192f43">alias.append('review')</text>
+  <text x="40" y="120" font-family="Arial, sans-serif" font-size="17" fill="#405364">Изменилось содержимое L1; связи имён остались прежними.</text>
+  <text x="70" y="152" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#405364">Имена</text>
+  <text x="458" y="152" font-family="Arial, sans-serif" font-size="17" font-weight="700" fill="#405364">Объект</text>
+  <rect x="60" y="171" width="194" height="52" rx="8" fill="#eaf2f8" stroke="#59728a" stroke-width="2"/>
+  <rect x="60" y="239" width="194" height="52" rx="8" fill="#eaf2f8" stroke="#59728a" stroke-width="2"/>
+  <text x="78" y="205" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">labels</text>
+  <text x="78" y="273" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">alias</text>
+  <path d="M254 197 L438 203" fill="none" stroke="#314b63" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <path d="M254 265 L438 251" fill="none" stroke="#314b63" stroke-width="2.5" marker-end="url(#arrow)"/>
+  <rect x="440" y="174" width="260" height="106" rx="10" fill="#f5f8e9" stroke="#667b3f" stroke-width="2"/>
+  <text x="459" y="208" font-family="Arial, sans-serif" font-size="19" font-weight="700" fill="#26371c">L1 · тот же список</text>
+  <text x="459" y="249" font-family="Consolas, 'Courier New', monospace" font-size="20" fill="#192f43">['draft', 'review']</text>
+  <text x="40" y="323" font-family="Arial, sans-serif" font-size="16" fill="#405364">Условная схема, не снимок памяти.</text>
+</svg>

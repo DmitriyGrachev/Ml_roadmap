@@ -44,6 +44,12 @@ within policy. These distinctions are the organizing constraints of the module.
 
 ## Example
 
+Начните с [теории 01](01_workflows_state/theory.md), затем идите по урокам 02–06.
+[Сквозной teacher walkthrough](walkthrough.py) даёт один офлайн trace по правилу G-01;
+ответы и proposals в нём заранее написаны, а эффект напоминания только симулирован.
+Запуск: `.venv/Scripts/python.exe -m modules.07_agents.walkthrough --output <new-directory>`.
+Папка должна ещё не существовать. Теория дополняет прежние примеры и задания.
+
 From the repository root:
 
 ```powershell

@@ -1184,3 +1184,48 @@ tests = [
     "modules/02_python_backend/exercises/analytics_sql/test_starter.py",
     "modules/02_python_backend/exercises/analytics_sql/test_queries.py",
 ]
+
+[[items]]
+id = "document-a1-reproduction"
+title = "Самостоятельно: воспроизведите эксперимент с объявлениями"
+kind = "exercise"
+readme = "projects/document_intelligence_lab/part_a1/exercise/README.md"
+tests = [
+    "projects/document_intelligence_lab/part_a1/exercise/test_starter.py",
+    "projects/document_intelligence_lab/part_a1/exercise/test_evidence.py",
+]
+
+[[items]]
+id = "python-control-flow"
+title = "First control flow: count labels"
+kind = "exercise"
+readme = "modules/01_python_core/00_environment/practice/README.md"
+tests = ["modules/01_python_core/00_environment/practice/test_starter.py"]
+
+[[items]]
+id = "data-experiment-design"
+title = "Preregister a bounded experiment"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/experiment_design/README.md"
+tests = ["modules/03_data_foundations/exercises/experiment_design/test_starter.py"]
+
+[[items]]
+id = "ml-representation-study"
+title = "Самостоятельное исследование представлений сенсоров"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/representation_study/README.md"
+tests = ["modules/04_machine_learning/exercises/representation_study/test_starter.py"]
+
+[[items]]
+id = "ml-bias-slices"
+title = "Grouped sensor decisions"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/bias_slices/README.md"
+tests = ["modules/04_machine_learning/exercises/bias_slices/test_starter.py"]
+
+[[items]]
+id = "backend-sql-foundations"
+title = "SQL foundations: latest valid measurements"
+kind = "exercise"
+readme = "modules/02_python_backend/exercises/sql_foundations/README.md"
+tests = ["modules/02_python_backend/exercises/sql_foundations/test_starter.py"]

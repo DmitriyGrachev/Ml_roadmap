@@ -1,5 +1,7 @@
 # LLM interfaces
 
+Разбор механизма и преподавательская трасса: [теория урока](theory.md).
+
 ## Goal
 
 Define the contract your application needs from a language-model provider without coupling

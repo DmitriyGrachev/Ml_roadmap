@@ -12,6 +12,8 @@ These resemble `List`, records, `Set`, and `Map`, with comprehensions often repl
 
 Lists preserve order, tuples represent fixed positional values, sets test membership, and dictionaries map keys to values while preserving insertion order.
 
+[Разбор с прогнозами, выводом примера и объяснениями](theory.md) продолжает этот вход в урок. Для вопросов об общем изменяемом объекте сначала вспомните [Object Model](../01_object_model/README.md).
+
 ## Key concepts
 
 Use unpacking to name positional data, slicing to select ranges, and comprehensions to project or filter readable data. Sort with an explicit key when output order matters.
@@ -19,6 +21,7 @@ Use unpacking to name positional data, slicing to select ranges, and comprehensi
 ## Example
 
 Run `uv run python modules/01_python_core/02_collections/example.py` to summarize document-language metadata with a set and dictionary.
+Полный вывод и смысл каждого шага разобраны в [теории](theory.md#example).
 
 ## Exercises
 
@@ -36,11 +39,15 @@ Start with the focused collection tasks, then use the review and mini-feature to
 
 ## Self-check
 
-1. Which collection is best for membership checks?
-2. Does a list preserve order?
-3. When is a tuple useful?
-4. What does `items[1:3]` select?
-5. What makes sorting deterministic?
+1. Which collection fits repeated membership checks, and what happens to duplicates?
+2. How do list, tuple, set, and dict differ in order, access, and changes?
+3. Why can `items[1:3]` return fewer than two items?
+4. When does unpacking a row into three names fail?
+5. What changes when a comprehension adds an `if` clause?
+6. Why does dictionary insertion order not imply sorted order?
+7. How do `sorted(..., key=...)` and `list.sort(...)` differ?
+
+После собственной попытки сверяйтесь с [объяснениями](theory.md#answers).
 
 ## Done when
 

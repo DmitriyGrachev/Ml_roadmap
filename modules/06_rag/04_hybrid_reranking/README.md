@@ -2,6 +2,9 @@
 
 ## Goal
 
+The [Russian fusion and reranking theory](theory.md) gives a small manual RRF
+calculation without implementing the student exercise.
+
 Combine complementary candidate lists without confusing incomparable scores, then
 rerank an authorized shortlist while tracking latency and candidate coverage.
 

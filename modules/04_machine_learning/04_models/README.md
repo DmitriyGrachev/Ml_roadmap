@@ -1,5 +1,14 @@
 # Linear models, trees and validation-based selection
 
+Подробный разбор механики моделей и переход к существующим заданиям:
+[теоретический урок](theory.md). Сначала прочитайте его, затем запускайте
+пример и выполняйте упражнения ниже.
+
+После supervised моделей — [представления и обучение без меток](representations.md):
+расстояния и масштаб, KMeans, PCA, IsolationForest на синтетических сенсорах.
+[Самостоятельная практика ml-representation-study](../exercises/representation_study/README.md)
+добавляет короткую обратную проекцию и собственное исследование.
+
 ## Goal
 
 Compare a simple baseline with models of increasing flexibility using the same folds

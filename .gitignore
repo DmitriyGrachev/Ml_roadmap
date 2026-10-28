@@ -18,6 +18,10 @@ generated-reports/
 data/derived/
 derived-data/
 .venv-training/
+.venv-tracking/
+.venv-rag/
+.venv-finetuning/
+.venv-base-check/
 .model-cache/
 .cache/roadmap-huggingface/
 artifacts/

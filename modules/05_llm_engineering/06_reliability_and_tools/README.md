@@ -1,5 +1,7 @@
 # Reliability and tools
 
+Разбор сбоев, streaming и разрешённых действий: [теория урока](theory.md).
+
 ## Goal
 
 Handle temporary provider failure within a finite budget and treat every proposed tool call

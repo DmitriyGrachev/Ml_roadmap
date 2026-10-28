@@ -1,0 +1,154 @@
+{
+  "schema_version": 1,
+  "labels": [
+    "borrowing",
+    "access",
+    "event"
+  ],
+  "records": [
+    {
+      "row_id": "n01",
+      "text": "Borrow up to three books for fourteen days.",
+      "label": "borrowing",
+      "source_id": "author-library-v1",
+      "group_id": "loan-limit",
+      "content_sha256": "8aa62c3dca838c5dfae1ed24a10295e8ee61a11e979d0592aed6ad58d09859e7"
+    },
+    {
+      "row_id": "n02",
+      "text": "Each reader may take three books for a two-week loan.",
+      "label": "borrowing",
+      "source_id": "author-library-v1",
+      "group_id": "loan-limit",
+      "content_sha256": "5560b30aa96e5544e43699408b16af8d80c2076087c59d8bb68cf40874681365"
+    },
+    {
+      "row_id": "n03",
+      "text": "Return borrowed books at the desk.",
+      "label": "borrowing",
+      "source_id": "author-library-v1",
+      "group_id": "return-desk",
+      "content_sha256": "9975ba92846fd09cb6d5e61e21c65ee9ec5b0a3b8dca3b2d2ef06482429f7a18"
+    },
+    {
+      "row_id": "n04",
+      "text": "The library opens at nine on Mondays.",
+      "label": "access",
+      "source_id": "author-library-v1",
+      "group_id": "monday-hours",
+      "content_sha256": "3186b6a3efe33f0157a5f6f40e2279751e4ae8e53bce1057878b687f6fec15ff"
+    },
+    {
+      "row_id": "n05",
+      "text": "Monday visitors may enter the library from nine.",
+      "label": "access",
+      "source_id": "author-library-v1",
+      "group_id": "monday-hours",
+      "content_sha256": "be5e4728b5ab11864bf98e1bd5048016728a71f1e8ab00df4f25117ebd7a041d"
+    },
+    {
+      "row_id": "n06",
+      "text": "Use the west entrance while the front door is repaired.",
+      "label": "access",
+      "source_id": "author-library-v1",
+      "group_id": "entrance-repair",
+      "content_sha256": "5d3c79d76978f28d7e1f012863668dc77b4045c7bade3240b12ff0298f806f58"
+    },
+    {
+      "row_id": "n07",
+      "text": "Join the poetry reading on Friday evening.",
+      "label": "event",
+      "source_id": "author-library-v1",
+      "group_id": "poetry-reading",
+      "content_sha256": "4286dc5e318d78ee834b31c9d0f9fa92432b7c37be101c4efe94b3a925eb2927"
+    },
+    {
+      "row_id": "n08",
+      "text": "All visitors are welcome at the Friday evening poetry reading.",
+      "label": "event",
+      "source_id": "author-library-v1",
+      "group_id": "poetry-reading",
+      "content_sha256": "2116c55789f6ab9646fc3a046b501d259ab532cf41b04166ca2cef6e2826104d"
+    },
+    {
+      "row_id": "n09",
+      "text": "Register at the desk for the storytelling workshop.",
+      "label": "event",
+      "source_id": "author-library-v1",
+      "group_id": "storytelling",
+      "content_sha256": "5deb4cbe40f43628c20da678d4db43bd1eeba321c88d2d5972d55736818fb6f3"
+    },
+    {
+      "row_id": "n10",
+      "text": "A borrowed map must be returned within seven days.",
+      "label": "borrowing",
+      "source_id": "author-library-v1",
+      "group_id": "map-loan",
+      "content_sha256": "583677a91270c28dd3ae5e848dcd467ee1f62cd1523f2ee620008b75459c06da"
+    },
+    {
+      "row_id": "n11",
+      "text": "The second floor is open until six this week.",
+      "label": "access",
+      "source_id": "author-library-v1",
+      "group_id": "floor-hours",
+      "content_sha256": "e8a48a3ef291b9b67c4af18caf9372fd7cc1172be48a3a767b2b67324151cb1f"
+    },
+    {
+      "row_id": "n12",
+      "text": "The chess club meets in the library on Tuesday.",
+      "label": "event",
+      "source_id": "author-library-v1",
+      "group_id": "chess-event",
+      "content_sha256": "102fb8da62f33a2d475e95becead504bf56710b0ddf50c2d4affa551128b4e30"
+    },
+    {
+      "row_id": "n13",
+      "text": "You can extend a book loan once.",
+      "label": "borrowing",
+      "source_id": "author-library-v1",
+      "group_id": "renewal-policy",
+      "content_sha256": "157003c85383985be9535544883f594f791fcbc16556f17b42b1c42638263e66"
+    },
+    {
+      "row_id": "n14",
+      "text": "A reader may renew each borrowed book one time.",
+      "label": "borrowing",
+      "source_id": "author-library-v1",
+      "group_id": "renewal-policy",
+      "content_sha256": "71f207e6ceec239518815c84ff6f344183ff4adf7846d0150e2a6fd3592c3862"
+    },
+    {
+      "row_id": "n15",
+      "text": "Visitors using wheelchairs can reach the reading room by lift.",
+      "label": "access",
+      "source_id": "author-library-v1",
+      "group_id": "accessible-route",
+      "content_sha256": "d93dac7ed4d4ca3ebba82392849e59c63484c2dcae5262635738d0e0dba1f70c"
+    },
+    {
+      "row_id": "n16",
+      "text": "Take the lift for step-free access to the reading room.",
+      "label": "access",
+      "source_id": "author-library-v1",
+      "group_id": "accessible-route",
+      "content_sha256": "02cd4b20b5e4606dfc3729ac15e1150c75ed8d2c035c8033230db8dfc46d34e6"
+    },
+    {
+      "row_id": "n17",
+      "text": "A historian gives a talk in the meeting room tonight.",
+      "label": "event",
+      "source_id": "author-library-v1",
+      "group_id": "history-talk",
+      "content_sha256": "7c8d690a8d0bf14ba9e63b0234a23afcccfc485a2c97bbad7c21f7da500bb0e4"
+    },
+    {
+      "row_id": "n18",
+      "text": "Come to the evening history talk in our meeting room.",
+      "label": "event",
+      "source_id": "author-library-v1",
+      "group_id": "history-talk",
+      "content_sha256": "0d03e6c2795fde1aeb6d3c198e392d7a5e4cbce15e54cb5900d8bd2c529ea22d"
+    }
+  ]
+}

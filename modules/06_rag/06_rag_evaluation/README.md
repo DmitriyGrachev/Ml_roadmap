@@ -2,6 +2,9 @@
 
 ## Goal
 
+The [Russian evaluation and diagnosis lesson](theory.md) separates retrieval misses,
+unsupported answers and useful abstention on the same service corpus.
+
 Measure whether retrieval finds relevant evidence separately from whether the final
 answer is supported, useful and appropriately abstaining. Keep every evaluation query
 in the denominator, including queries whose retrieval failed.

@@ -1,5 +1,8 @@
 # Serving contracts and lifecycle
 
+Start with the connected [theory](theory.md); this lesson's museum label example
+illustrates lifecycle mechanics alongside the G-01 teacher scenario.
+
 ## Goal
 
 Define the request, response, version, and lifecycle contract for a museum-label service.

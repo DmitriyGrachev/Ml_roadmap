@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1120" height="720" viewBox="0 0 1120 720" role="img" aria-labelledby="title desc">
+  <title id="title">NumPy broadcasting: один лимит на каждую строку</title>
+  <desc id="desc">a равен [[2, 4, 6], [8, 10, 12]], shape (2, 3). limits равен [[5], [9]], shape (2, 1). В сравнении a &lt;= limits размерность 1 позволяет повторно использовать 5 для трёх элементов первой строки и 9 для трёх элементов второй строки. Результат [[True, True, False], [True, False, False]], shape (2, 3). Стрелки показывают логическое повторное использование, а не создание массива из размноженных лимитов.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 L9 5 L1 9 Z" fill="#314b63"/></marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #192f43; font-size: 20px; }
+      .code { font-family: Consolas, 'Courier New', monospace; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .small { font-size: 18px; fill: #405364; }
+      .number { font-family: Consolas, 'Courier New', monospace; font-size: 23px; text-anchor: middle; }
+      .cell { fill: #eaf2f8; stroke: #59728a; stroke-width: 1.5; }
+      .limit { fill: #fff0d8; stroke: #9e7430; stroke-width: 1.5; }
+      .true { fill: #edf4de; stroke: #667b3f; stroke-width: 1.5; }
+      .false { fill: #fbece7; stroke: #a56851; stroke-width: 1.5; }
+      .arrow { fill: none; stroke: #314b63; stroke-width: 2; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1120" height="720" rx="14" fill="#fffdf8"/>
+  <text x="40" y="51" class="title">Broadcasting: один лимит для всей строки</text>
+  <text x="40" y="92" class="code">within_limit = a &lt;= limits</text>
+  <text x="40" y="131">Сопоставляем shape справа: (2, 3) и (2, 1) → (2, 3).</text>
+
+  <text x="70" y="185" class="heading code">a</text><text x="435" y="185" class="heading code">limits</text><text x="706" y="185" class="heading">Результат</text>
+  <text x="70" y="214" class="small code">shape (2, 3)</text><text x="435" y="214" class="small code">shape (2, 1)</text><text x="706" y="214" class="small code">shape (2, 3)</text>
+  <g>
+    <rect x="70" y="235" width="86" height="58" class="cell"/><rect x="156" y="235" width="86" height="58" class="cell"/><rect x="242" y="235" width="86" height="58" class="cell"/>
+    <rect x="70" y="293" width="86" height="58" class="cell"/><rect x="156" y="293" width="86" height="58" class="cell"/><rect x="242" y="293" width="86" height="58" class="cell"/>
+    <text x="113" y="272" class="number">2</text><text x="199" y="272" class="number">4</text><text x="285" y="272" class="number">6</text>
+    <text x="113" y="330" class="number">8</text><text x="199" y="330" class="number">10</text><text x="285" y="330" class="number">12</text>
+    <text x="380" y="301" class="number">&lt;=</text>
+    <rect x="435" y="235" width="92" height="58" class="limit"/><rect x="435" y="293" width="92" height="58" class="limit"/>
+    <text x="481" y="272" class="number">5</text><text x="481" y="330" class="number">9</text>
+    <path d="M563 293 H677" class="arrow"/>
+    <rect x="706" y="235" width="110" height="58" class="true"/><rect x="816" y="235" width="110" height="58" class="true"/><rect x="926" y="235" width="110" height="58" class="false"/>
+    <rect x="706" y="293" width="110" height="58" class="true"/><rect x="816" y="293" width="110" height="58" class="false"/><rect x="926" y="293" width="110" height="58" class="false"/>
+    <text x="761" y="272" class="number">True</text><text x="871" y="272" class="number">True</text><text x="981" y="272" class="number">False</text>
+    <text x="761" y="330" class="number">True</text><text x="871" y="330" class="number">False</text><text x="981" y="330" class="number">False</text>
+  </g>
+
+  <rect x="40" y="391" width="1040" height="229" rx="12" fill="#ffffff" stroke="#c7d2da"/>
+  <text x="64" y="430" class="heading">Как используется длина 1 во второй размерности</text>
+  <text x="64" y="467" class="small">Один элемент limits участвует в трёх сравнениях своей строки.</text>
+  <rect x="70" y="487" width="175" height="44" rx="6" class="limit"/>
+  <rect x="70" y="551" width="175" height="44" rx="6" class="limit"/>
+  <text x="157" y="515" class="number">лимит 5</text><text x="157" y="579" class="number">лимит 9</text>
+  <path d="M255 509 H350" class="arrow"/><path d="M255 573 H350" class="arrow"/>
+  <text x="380" y="516" class="code">2 &lt;= 5</text><text x="609" y="516" class="code">4 &lt;= 5</text><text x="839" y="516" class="code">6 &lt;= 5</text>
+  <text x="380" y="580" class="code">8 &lt;= 9</text><text x="609" y="580" class="code">10 &lt;= 9</text><text x="839" y="580" class="code">12 &lt;= 9</text>
+  <text x="40" y="659" class="small">Стрелки обозначают логическое повторное использование значений.</text>
+  <text x="40" y="690" class="small">Broadcasting не требует создавать отдельный массив из размноженных лимитов.</text>
+</svg>

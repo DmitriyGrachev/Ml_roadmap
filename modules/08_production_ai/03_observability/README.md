@@ -1,5 +1,8 @@
 # Operational signals and service objectives
 
+Read the connected [theory](theory.md) to recalculate the fixed G-01 event window
+before implementing the separate request-metrics exercise.
+
 ## Goal
 
 Choose observable user outcomes, meaningful denominators, and bounded-cardinality signals

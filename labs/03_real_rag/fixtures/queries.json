@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "annotation_policy": "Teacher judgments fixed before inspecting rankings, scope public role and corpus revision 1. Paraphrase is a deliberately lexical-miss query, not an estimated semantic benchmark. No model selection on these cases.",
+  "queries": [
+    {"query_id": "q-exact", "text": "scanner settings", "relevant_chunk_ids": ["A-SCAN@1:p1"], "answerable": true},
+    {"query_id": "q-paraphrase", "text": "digitisation resolution", "relevant_chunk_ids": ["A-SCAN@1:p1"], "answerable": true},
+    {"query_id": "q-hours", "text": "reading room hours", "relevant_chunk_ids": ["A-HOURS@1:p1"], "answerable": true},
+    {"query_id": "q-absent", "text": "volcano insurance", "relevant_chunk_ids": [], "answerable": false},
+    {"query_id": "q-protected", "text": "cabinet code", "relevant_chunk_ids": [], "answerable": false}
+  ]
+}

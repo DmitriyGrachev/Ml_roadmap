@@ -2,6 +2,9 @@
 
 ## Goal
 
+Start with the [Russian theory and G-01 provenance walkthrough](theory.md); it connects
+the Module 05 guide to the complete retrieval chain.
+
 Define what the system can answer, who can access each source and what evidence every
 retrieved passage must carry. A library-hours answer should identify the relevant
 branch and current schedule, not merely return a plausible sentence.

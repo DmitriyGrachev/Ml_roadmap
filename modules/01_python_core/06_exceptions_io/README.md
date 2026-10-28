@@ -4,6 +4,12 @@
 
 Handle failures narrowly and use context managers for files, paths, JSON, and CSV safely.
 
+[Теория: фазы записи, владение draft и исходная ошибка](theory.md) разбирает
+успех, сбой сериализации и сбой замены в изолированной директории. Сначала
+предскажите байты и пути после каждого шага, затем выполните команды из теории
+и самостоятельно соедините механизмы в существующем `python-json-export`.
+Демонстрация не является готовым общим JSON exporter или зачётом упражнения.
+
 ## Java mental model
 
 `try`/`except` and `with` resemble exceptions plus try-with-resources. Python does not distinguish checked exceptions in the Java sense.

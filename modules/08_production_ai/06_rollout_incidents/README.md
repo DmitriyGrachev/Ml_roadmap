@@ -1,5 +1,8 @@
 # Rollouts, rollback and incident response
 
+Read the connected [theory](theory.md) for the fixed G-01 candidate comparison
+and incident timeline; the rollout algorithm remains independent practice.
+
 ## Goal
 
 Limit exposure while evaluating a release, make stop conditions explicit, and prepare a

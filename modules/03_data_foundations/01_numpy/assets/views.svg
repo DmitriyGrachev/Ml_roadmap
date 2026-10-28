@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1160" height="1050" viewBox="0 0 1160 1050" role="img" aria-labelledby="title desc">
+  <title id="title">NumPy: basic slice разделяет память, advanced indexing создаёт независимые данные</title>
+  <desc id="desc">Три последовательных состояния. Вначале a равен [[2, 4, 6], [8, 10, 12]]. view = a[:, 1:] и picked = a[:, [1, 2]] оба показывают [[4, 6], [10, 12]], но только view разделяет память с a. Координаты view[0, 0] и a[0, 1] соответствуют одному элементу данных. После view[0, 0] = 40 массив a равен [[2, 40, 6], [8, 10, 12]], view равен [[40, 6], [10, 12]], picked остаётся [[4, 6], [10, 12]]. Затем picked[0, 0] = 400 изменяет только picked до [[400, 6], [10, 12]]; a и view остаются прежними. Схема показывает связи данных, а не адреса памяти.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M1 1 L9 5 L1 9 Z" fill="#287780"/></marker>
+    <marker id="arrowStart" markerWidth="10" markerHeight="10" refX="1" refY="5" orient="auto" markerUnits="userSpaceOnUse"><path d="M9 1 L1 5 L9 9 Z" fill="#287780"/></marker>
+    <style>
+      text { font-family: Arial, sans-serif; fill: #192f43; font-size: 20px; }
+      .code { font-family: Consolas, 'Courier New', monospace; }
+      .title { font-size: 28px; font-weight: 700; }
+      .heading { font-size: 22px; font-weight: 700; }
+      .small { font-size: 18px; fill: #405364; }
+      .number { font-family: Consolas, 'Courier New', monospace; font-size: 24px; text-anchor: middle; }
+      .cell { fill: #eaf2f8; stroke: #59728a; stroke-width: 1.5; }
+      .shared { fill: #e0f2f0; stroke: #287780; stroke-width: 1.5; }
+      .independent { fill: #fff0d8; stroke: #9e7430; stroke-width: 1.5; }
+      .changed { fill: #bde3dd; stroke: #1e636b; stroke-width: 3; }
+      .pickedChanged { fill: #f5d39b; stroke: #946721; stroke-width: 3; }
+      .link { fill: none; stroke: #287780; stroke-width: 2.5; marker-start: url(#arrowStart); marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect width="1160" height="1050" rx="14" fill="#fffdf8"/>
+  <text x="40" y="50" class="title">View и copy: куда попадает запись?</text>
+  <text x="40" y="92" class="code">view = a[:, 1:]; picked = a[:, [1, 2]]</text>
+  <text x="40" y="125" class="small">Basic slicing создаёт view; advanced indexing выбирает независимые данные.</text>
+
+  <rect x="40" y="151" width="1080" height="246" rx="12" fill="#ffffff" stroke="#c7d2da"/>
+  <text x="62" y="187" class="heading">1. Сразу после создания view и picked</text>
+  <text x="72" y="223" class="code">a · (2, 3)</text><text x="500" y="223" class="code">view · (2, 2)</text><text x="868" y="223" class="code">picked · (2, 2)</text>
+  <g>
+    <rect x="72" y="239" width="70" height="50" class="cell"/><rect x="142" y="239" width="70" height="50" class="shared"/><rect x="212" y="239" width="70" height="50" class="shared"/>
+    <rect x="72" y="289" width="70" height="50" class="cell"/><rect x="142" y="289" width="70" height="50" class="shared"/><rect x="212" y="289" width="70" height="50" class="shared"/>
+    <text x="107" y="271" class="number">2</text><text x="177" y="271" class="number">4</text><text x="247" y="271" class="number">6</text>
+    <text x="107" y="321" class="number">8</text><text x="177" y="321" class="number">10</text><text x="247" y="321" class="number">12</text>
+    <rect x="500" y="239" width="70" height="50" class="shared"/><rect x="570" y="239" width="70" height="50" class="shared"/>
+    <rect x="500" y="289" width="70" height="50" class="shared"/><rect x="570" y="289" width="70" height="50" class="shared"/>
+    <text x="535" y="271" class="number">4</text><text x="605" y="271" class="number">6</text><text x="535" y="321" class="number">10</text><text x="605" y="321" class="number">12</text>
+    <path d="M298 289 H482" class="link"/>
+    <text x="315" y="273" class="small">общие данные</text>
+    <rect x="868" y="239" width="90" height="50" class="independent"/><rect x="958" y="239" width="90" height="50" class="independent"/>
+    <rect x="868" y="289" width="90" height="50" class="independent"/><rect x="958" y="289" width="90" height="50" class="independent"/>
+    <text x="913" y="271" class="number">4</text><text x="1003" y="271" class="number">6</text><text x="913" y="321" class="number">10</text><text x="1003" y="321" class="number">12</text>
+  </g>
+  <text x="72" y="374" class="small code">a[0, 1] ↔ view[0, 0]: один элемент данных</text>
+  <text x="868" y="374" class="small">отдельные данные</text>
+
+  <rect x="40" y="422" width="1080" height="246" rx="12" fill="#ffffff" stroke="#c7d2da"/>
+  <text x="62" y="458" class="heading">2. Запись через view</text><text x="366" y="458" class="code">view[0, 0] = 40</text>
+  <text x="72" y="494" class="code">a</text><text x="500" y="494" class="code">view</text><text x="868" y="494" class="code">picked</text>
+  <g>
+    <rect x="72" y="510" width="70" height="50" class="cell"/><rect x="142" y="510" width="70" height="50" class="changed"/><rect x="212" y="510" width="70" height="50" class="shared"/>
+    <rect x="72" y="560" width="70" height="50" class="cell"/><rect x="142" y="560" width="70" height="50" class="shared"/><rect x="212" y="560" width="70" height="50" class="shared"/>
+    <text x="107" y="542" class="number">2</text><text x="177" y="542" class="number">40</text><text x="247" y="542" class="number">6</text>
+    <text x="107" y="592" class="number">8</text><text x="177" y="592" class="number">10</text><text x="247" y="592" class="number">12</text>
+    <rect x="500" y="510" width="70" height="50" class="changed"/><rect x="570" y="510" width="70" height="50" class="shared"/>
+    <rect x="500" y="560" width="70" height="50" class="shared"/><rect x="570" y="560" width="70" height="50" class="shared"/>
+    <text x="535" y="542" class="number">40</text><text x="605" y="542" class="number">6</text><text x="535" y="592" class="number">10</text><text x="605" y="592" class="number">12</text>
+    <path d="M298 560 H482" class="link"/><text x="315" y="544" class="small">общие данные</text>
+    <rect x="868" y="510" width="90" height="50" class="independent"/><rect x="958" y="510" width="90" height="50" class="independent"/>
+    <rect x="868" y="560" width="90" height="50" class="independent"/><rect x="958" y="560" width="90" height="50" class="independent"/>
+    <text x="913" y="542" class="number">4</text><text x="1003" y="542" class="number">6</text><text x="913" y="592" class="number">10</text><text x="1003" y="592" class="number">12</text>
+  </g>
+  <text x="72" y="645" class="small">a[0, 1] и view[0, 0] теперь показывают 40.</text><text x="868" y="645" class="small">без изменений</text>
+
+  <rect x="40" y="693" width="1080" height="246" rx="12" fill="#ffffff" stroke="#c7d2da"/>
+  <text x="62" y="729" class="heading">3. Запись в picked</text><text x="366" y="729" class="code">picked[0, 0] = 400</text>
+  <text x="72" y="765" class="code">a</text><text x="500" y="765" class="code">view</text><text x="868" y="765" class="code">picked</text>
+  <g>
+    <rect x="72" y="781" width="70" height="50" class="cell"/><rect x="142" y="781" width="70" height="50" class="shared"/><rect x="212" y="781" width="70" height="50" class="shared"/>
+    <rect x="72" y="831" width="70" height="50" class="cell"/><rect x="142" y="831" width="70" height="50" class="shared"/><rect x="212" y="831" width="70" height="50" class="shared"/>
+    <text x="107" y="813" class="number">2</text><text x="177" y="813" class="number">40</text><text x="247" y="813" class="number">6</text>
+    <text x="107" y="863" class="number">8</text><text x="177" y="863" class="number">10</text><text x="247" y="863" class="number">12</text>
+    <rect x="500" y="781" width="70" height="50" class="shared"/><rect x="570" y="781" width="70" height="50" class="shared"/>
+    <rect x="500" y="831" width="70" height="50" class="shared"/><rect x="570" y="831" width="70" height="50" class="shared"/>
+    <text x="535" y="813" class="number">40</text><text x="605" y="813" class="number">6</text><text x="535" y="863" class="number">10</text><text x="605" y="863" class="number">12</text>
+    <path d="M298 831 H482" class="link"/><text x="315" y="815" class="small">общие данные</text>
+    <rect x="868" y="781" width="90" height="50" class="pickedChanged"/><rect x="958" y="781" width="90" height="50" class="independent"/>
+    <rect x="868" y="831" width="90" height="50" class="independent"/><rect x="958" y="831" width="90" height="50" class="independent"/>
+    <text x="913" y="813" class="number">400</text><text x="1003" y="813" class="number">6</text><text x="913" y="863" class="number">10</text><text x="1003" y="863" class="number">12</text>
+  </g>
+  <text x="72" y="916" class="small">a и view остаются без изменений.</text><text x="868" y="916" class="small">изменён picked[0, 0]</text>
+
+  <text x="40" y="981" class="code">shares_memory(a, view) → True; shares_memory(a, picked) → False</text>
+  <text x="40" y="1018" class="small">Это схема связей данных; расстояния и размеры блоков не изображают адреса памяти.</text>
+</svg>

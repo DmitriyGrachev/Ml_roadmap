@@ -22,7 +22,12 @@ Run `uv run python modules/01_python_core/00_environment/example.py` to print st
 
 ## Exercises
 
-Verify the two commands above, then [open the module practice map](../README.md#practice-map) and choose a focused task.
+Начинающим с нуля: [выражения, ветвления, циклы, первая функция и import](basics.md)
+→ [маленькая самостоятельная задача](practice/README.md).
+
+Verify the two commands above, then continue with [Object Model](../01_object_model/README.md)
+and [Collections](../02_collections/README.md). Use the [module practice map](../README.md#practice-map)
+after the corresponding lessons, not instead of their explanations.
 
 ## Self-check
 
