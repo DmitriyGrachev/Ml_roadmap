@@ -114,10 +114,32 @@ checks и сохранение неуспешного отчёта. Эти из�
 
 Workflow проверяет base + migrations на Ubuntu и Windows; отдельный Windows job
 проверяет training-код offline. Local-runtimes остаётся явным opt-in.
-На момент фиксации локальной записи результат CI нового commit ещё отсутствовал;
-текущий статус нужно читать в
+Первый опубликованный commit `8b21205095f87cf5b9d19ed7a9e8b5ac17e90f80`
+проверен в [CI run 40791909303](https://github.com/DmitriyGrachev/Ml_roadmap/actions/runs/40791909303):
+
+| Job | Исторический результат первого запуска |
+|---|---|
+| Ubuntu base | PASS: 1634 passed, 87 skipped, 1296 xfailed, 4 deselected; 120.68 s. Также прошли maintainer gate, Ruff/format, mypy 807 файлов и artifact smoke. |
+| Windows base | Один сбой в новом синхронном RAG-тесте; 1635 passed, 85 skipped, 1296 xfailed, 4 deselected; 157.25 s. |
+| Windows training | Тот же единственный сбой; 400 passed, 23 skipped, 79 xfailed; 44.67 s. |
+
+Причина обоих Windows failures: `asyncio.run` создаёт event loop через Windows
+`socketpair`, а stdlib fallback использует служебное loopback-подключение. Общий
+offline guard запрещал его раньше, чем тест доходил до HTTP MockTransport.
+Исправлена подготовка теста: отдельный disposable loop создаётся до установки
+function-scoped guard. Сам `LocalGenerator`, `asyncio.run` и запрет обычных
+`connect`/`connect_ex`/`create_connection` не изменены. Короткая регрессия принудительно
+воспроизводит Windows fallback на Linux и проверяет cleanup, восстановление factory
+и блокировку обычных localhost/public подключений: **9 passed in 1.05s**;
+scoped Ruff и mypy трёх файлов прошли. Повторного полного локального pytest,
+обучения, скачивания моделей и TCP benchmark не было.
+
+Следующая публикация исправляет именно этот наблюдаемый CI-сбой; автоматическая
+проверка нового commit необходима, а ручной rerun старого commit не запускался.
+Результат первого запуска выше сохранён как историческое свидетельство;
+текущий статус последнего commit нужно читать в
 [Actions для этой ветки](https://github.com/DmitriyGrachev/Ml_roadmap/actions?query=branch%3Acodex%2Fml-engineer-readiness).
-Локальный Linux-результат не выдаётся за выполненный Windows job.
+Windows-результат после исправления определяется этим новым CI, а не Linux-регрессией.
 
 Публикуется новая ветка от указанного исходного commit. Исходные ветки не
 обновляются. Draft PR не создаётся: workflow запускается и на push, и на PR,

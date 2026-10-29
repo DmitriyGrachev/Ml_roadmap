@@ -1,5 +1,6 @@
 """Author infrastructure tests; never included in learner catalog completion."""
 
+import asyncio
 from importlib import import_module
 from pathlib import Path
 from types import ModuleType
@@ -165,7 +166,10 @@ def test_live_runner_binds_encoder_queries_and_existing_provider_without_network
     assert (tmp_path / "author" / "receipt.json").is_file()
 
 
-def test_real_local_generator_consumes_dense_selected_passage() -> None:
+def test_real_local_generator_consumes_dense_selected_passage(
+    preinitialized_sync_event_loop: asyncio.AbstractEventLoop,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     rt = runtime()
 
     def response(request: httpx.Request) -> httpx.Response:
@@ -191,14 +195,19 @@ def test_real_local_generator_consumes_dense_selected_passage() -> None:
         )
 
     provider = rt.local.LocalGenerator(transport=httpx.MockTransport(response))
-    result = rt.run_case(
-        rt.teacher_cases()[0],
-        rt.teacher_chunks(),
-        [[1.0, 0.0], [0.0, 1.0], [1.0, 0.0], [-1.0, 0.0]],
-        [1.0, 0.0],
-        rt.Config(k=1),
-        provider,
-    )
+    original_factory = asyncio.events.new_event_loop
+    with monkeypatch.context() as patch:
+        patch.setattr(asyncio.events, "new_event_loop", lambda: preinitialized_sync_event_loop)
+        result = rt.run_case(
+            rt.teacher_cases()[0],
+            rt.teacher_chunks(),
+            [[1.0, 0.0], [0.0, 1.0], [1.0, 0.0], [-1.0, 0.0]],
+            [1.0, 0.0],
+            rt.Config(k=1),
+            provider,
+        )
+    assert preinitialized_sync_event_loop.is_closed()
+    assert asyncio.events.new_event_loop is original_factory
     assert result["answer"]["status"] == "answer"
     assert result["stream"]["status"] == "ok"
     assert result["answer_metrics"]["correct"] is True
