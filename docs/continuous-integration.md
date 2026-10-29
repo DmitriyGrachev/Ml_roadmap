@@ -5,25 +5,20 @@
 машине. Он не проходит упражнения за ученика и не измеряет качество модели.
 
 В [workflow](../.github/workflows/ci.yml) подготовлены две обычные независимые работы
-(jobs). Первая устанавливает базовое окружение, вторая явно включает CPU training.
+(jobs). Первая устанавливает базовое окружение на Ubuntu и Windows, вторая включает
+CPU PyTorch/HF и прикладные группы Trainer/SFT/ranking/experiments на Windows.
 Отдельная matrix `local-runtimes` запускается только при ручном `workflow_dispatch`
 с выбранным `local_runtime_checks`: MLflow, Qdrant и PEFT получают каждый свою
 группу и чистое окружение. Обычный push/pull request эту matrix не включает.
 Каждый шаг (step) запускает одну команду. Ненулевой код завершения, например из-за
 упавшего assertion, останавливает обычные следующие шаги этой работы.
 
-```text
-код + pyproject.toml + uv.lock
-                 │
-           два чистых runner
-           ┌─────┴────────────┐
-           ↓                  ↓
-       base install      training install
-           ↓                  ↓
-   pytest / Ruff / mypy   offline lab tests / mypy
-           ↓                  ↓
-    artifact smoke      CPU tensors, random weights
-```
+| Job | Установка | Проверка |
+|---|---|---|
+| base, Ubuntu/Windows | Base + migrations | Pytest, maintainer boundaries, Ruff, mypy, artifact smoke |
+| training-offline, Windows | trainer + sft + ranking + experiments + migrations | Local random-model API и learner contracts, MLflow/Optuna, training types |
+| local-runtimes, ручной | Отдельные tracking/retrieval/finetuning | Дополнительные прежние runtime demos |
+
 
 `uv.lock` фиксирует разрешённые версии. `--locked` требует согласованности файла
 с зависимостями проекта; это не гарантия отсутствия ошибок в самих библиотеках.
@@ -31,7 +26,8 @@
 Базовая работа не включает `training`, а training не получает vLLM или GPU stack.
 Optional runtime matrix также использует offline Hub flags; MLflow telemetry
 выключена. Она проверяет локальные библиотеки, без внешних endpoints и downloads
-моделей. Настройка workflow не является его hosted исполнением — **NOT_RUN**.
+моделей. Настройка workflow не является его hosted исполнением; результаты конкретного
+commit и URL запуска записываются отдельно в verification report.
 Загрузка Python и пакетов при установке разрешена конфигурацией CI; загрузка
 моделей и датасетов в тестах не нужна. Hub offline flags — дополнительная защита,
 а не полный сетевой firewall. Локальные тесты входов/выходов остаются обязательными.
@@ -81,10 +77,11 @@ starters могут оставаться xfail. Строгий `check <ID>` пр
 
 ## Граница запуска
 
-Workflow подготовлен локально. Hosted CI — **CONFIGURED / NOT_RUN** до отдельного
-разрешения на публикацию и фактического запуска. Он не развёртывает сервис,
-не получает облачных секретов и не запускает платные эксперименты. Публикация
-репозитория с этим файлом активирует события push/pull_request; сейчас публикации нет.
+Workflow запускается по push/pull_request. Последняя опубликованная база прошла
+[Ubuntu/Windows CI](https://github.com/DmitriyGrachev/Ml_roadmap/actions/runs/40793287000).
+Результат PA1 описан отдельно в [актуальном журнале](applied-tools-verification.md).
+Workflow не развёртывает сервис, не получает облачные секреты и не запускает
+платные эксперименты, pretrained training, CUDA или vLLM.
 
 Документация: [uv в GitHub Actions](https://docs.astral.sh/uv/guides/integration/github/)
 — установка и sync; [синтаксис workflow](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
@@ -104,3 +101,18 @@ CLI принудительно пишет UTF-8; subprocess-потребител
 Регрессия воспроизводит прежний сбой при `PYTHONIOENCODING=cp1252`. Тест относительных
 путей PyTorch использует временный repository root, не предполагая один Windows drive
 для checkout и temp. Актуальные результаты — [verification](ml-engineer-readiness-verification.md).
+
+## Прикладные группы PA1
+
+Обычный training-offline job устанавливает `trainer`, `sft`, `ranking` и
+`experiments` вместе с `migrations`. Поэтому короткие реальные API проверки
+Trainer/TRL/PEFT/Sentence Transformers/MLflow/Optuna выполняются с установленными
+зависимостями, а не считаются успешными из-за importorskip в base. Модели создаются
+локально со случайными весами, шаги ограничены, CUDA/сервер не запускается.
+В `quantization` есть отдельная зависимость bitsandbytes; CI её не устанавливает.
+Результаты не являются quality evaluation pretrained моделей или learner credit.
+
+В training job явно включены `ROADMAP_RUN_SFT=1`, `ROADMAP_RUN_RANKING=1` и
+`ROADMAP_RUN_EXPERIMENTS=1` для маленьких локальных API-контрактов. Пути к live
+learner submissions не задаются; отсутствие реального ученического опыта
+сохраняет NOT_RUN/xfail и не превращается в зачёт.

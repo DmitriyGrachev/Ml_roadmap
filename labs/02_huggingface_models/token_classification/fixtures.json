@@ -1,0 +1,18 @@
+{
+  "evidence": "ANNOTATION_FIXTURE_ONLY",
+  "dataset_source": "course-authored neutral English examples; no quality claim",
+  "model_source": "NONE: annotated text only",
+  "splits": {
+    "train": [
+      {"id": "train-visit-1", "words": ["Ada", "visits", "Rome", "."], "tags": ["B-PER", "O", "B-LOC", "O"]},
+      {"id": "train-note-2", "words": ["Lee", "writes", "for", "Cedar", "Press", "."], "tags": ["B-PER", "O", "O", "B-ORG", "I-ORG", "O"]}
+    ],
+    "validation": [
+      {"id": "dev-meeting-1", "words": ["Mira", "and", "Jo", "meet", "in", "Oslo", "."], "tags": ["B-PER", "O", "B-PER", "O", "O", "B-LOC", "O"]}
+    ],
+    "test": [
+      {"id": "holdout-exhibit-1", "words": ["The", "exhibition", "by", "Rowan", "Studio", "opens", "in", "New", "York", "."], "tags": ["O", "O", "O", "B-ORG", "I-ORG", "O", "O", "B-LOC", "I-LOC", "O"]},
+      {"id": "holdout-archive-2", "words": ["An", "archive", "credits", "Nora", "Vale", ",", "then", "Eli", "."], "tags": ["O", "O", "O", "B-PER", "I-PER", "O", "O", "B-PER", "O"]}
+    ]
+  }
+}

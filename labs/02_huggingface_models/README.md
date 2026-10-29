@@ -194,7 +194,9 @@ requires_grad, zero_grad, LR и train/eval, затем увеличивайте 
 
 Сравните с `Trainer`: он организует batches, optimizer steps, evaluation и checkpointing,
 но не выбирает честный split и метрику за вас. Здесь ручной loop показывает эти границы.
-Переход на Trainer — последующий эксперимент; сам transformer с нуля реализовывать не нужно.
+Переход на Trainer — отдельный [проверяемый практикум](trainer_workflow/README.md);
+сам transformer с нуля реализовывать не нужно. Для нового типа выхода модели
+продолжите [NER/token classification](token_classification/README.md).
 
 ### 4. Сравните три метода и объясните результат
 

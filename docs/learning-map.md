@@ -10,6 +10,7 @@ uv sync --locked
 uv run python scripts/learn.py inventory
 uv run python scripts/learn.py track ml-engineer
 uv run python scripts/learn.py track applied-ai
+uv run python scripts/learn.py track applied-nlp
 ```
 
 ## Как пользоваться
@@ -81,7 +82,8 @@ Fine-tuning/LoRA, local MLflow/Qdrant и модельный serving уже им�
 [local runtimes](local-runtime-continuation.md).
 Их наличие не означает, что каждый GPU, Docker или внешний cloud сценарий был
 исполнен. Используй [актуальную запись проверок](ml-engineer-readiness-verification.md).
-vLLM оставлен Linux/WSL-специализацией; native Windows не является обязательным путём.
+Реальный vLLM остаётся обязательным отложенным этапом Applied AI/NLP на Linux/WSL;
+формальная сдача — `lab-vllm-measurements`. Native Windows не является serving runtime.
 
 ## Зачёт и выбор следующего шага
 
@@ -102,3 +104,10 @@ Kubernetes и глубокая research-математика — дальней�
 все проходить до первых интервью. Прежний [Banking AI Lab](../projects/banking_ai_lab/README.md)
 остаётся практикой Python/backend/data; два внешних проекта проверяют перенос
 на новые данные и независимые решения.
+
+## Углубление прикладных инструментов PA1
+
+[Карта 11 новых практикумов](applied-tools-practice.md) расширяет NumPy/Pandas/sklearn,
+PyTorch/HF, SFT/LoRA, NER, retrieval и управление экспериментами. Новый `applied-nlp`
+маршрут фокусируется на текстах, документах и адаптации моделей.
+Это следующий слой над описанным основанием; все learner TODO остаются самостоятельными.

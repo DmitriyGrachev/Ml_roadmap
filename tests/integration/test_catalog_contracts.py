@@ -33,6 +33,9 @@ REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
         "ml-representation-study",
         "ml-bias-slices",
         "backend-sql-foundations",
+        "data-vectorized-features",
+        "data-point-in-time-features",
+        "ml-sklearn-selection",
     ],
 )
 def test_new_base_exercises_block_network(identifier: str, tmp_path: Path) -> None:
@@ -86,7 +89,7 @@ def item(
     return ExpectedItem(identifier, kind, readme, tests)
 
 
-EXPECTED_CATALOG = (
+EXPECTED_CATALOG: tuple[ExpectedItem, ...] = (
     item(
         "python-environment",
         "lesson",
@@ -1203,10 +1206,89 @@ READINESS_CATALOG = (
 READINESS_IDS = tuple(entry.identifier for entry in READINESS_CATALOG)
 EXPECTED_CATALOG += READINESS_CATALOG
 
+EXTENDED_CATALOG = (
+    item(
+        "data-vectorized-features",
+        "exercise",
+        "modules/03_data_foundations/exercises/vectorized_features/README.md",
+        "modules/03_data_foundations/exercises/vectorized_features/test_starter.py",
+    ),
+    item(
+        "data-point-in-time-features",
+        "exercise",
+        "modules/03_data_foundations/exercises/point_in_time_features/README.md",
+        "modules/03_data_foundations/exercises/point_in_time_features/test_starter.py",
+    ),
+    item(
+        "ml-sklearn-selection",
+        "exercise",
+        "modules/04_machine_learning/exercises/sklearn_selection/README.md",
+        "modules/04_machine_learning/exercises/sklearn_selection/test_starter.py",
+    ),
+    item(
+        "lab-hf-trainer-workflow",
+        "exercise",
+        "labs/02_huggingface_models/trainer_workflow/README.md",
+        "labs/02_huggingface_models/trainer_workflow/test_starter.py",
+    ),
+    item(
+        "lab-token-classification",
+        "exercise",
+        "labs/02_huggingface_models/token_classification/README.md",
+        "labs/02_huggingface_models/token_classification/test_starter.py",
+    ),
+    item(
+        "lab-sft-lora",
+        "exercise",
+        "labs/04_llm_finetuning/sft_workflow/README.md",
+        "labs/04_llm_finetuning/sft_workflow/test_starter.py",
+        "labs/04_llm_finetuning/sft_workflow/test_library.py",
+        "labs/04_llm_finetuning/sft_workflow/test_live.py",
+    ),
+    item(
+        "lab-training-efficiency",
+        "exercise",
+        "labs/01_pytorch_foundations/exercises/training_efficiency/README.md",
+        "labs/01_pytorch_foundations/exercises/training_efficiency/test_starter.py",
+    ),
+    item(
+        "rag-neural-reranking",
+        "exercise",
+        "labs/03_real_rag/neural_reranking/README.md",
+        "labs/03_real_rag/neural_reranking/test_starter.py",
+        "labs/03_real_rag/neural_reranking/test_library.py",
+        "labs/03_real_rag/neural_reranking/test_submission.py",
+    ),
+    item(
+        "rag-embedding-adaptation",
+        "exercise",
+        "labs/03_real_rag/embedding_adaptation/README.md",
+        "labs/03_real_rag/embedding_adaptation/test_starter.py",
+        "labs/03_real_rag/embedding_adaptation/test_library.py",
+        "labs/03_real_rag/embedding_adaptation/test_submission.py",
+    ),
+    item(
+        "ml-experiment-management",
+        "exercise",
+        "projects/document_intelligence_lab/experiment_management/README.md",
+        "projects/document_intelligence_lab/experiment_management/test_starter.py",
+    ),
+    item(
+        "lab-vllm-measurements",
+        "exercise",
+        "labs/05_model_serving/assessment/README.md",
+        "labs/05_model_serving/assessment/test_starter.py",
+        "labs/05_model_serving/assessment/test_evidence.py",
+    ),
+)
+EXTENDED_IDS = tuple(entry.identifier for entry in EXTENDED_CATALOG)
+EXPECTED_CATALOG += EXTENDED_CATALOG
+
 LESSON_IDS = tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind == "lesson")
 PROGRESS_IDS = (
     tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind in {"lesson", "lab"})
     + READINESS_IDS
+    + EXTENDED_IDS
 )
 FIRST_SPRINT_IDS = (
     "python-detect-duplicates",
@@ -1258,12 +1340,12 @@ def test_catalog_is_the_complete_ordered_roadmap() -> None:
     assert tuple(item.kind for item in catalog.items) == tuple(
         entry.kind for entry in EXPECTED_CATALOG
     )
-    assert len(catalog.items) == 180
+    assert len(catalog.items) == 191
     assert len(LESSON_IDS) == 57
     assert len(FIRST_SPRINT_IDS) == 15
     assert len(LATER_PYTHON_PRACTICE_IDS) == 6
     assert len(BACKEND_EXERCISE_IDS) == 14
-    assert len(DATA_EXERCISE_IDS) == 18
+    assert len(DATA_EXERCISE_IDS) == 20
     assert tuple(item.identifier for item in catalog.items if item.kind == "project") == (
         "banking-ai-lab",
         "ml-external-tabular",
@@ -1310,6 +1392,7 @@ def test_new_practices_do_not_expand_legacy_check_directories() -> None:
         "ml-bias-slices",
         "backend-sql-foundations",
         *READINESS_IDS,
+        *EXTENDED_IDS,
     }
     for new_id in new_ids:
         new_tests = catalog.get(new_id).tests

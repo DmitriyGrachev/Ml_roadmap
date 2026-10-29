@@ -114,3 +114,32 @@ def test_registered_routes_put_new_explanations_before_dependent_practice() -> N
             assert track.required.index(before) < track.required.index(after), track.identifier
     applied = tracks["applied-ai"].required
     assert applied.index("rag-evaluation") < applied.index("rag-end-to-end-evaluation")
+
+
+def test_applied_tool_routes_keep_prerequisites_and_specialization_scope() -> None:
+    root = Path(__file__).resolve().parents[2]
+    tracks = load_tracks(root)
+    for track in tracks.values():
+        for before, after in (
+            ("data-numpy", "data-vectorized-features"),
+            ("data-time-split", "data-point-in-time-features"),
+            ("ml-model-comparison", "ml-sklearn-selection"),
+            ("ml-external-tabular", "ml-experiment-management"),
+            ("lab-training-resume", "lab-training-efficiency"),
+            ("lab-huggingface", "lab-hf-trainer-workflow"),
+            ("lab-hf-trainer-workflow", "document-external-model-study"),
+        ):
+            assert track.required.index(before) < track.required.index(after), track.identifier
+    for key in ("applied-ai", "applied-nlp"):
+        required = tracks[key].required
+        for before, after in (
+            ("document-external-model-study", "lab-token-classification"),
+            ("llm-answer-evaluation", "lab-sft-lora"),
+            ("rag-retrieval-evaluation", "rag-neural-reranking"),
+            ("rag-neural-reranking", "rag-embedding-adaptation"),
+            ("production-service-lifecycle", "lab-vllm-measurements"),
+        ):
+            assert required.index(before) < required.index(after), key
+    assert not any(key.startswith("agents-") for key in tracks["applied-nlp"].required)
+    assert "lab-sft-lora" not in tracks["ml-engineer"].required
+    assert "lab-sft-lora" in tracks["applied-nlp"].required

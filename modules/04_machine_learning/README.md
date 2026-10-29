@@ -129,3 +129,10 @@ and hand another person a versioned report with data provenance.
 - [Внешний tabular проект](../../projects/external_tabular/README.md).
 
 Prerequisites, проверки и следующий этап — в [текущей карте](../../docs/learning-map.md).
+
+## Выбор и проверка sklearn pipeline
+
+[Group CV и permutation importance](exercises/sklearn_selection/README.md) связывает
+ColumnTransformer, категориальные/пропущенные значения, подбор гиперпараметров
+и heldout inspection. Далее — [MLflow/Optuna](../../projects/document_intelligence_lab/experiment_management/README.md)
+для собственных воспроизводимых сравнений.

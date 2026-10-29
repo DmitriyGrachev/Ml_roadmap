@@ -44,6 +44,25 @@ finetuning = [
     {include-group = "training"},
     "peft>=0.17,<1",
 ]
+trainer = [
+    {include-group = "training"},
+    "accelerate==1.15.0",
+]
+sft = [
+    {include-group = "finetuning"},
+    "trl==1.16.0",
+]
+ranking = [
+    {include-group = "trainer"},
+    "sentence-transformers==6.2.0",
+]
+experiments = [
+    {include-group = "tracking"},
+    "optuna==5.0.0",
+]
+quantization = [
+    "bitsandbytes==0.50.2",
+]
 dev = [
     "uv_build>=0.12.16,<0.13",
     "pytest",

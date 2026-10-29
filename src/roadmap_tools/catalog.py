@@ -12,6 +12,20 @@ from typing import Literal, cast
 
 CatalogKind = Literal["lesson", "exercise", "project", "lab"]
 _CATALOG_KINDS: frozenset[str] = frozenset({"lesson", "exercise", "project", "lab"})
+OPTIONAL_GROUPS: frozenset[str] = frozenset(
+    {
+        "training",
+        "migrations",
+        "tracking",
+        "retrieval",
+        "finetuning",
+        "trainer",
+        "sft",
+        "ranking",
+        "experiments",
+        "quantization",
+    }
+)
 
 
 class CatalogError(ValueError):
@@ -33,6 +47,7 @@ class CatalogItem:
     readme: Path
     tests: tuple[Path, ...]
     requires_training: bool = False
+    requires_groups: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -113,7 +128,22 @@ def _parse_item(record: object, repository_root: Path) -> CatalogItem:
         readme=readme,
         tests=tests,
         requires_training=requires_training,
+        requires_groups=_parse_groups(record, identifier),
     )
+
+
+def _parse_groups(record: dict[object, object], identifier: str) -> tuple[str, ...]:
+    values = record.get("requires_groups", [])
+    if not isinstance(values, list):
+        raise CatalogError(identifier, "requires_groups", "expected an array of group names")
+    groups: list[str] = []
+    for value in values:
+        if not isinstance(value, str) or value not in OPTIONAL_GROUPS:
+            raise CatalogError(identifier, "requires_groups", f"unknown group {value!r}")
+        if value in groups:
+            raise CatalogError(identifier, "requires_groups", f"duplicate group {value!r}")
+        groups.append(value)
+    return tuple(groups)
 
 
 def _required_string(record: dict[object, object], field: str, identifier: str) -> str:

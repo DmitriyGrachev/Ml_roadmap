@@ -63,6 +63,9 @@ jobs:
     timeout-minutes: 25
     env:
       UV_PROJECT_ENVIRONMENT: .venv-training
+      ROADMAP_RUN_SFT: "1"
+      ROADMAP_RUN_RANKING: "1"
+      ROADMAP_RUN_EXPERIMENTS: "1"
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -72,10 +75,10 @@ jobs:
           version: "0.12.17"
           python-version: "3.12.14"
           enable-cache: true
-      - name: Explicit CPU training environment
-        run: uv sync --locked --group training
+      - name: Explicit CPU applied-tool environment
+        run: uv sync --locked --group migrations --group trainer --group sft --group ranking --group experiments
       - name: Local tensors and random models only
-        run: uv run --no-sync python -m pytest labs projects/document_intelligence_lab/part_a -q
+        run: uv run --no-sync python -m pytest labs projects/document_intelligence_lab/part_a projects/document_intelligence_lab/experiment_management -q
       - name: Training types
         run: uv run --no-sync python -m mypy -p labs -p projects.document_intelligence_lab
 

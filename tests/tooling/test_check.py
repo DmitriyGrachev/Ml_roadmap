@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import subprocess
 from collections.abc import Sequence
-from importlib import metadata
+from importlib import util
 from pathlib import Path
 
 import pytest
@@ -279,7 +279,7 @@ def test_health_command_keeps_xfail_compatible(tmp_path: Path) -> None:
     assert "xfailed" in output
 
 
-def test_check_requires_training_distribution_before_running_tests(
+def test_check_requires_training_modules_before_running_tests(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch, capsys: pytest.CaptureFixture[str]
 ) -> None:
     root = make_repository(tmp_path, "def test_complete():\n    assert True\n")
@@ -291,11 +291,11 @@ def test_check_requires_training_distribution_before_running_tests(
         encoding="utf-8",
     )
 
-    def missing_distribution(name: str) -> str:
-        assert name == "torch"
-        raise metadata.PackageNotFoundError(name)
+    def missing_module(name: str) -> None:
+        assert name in {"torch", "transformers", "datasets"}
+        return None
 
-    monkeypatch.setattr(metadata, "version", missing_distribution)
+    monkeypatch.setattr(util, "find_spec", missing_module)
 
     def unexpected_runner(command: Sequence[str]) -> int:
         raise AssertionError(f"pytest must not start: {command}")
@@ -304,5 +304,5 @@ def test_check_requires_training_distribution_before_running_tests(
 
     assert exit_code != 0
     output = capsys.readouterr().out
-    assert "uv sync --group training" in output
+    assert "uv sync --locked --group training" in output
     assert "torch" in output

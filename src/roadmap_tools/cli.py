@@ -9,16 +9,29 @@ import subprocess
 import sys
 from collections import Counter
 from collections.abc import Callable, Sequence
-from importlib import metadata
+from importlib import util
 from io import TextIOWrapper
 from pathlib import Path
 
-from roadmap_tools.catalog import Catalog, CatalogError
+from roadmap_tools.catalog import Catalog, CatalogError, CatalogItem
 from roadmap_tools.tracks import TrackError, load_tracks, unique_test_targets
 
 ProcessRunner = Callable[[Sequence[str]], int]
 _PROGRESS_ENTRY = re.compile(r"^- \[([ ~x])\] (.+)$")
 _CORRECTIVE_COMMAND = "uv sync --locked"
+_TRAINING_MODULES = ("torch", "transformers", "datasets")
+_GROUP_MODULES = {
+    "training": _TRAINING_MODULES,
+    "migrations": ("alembic",),
+    "trainer": (*_TRAINING_MODULES, "accelerate"),
+    "finetuning": (*_TRAINING_MODULES, "accelerate", "peft"),
+    "sft": (*_TRAINING_MODULES, "accelerate", "peft", "trl"),
+    "ranking": (*_TRAINING_MODULES, "accelerate", "sentence_transformers"),
+    "tracking": ("mlflow",),
+    "experiments": ("mlflow", "optuna"),
+    "retrieval": ("qdrant_client",),
+    "quantization": ("bitsandbytes",),
+}
 
 
 def main(argv: Sequence[str] | None = None, repository_root: Path | None = None) -> int:
@@ -147,12 +160,8 @@ def _run_item_tests(
         print(message)
         return 2
 
-    if strict and item.requires_training:
-        try:
-            metadata.version("torch")
-        except metadata.PackageNotFoundError:
-            print("Training dependency torch is unavailable. Run: uv sync --group training")
-            return 2
+    if strict and not _optional_environment_available((item,)):
+        return 2
 
     command = [sys.executable, "-m", "pytest"]
     if strict:
@@ -163,6 +172,23 @@ def _run_item_tests(
 
 def _run_process(command: Sequence[str]) -> int:
     return subprocess.call(command)
+
+
+def _optional_environment_available(items: Sequence[CatalogItem], *, track: bool = False) -> bool:
+    """Check known top-level modules without loading optional ML frameworks."""
+    groups = {group for item in items for group in item.requires_groups}
+    if any(item.requires_training for item in items):
+        groups.add("training")
+    if track and groups:
+        groups.add("migrations")
+    ordered_groups = [group for group in _GROUP_MODULES if group in groups]
+    modules = dict.fromkeys(module for group in ordered_groups for module in _GROUP_MODULES[group])
+    missing = [module for module in modules if util.find_spec(module) is None]
+    if not missing:
+        return True
+    command = "uv sync --locked" + "".join(f" --group {group}" for group in ordered_groups)
+    print(f"Optional dependencies unavailable: {', '.join(missing)}. Run: {command}")
+    return False
 
 
 def _run_track(
@@ -187,15 +213,10 @@ def _run_track(
             print(f"{number}. {key} — {catalog.get(key).title}")
         print(f"HUMAN REVIEW REQUIRED: {track.review.relative_to(root)}")
         return 0
-    if any(catalog.get(key).requires_training for key in track.required):
-        try:
-            metadata.version("torch")
-        except metadata.PackageNotFoundError:
-            print(
-                "Training dependency torch is unavailable. "
-                "Run: uv sync --locked --group training --group migrations"
-            )
-            return 2
+    if not _optional_environment_available(
+        tuple(catalog.get(key) for key in track.required), track=True
+    ):
+        return 2
     targets = unique_test_targets(catalog, track)
     result = run_process(
         [sys.executable, "-m", "pytest", "-p", "roadmap_tools.strict_check", *map(str, targets)]

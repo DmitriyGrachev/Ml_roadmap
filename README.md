@@ -9,7 +9,8 @@ Modules 01–08 are implemented. Актуальный состав: `uv run pyth
 Начинайте с [единой учебной карты](docs/learning-map.md): prerequisites, обязательная практика,
 два внешних проекта и критерии защиты. [Сравнение с вакансиями](docs/job-market-comparison-2026-10-29.md)
 объясняет приоритеты ML Engineer и Applied AI. Материалы real RAG, fine-tuning, serving и lifecycle
-уже существуют; фактические запуски перечислены в [журнале проверок](docs/ml-engineer-readiness-verification.md).
+уже существуют. Новое углубление: [практика основных инструментов и Applied NLP](docs/applied-tools-practice.md);
+фактические проверки и ограничения — [журнал PA1](docs/applied-tools-verification.md).
 All eight modules include neutral-theme Medium practice. Implemented courseware includes examples
 and deliberately unsolved student tasks; it does not mean those tasks are already completed.
 
@@ -125,8 +126,8 @@ uv run --group training python scripts/learn.py check lab-huggingface
 Это не завершённые учеником labs. Настоящие локальные MLflow registry, Qdrant и
 PEFT теперь имеют отдельные авторские runtime-опыты без скачивания моделей:
 [команды, результаты и ограничения](docs/local-runtime-continuation.md).
-Pretrained quality, cloud и hosted CI не проверены; vLLM отложен по вашему решению
-до появления Linux/WSL. [Предыдущие offline проверки](docs/remaining-roadmap-verification.md).
+Pretrained quality и cloud требуют отдельных опытов; результаты hosted CI указаны
+в актуальном журнале. Реальный vLLM запуск остаётся отложенным до подготовки Linux/WSL. [Предыдущие offline проверки](docs/remaining-roadmap-verification.md).
 
 ## Вторая волна: практика и самостоятельные контроли
 
@@ -149,6 +150,25 @@ NOT_RUN, содержательная защита REQUIRES_REVIEW. Новые �
 
 Последний `check` станет успешным только после вашей реализации. Три продолжения
 labs требуют [отдельного training interpreter](docs/compute-guide.md).
+
+## Прикладная модельная практика PA1
+
+Добавлены 11 самостоятельных блоков: NumPy/Pandas/sklearn, PyTorch accumulation,
+HF Trainer/Datasets и NER, TRL SFT/LoRA, CrossEncoder и embedding adaptation,
+MLflow/Optuna, а также формальная сдача реальных vLLM measurements.
+Каждый блок включает объяснение, отдельный авторский пример и незаполненные learner TODO.
+[Карта практики](docs/applied-tools-practice.md) объясняет prerequisites, окружения,
+методы адаптации, критерии переноса и рекомендуемую специализацию Applied ML/NLP.
+
+```powershell
+uv run --no-sync python scripts/learn.py track applied-nlp
+uv run --no-sync python scripts/learn.py test data-vectorized-features
+```
+
+Новые группы ставятся явно: `trainer`, `sft`, `ranking`, `experiments`.
+Основной lock остаётся CPU; отдельный `quantization` не превращает его в CUDA.
+Небольшие локальные API-тесты проверяют механику библиотек. Претензия на качество
+pretrained модели требует собственного heldout опыта, артефактов и защиты.
 
 ## Roadmap and project thread
 

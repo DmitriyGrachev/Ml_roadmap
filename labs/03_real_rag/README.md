@@ -84,3 +84,10 @@ no-answer, ambiguity, stale и ACL. Новый ID `rag-end-to-end-evaluation` т
 самостоятельной реализации и реального локального evidence; старые CLS-отчёты
 сохраняют свои подписи. Offline doubles не подтверждают качество генератора.
 Порядок прохождения — [текущая карта](../../docs/learning-map.md).
+
+## Модельная глубина retrieval
+
+После lexical/dense/hybrid и retrieval evaluation выполните
+[настоящий CrossEncoder reranker](neural_reranking/README.md), затем
+[адаптацию embeddings](embedding_adaptation/README.md). Эти learner ID требуют
+собственных данных/предсказаний и не закрываются illustrative score таблицей.

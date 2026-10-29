@@ -1314,3 +1314,89 @@ title = "ML data pipeline: SQL, increment, idempotency, replay"
 kind = "exercise"
 readme = "projects/document_intelligence_lab/data_pipeline/README.md"
 tests = ["projects/document_intelligence_lab/data_pipeline/test_starter.py"]
+
+# Applied tool practice PA1: independently assessed learner work.
+
+[[items]]
+id = "data-vectorized-features"
+title = "NumPy: маски, оси и cosine top-k"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/vectorized_features/README.md"
+tests = ["modules/03_data_foundations/exercises/vectorized_features/test_starter.py"]
+
+[[items]]
+id = "data-point-in-time-features"
+title = "Pandas: признаки на момент запроса"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/point_in_time_features/README.md"
+tests = ["modules/03_data_foundations/exercises/point_in_time_features/test_starter.py"]
+
+[[items]]
+id = "ml-sklearn-selection"
+title = "sklearn: выбор pipeline и permutation importance"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/sklearn_selection/README.md"
+tests = ["modules/04_machine_learning/exercises/sklearn_selection/test_starter.py"]
+
+[[items]]
+id = "lab-hf-trainer-workflow"
+title = "Trainer и Datasets: проверяемый цикл обучения"
+kind = "exercise"
+readme = "labs/02_huggingface_models/trainer_workflow/README.md"
+tests = ["labs/02_huggingface_models/trainer_workflow/test_starter.py"]
+requires_groups = ["trainer"]
+
+[[items]]
+id = "lab-token-classification"
+title = "Token classification: subwords, BIO и точные сущности"
+kind = "exercise"
+readme = "labs/02_huggingface_models/token_classification/README.md"
+tests = ["labs/02_huggingface_models/token_classification/test_starter.py"]
+requires_groups = ["trainer"]
+
+[[items]]
+id = "lab-sft-lora"
+title = "Самостоятельный SFT и LoRA"
+kind = "exercise"
+readme = "labs/04_llm_finetuning/sft_workflow/README.md"
+tests = ["labs/04_llm_finetuning/sft_workflow/test_starter.py", "labs/04_llm_finetuning/sft_workflow/test_library.py", "labs/04_llm_finetuning/sft_workflow/test_live.py"]
+requires_groups = ["sft"]
+
+[[items]]
+id = "lab-training-efficiency"
+title = "Эффективность обучения и logical batch"
+kind = "exercise"
+readme = "labs/01_pytorch_foundations/exercises/training_efficiency/README.md"
+tests = ["labs/01_pytorch_foundations/exercises/training_efficiency/test_starter.py"]
+requires_training = true
+
+[[items]]
+id = "rag-neural-reranking"
+title = "Нейронный reranking: кандидаты, порядок и стоимость"
+kind = "exercise"
+readme = "labs/03_real_rag/neural_reranking/README.md"
+tests = ["labs/03_real_rag/neural_reranking/test_starter.py", "labs/03_real_rag/neural_reranking/test_library.py", "labs/03_real_rag/neural_reranking/test_submission.py"]
+requires_groups = ["ranking"]
+
+[[items]]
+id = "rag-embedding-adaptation"
+title = "Адаптация embeddings на доменных тройках"
+kind = "exercise"
+readme = "labs/03_real_rag/embedding_adaptation/README.md"
+tests = ["labs/03_real_rag/embedding_adaptation/test_starter.py", "labs/03_real_rag/embedding_adaptation/test_library.py", "labs/03_real_rag/embedding_adaptation/test_submission.py"]
+requires_groups = ["ranking"]
+
+[[items]]
+id = "ml-experiment-management"
+title = "MLflow и ограниченный поиск экспериментов"
+kind = "exercise"
+readme = "projects/document_intelligence_lab/experiment_management/README.md"
+tests = ["projects/document_intelligence_lab/experiment_management/test_starter.py"]
+requires_groups = ["experiments"]
+
+[[items]]
+id = "lab-vllm-measurements"
+title = "Самостоятельные измерения vLLM и проверка артефактов"
+kind = "exercise"
+readme = "labs/05_model_serving/assessment/README.md"
+tests = ["labs/05_model_serving/assessment/test_starter.py", "labs/05_model_serving/assessment/test_evidence.py"]

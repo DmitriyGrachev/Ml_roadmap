@@ -76,3 +76,10 @@ These Medium exercises add independent synthetic inputs and focused automated te
 [повторные обучения](exercises/training_stability/README.md): меняйте seeds/splits/размер train,
 отдельно сравнивайте paired bootstrap фиксированных predictions и вариативность всего обучения.
 Переход к [внешним проектам](../../docs/learning-map.md) требует обоих видов рассуждений.
+
+## Углубление основных инструментов
+
+- [NumPy: маски, broadcasting и cosine top-k](exercises/vectorized_features/README.md).
+- [Pandas: point-in-time признаки без будущих данных](exercises/point_in_time_features/README.md).
+
+Порядок и критерии переноса — [прикладная карта](../../docs/applied-tools-practice.md).

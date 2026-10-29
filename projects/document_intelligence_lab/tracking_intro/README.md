@@ -150,3 +150,9 @@ manual start_run/log params/metrics/model и reload;
 [artifact store](https://mlflow.org/docs/latest/self-hosting/architecture/artifact-store/) —
 различие SQLite и файлов. Остановиться перед remote server/registry deployment.
 Установленный MLflow 3.17.0 проверен отдельно настоящими CLI и integration tests.
+
+## Независимый ограниченный поиск
+
+После вводного tracking выполните [MLflow и ограниченный поиск экспериментов](../experiment_management/README.md):
+собственный Optuna objective, отдельные MLflow trials, выбор по dev и локальный reload
+с обязательным learner evidence. Авторский tracking demo не закрывает эту практику.

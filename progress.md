@@ -104,3 +104,17 @@ Passing template checks does not complete lessons or the student-owned exercises
 - [ ] rag-end-to-end-evaluation
 - [ ] production-service-lifecycle
 - [ ] ml-data-pipeline
+
+## Прикладные инструменты PA1 — самостоятельная практика
+
+- [ ] data-vectorized-features
+- [ ] data-point-in-time-features
+- [ ] ml-sklearn-selection
+- [ ] lab-hf-trainer-workflow
+- [ ] lab-token-classification
+- [ ] lab-sft-lora
+- [ ] lab-training-efficiency
+- [ ] rag-neural-reranking
+- [ ] rag-embedding-adaptation
+- [ ] ml-experiment-management
+- [ ] lab-vllm-measurements

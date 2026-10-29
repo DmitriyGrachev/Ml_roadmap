@@ -90,6 +90,29 @@ EXPECTED_MULTI_BOUNDARIES = {
 }
 
 EXPECTED_EXERCISE_BOUNDARIES = {
+    "data-vectorized-features": {"masked_standardize", "topk_cosine"},
+    "data-point-in-time-features": {"build_point_in_time_features"},
+    "ml-sklearn-selection": {"select_pipeline", "permutation_report"},
+    "lab-hf-trainer-workflow": {
+        "tokenize_dataset",
+        "build_collator",
+        "make_training_arguments",
+        "compute_metrics",
+        "train_model",
+    },
+    "lab-token-classification": {"align_labels", "entity_metrics", "train_token_classifier"},
+    "lab-sft-lora": {
+        "validate_conversations",
+        "split_conversations",
+        "encode_conversation",
+        "build_trainer",
+        "compare_and_reload",
+    },
+    "lab-training-efficiency": {"accumulated_step"},
+    "rag-neural-reranking": {"rerank", "ranking_metrics"},
+    "rag-embedding-adaptation": {"make_triples", "split_queries", "fit_encoder"},
+    "ml-experiment-management": {"select_trial", "build_objective", "run_search"},
+    "lab-vllm-measurements": {"summarize_measurements"},
     "production-service-lifecycle": {"summarize_outcomes", "run_lifecycle", "join_delayed_labels"},
     "ml-data-pipeline": {"initialize", "snapshot", "load_increment"},
     "rag-end-to-end-evaluation": {"pool_tokens", "answer_case"},
@@ -239,6 +262,7 @@ EXPECTED_BANKING_BOUNDARIES = {
 
 
 EXPECTED_NESTED_AND_PROJECT_BOUNDARIES = {
+    "labs/04_llm_finetuning/sft_workflow/learner_run.py": {"run_project"},
     (
         "modules/01_python_core/exercises/package_delivery/student_project/"
         "src/ticket_features/transform.py"

@@ -71,3 +71,19 @@ experiment log; воспроизводимый pipeline; API и измерени
 
 Навигация: [учебная карта](learning-map.md), [сравнение с вакансиями](job-market-comparison-2026-10-29.md),
 [проверка упражнений](testing-exercises.md), [прежняя рубрика открытых контролей](project-defense.md).
+
+## Прикладной NLP и инструменты PA1
+
+Дополнительно защитить независимые результаты из [карты практики](applied-tools-practice.md):
+
+- Объяснить обработку масок/оси NumPy, временную доступность Pandas-признаков и group-CV preprocessing.
+- Перенести ручной training loop в Trainer, проверить collator, best checkpoint и resume.
+- Обосновать NER subword labels, BIO spans и судьбу обрезанных entities; показать другой домен.
+- В SFT показать реальные train masks, frozen base/adapter, общий holdout base/prompt/LoRA и reload.
+- Разделить candidate recall и качество reranking; объяснить false negatives при embedding adaptation.
+- Восстановить выбранный MLflow/Optuna эксперимент и показать, что holdout не участвовал в подборе.
+- Для vLLM показать actual runtime/restart и raw measurement arithmetic; для GPU/QLoRA честно
+  оставить NOT_RUN, если опыт ещё не выполнен.
+
+Автоматические evidence checks сверяют структуры, артефакты и вычисления. Оценка
+авторства, нового домена и обоснованности решения остаётся человеческой.

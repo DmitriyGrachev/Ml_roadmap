@@ -50,3 +50,9 @@ Opt-in tests пропускаются без `ROADMAP_RUN_PEFT=1`; с явным
 torch/peft/transformers/safetensors означает ошибку подготовки окружения.
 Обычная установка не требует этих пакетов. Состояние optimizer/RNG не сохранено:
 это inference reload, не training resume.
+
+## Самостоятельный TRL SFT / LoRA
+
+[Новый learner workflow](sft_workflow/README.md) добавляет отдельный `lab-sft-lora`: реальные
+chat templates и TRL/PEFT mechanics, независимый pretrained evidence gate и opt-in QLoRA.
+Авторский random smoke и live learner evidence проверяются отдельно.

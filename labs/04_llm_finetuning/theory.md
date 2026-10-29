@@ -263,3 +263,10 @@ quantization. Крупная платная GPU без отдельного вы
 перед реальным опытом фиксируйте установленную версию PEFT и её документацию.
 Ручной шаг проверяет алгебру; локальный PEFT run — CPU обучение и inference reload
 на случайном Transformer. Они не подтверждают CUDA, QLoRA или качество pretrained модели.
+
+## Практика TRL и обучение с ограниченной памятью
+
+[Самостоятельный SFT workflow](sft_workflow/README.md) и [маски/разбиение/LoRA](sft_workflow/theory.md)
+проводят от chat template до независимого adapter evidence.
+[Gradient accumulation и GPU measurement](../01_pytorch_foundations/exercises/training_efficiency/README.md)
+отдельно проверяют row-weighted CPU update и явные CUDA experiments.

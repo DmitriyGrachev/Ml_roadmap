@@ -61,3 +61,11 @@ Return to the [repository overview](../README.md) for the workflow and roadmap.
 обычный `uv sync` без них. Старое `--all-groups` теперь включает и training.
 Веса и датасеты эта установка не загружает. Полные команды и ограничения —
 в [compute guide](compute-guide.md). Существующие модели упражнений не решены за вас.
+
+## Прикладные инструменты PA1
+
+Trainer/NER, SFT/LoRA, Sentence Transformers и MLflow/Optuna имеют явные группы
+`trainer`, `sft`, `ranking`, `experiments`. [Единая карта](applied-tools-practice.md)
+показывает команду установки и отдельный `.venv-training` interpreter. После sync
+используйте его напрямую или `uv run --no-sync`, чтобы не менять окружение на каждом запуске.
+Основной lock использует CPU torch; QLoRA и vLLM требуют собственной GPU среды.

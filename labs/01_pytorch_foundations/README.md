@@ -172,3 +172,8 @@ ID. `starter.py` оставлен незавершённым намеренно:
 неравных размерах? Чем `eval()` отличается от `no_grad()`? Почему checksum
 checkpoint не делает безопасной загрузку произвольного pickle? Что поменяется,
 если признаки при прогнозе расположить в другом порядке?
+
+## Практика эффективности обучения
+
+После resume/diagnostics выполните [gradient accumulation и GPU measurement](exercises/training_efficiency/README.md).
+Неравные micro-batches проверяются на CPU; AMP/память/CUDA — отдельный явный опыт.
