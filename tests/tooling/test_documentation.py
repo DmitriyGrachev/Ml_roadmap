@@ -118,6 +118,19 @@ READINESS_IDS = (
     "production-service-lifecycle",
     "ml-data-pipeline",
 )
+APPLIED_TOOLS_IDS = (
+    "data-vectorized-features",
+    "data-point-in-time-features",
+    "ml-sklearn-selection",
+    "lab-hf-trainer-workflow",
+    "lab-token-classification",
+    "lab-sft-lora",
+    "lab-training-efficiency",
+    "rag-neural-reranking",
+    "rag-embedding-adaptation",
+    "ml-experiment-management",
+    "lab-vllm-measurements",
+)
 FINAL_MODULES = (
     "06_rag",
     "07_agents",
@@ -237,7 +250,7 @@ def test_progress_is_an_ordered_editable_module_01_to_08_checklist() -> None:
     """Learners can update the implemented lesson sequence as they progress."""
     entries = CHECKLIST_ENTRY.findall(PROGRESS_PATH.read_text(encoding="utf-8"))
 
-    assert entries == [*PLANNED_LESSON_IDS, *READINESS_IDS]
+    assert entries == [*PLANNED_LESSON_IDS, *READINESS_IDS, *APPLIED_TOOLS_IDS]
 
 
 def test_progress_includes_every_loaded_catalog_lesson() -> None:

@@ -131,6 +131,20 @@ CPU job с установленными `trainer/sft/ranking/experiments`. Эт�
 проверяется в [запусках ветки](https://github.com/DmitriyGrachev/Ml_roadmap/actions?query=branch%3Anamepfchekcoutbranch-extended-pa1).
 Настройка CI и зелёный результат родительского commit не являются результатом PA1.
 
+В [первом опубликованном запуске PA1](https://github.com/DmitriyGrachev/Ml_roadmap/actions/runs/40833207673)
+Windows `training-offline` прошёл: **559 passed / 22 skipped / 163 xfailed**,
+strict mypy **235 source files clean**. Оба base jobs выявили один и тот же
+пропущенный update в `tests/tooling/test_documentation.py`: независимый expected
+список progress ещё не включал 11 новых ID. Ошибка была в старом ожидании теста;
+сам progress уже соответствовал расширенному каталогу.
+
+Добавлен явный `APPLIED_TOOLS_IDS` в ожидаемом порядке, точное сравнение сохранено.
+Сбой воспроизведён отдельно (**1 failed**), затем весь documentation test file
+прошёл (**10 passed за 0,11 секунды**). Это конкретное исправление требует нового
+автоматического CI для следующего commit; предыдущий неудачный запуск не скрыт и
+не считается успешной проверкой всей ветки. Актуальный результат опубликованного
+HEAD доступен по ссылке запусков ветки выше.
+
 ## Что остаётся невыполненным учеником
 
 - Собственные решения новых starter functions и независимый перенос на новый домен.
