@@ -23,6 +23,9 @@ dependencies = [
 ]
 
 [dependency-groups]
+migrations = [
+    "alembic>=1.16,<2",
+]
 visualization = [
     "matplotlib==3.11.2",
 ]
@@ -42,6 +45,7 @@ finetuning = [
     "peft>=0.17,<1",
 ]
 dev = [
+    "uv_build>=0.12.16,<0.13",
     "pytest",
     "pytest-asyncio",
     "httpx2",
@@ -72,6 +76,7 @@ addopts = ["--import-mode=importlib"]
 testpaths = ["tests", "modules", "projects", "labs"]
 xfail_strict = true
 markers = [
+    "maintainer_only: distributed starter-template policy; opt in with --maintainer",
     "student_exercise: marks a student starter exercise as expected incomplete",
     "postgres: marks tests that require PostgreSQL",
     "optional_live: explicit live experiment; not run by default",

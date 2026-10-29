@@ -92,7 +92,7 @@ with package-mode mypy; exercise tests use local package imports and pytest impo
 
 ## Exercises
 
-All seven exercises are **Difficulty: Medium**, each approximately 45–75 minutes. Their
+The seven original lesson exercises are **Difficulty: Medium**, each approximately 45–75 minutes. Their
 READMEs define validation rules, edge cases and focused test commands. Untouched boundaries
 raise `NotImplementedError` and are expected-incomplete; an incorrect implementation fails.
 Examples teach related mechanics on separate inputs and do not implement the exercise contracts.
@@ -118,3 +118,14 @@ Additional practice after the related lessons:
 You can run the six original examples and the training-bridge example, complete the seven
 original exercises plus the bridge task, justify a baseline and split, explain an error slice,
 and hand another person a versioned report with data provenance.
+
+## Математическая глубина и независимый проект
+
+Обязательные продолжения ML-маршрута:
+
+- [Градиенты MSE/BCE и L2](exercises/gradient_derivations/README.md).
+- [Линейная геометрия, Ridge и PCA](exercises/linear_geometry/README.md).
+- [Decision stump и шаги boosting](exercises/tree_boosting/README.md).
+- [Внешний tabular проект](../../projects/external_tabular/README.md).
+
+Prerequisites, проверки и следующий этап — в [текущей карте](../../docs/learning-map.md).

@@ -58,3 +58,9 @@ You can navigate the nine lessons, explain their order, and run the support exam
 - [Store equipment with SQLAlchemy](exercises/equipment_repository/README.md) — local transactions and repository queries.
 
 These Medium exercises run locally and include automated behavioral tests.
+
+## Практика миграций и ML-доставки
+
+После SQLAlchemy и SQL выполните [Alembic на заполненной схеме](exercises/schema_migrations/README.md)
+с upgrade/backfill/downgrade. Общий порядок и ограничения окружения —
+[учебная карта](../../docs/learning-map.md).

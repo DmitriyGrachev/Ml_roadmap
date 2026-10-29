@@ -69,3 +69,10 @@ documented package-mode type check without changing tracked data.
 - [Summarize paired observations](exercises/paired_observations/README.md) — aligned missing values, covariance, and correlation.
 
 These Medium exercises add independent synthetic inputs and focused automated tests.
+
+## Устойчивость результатов
+
+После статистики, paired comparison и ML training pipeline выполните
+[повторные обучения](exercises/training_stability/README.md): меняйте seeds/splits/размер train,
+отдельно сравнивайте paired bootstrap фиксированных predictions и вариативность всего обучения.
+Переход к [внешним проектам](../../docs/learning-map.md) требует обоих видов рассуждений.

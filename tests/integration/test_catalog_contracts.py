@@ -59,6 +59,7 @@ def test_new_base_exercises_block_network(identifier: str, tmp_path: Path) -> No
         cwd=tmp_path,
         capture_output=True,
         text=True,
+        encoding="utf-8",
         check=False,
     )
     assert result.returncode == 0, result.stdout + result.stderr
@@ -1124,9 +1125,88 @@ EXPECTED_CATALOG = (
     ),
 )
 
+READINESS_CATALOG = (
+    item(
+        "ml-gradient-derivations",
+        "exercise",
+        "modules/04_machine_learning/exercises/gradient_derivations/README.md",
+        "modules/04_machine_learning/exercises/gradient_derivations/test_starter.py",
+    ),
+    item(
+        "ml-linear-geometry",
+        "exercise",
+        "modules/04_machine_learning/exercises/linear_geometry/README.md",
+        "modules/04_machine_learning/exercises/linear_geometry/test_starter.py",
+    ),
+    item(
+        "ml-tree-boosting",
+        "exercise",
+        "modules/04_machine_learning/exercises/tree_boosting/README.md",
+        "modules/04_machine_learning/exercises/tree_boosting/test_starter.py",
+    ),
+    item(
+        "data-training-stability",
+        "exercise",
+        "modules/03_data_foundations/exercises/training_stability/README.md",
+        "modules/03_data_foundations/exercises/training_stability/test_starter.py",
+    ),
+    item(
+        "python-async-lifecycle",
+        "exercise",
+        "modules/01_python_core/exercises/async_lifecycle/README.md",
+        "modules/01_python_core/exercises/async_lifecycle/test_starter.py",
+    ),
+    item(
+        "python-package-delivery",
+        "exercise",
+        "modules/01_python_core/exercises/package_delivery/README.md",
+        "modules/01_python_core/exercises/package_delivery/test_starter.py",
+    ),
+    item(
+        "backend-schema-migrations",
+        "exercise",
+        "modules/02_python_backend/exercises/schema_migrations/README.md",
+        "modules/02_python_backend/exercises/schema_migrations/test_starter.py",
+    ),
+    item(
+        "ml-external-tabular",
+        "project",
+        "projects/external_tabular/README.md",
+        "projects/external_tabular/test_submission.py",
+    ),
+    item(
+        "document-external-model-study",
+        "project",
+        "projects/document_intelligence_lab/external_model_study/README.md",
+        "projects/document_intelligence_lab/external_model_study/test_submission.py",
+    ),
+    item(
+        "rag-end-to-end-evaluation",
+        "exercise",
+        "labs/03_real_rag/end_to_end/README.md",
+        "labs/03_real_rag/end_to_end/test_starter.py",
+        "labs/03_real_rag/end_to_end/test_evidence.py",
+    ),
+    item(
+        "production-service-lifecycle",
+        "exercise",
+        "projects/document_intelligence_lab/production_readiness/README.md",
+        "projects/document_intelligence_lab/production_readiness/test_starter.py",
+    ),
+    item(
+        "ml-data-pipeline",
+        "exercise",
+        "projects/document_intelligence_lab/data_pipeline/README.md",
+        "projects/document_intelligence_lab/data_pipeline/test_starter.py",
+    ),
+)
+READINESS_IDS = tuple(entry.identifier for entry in READINESS_CATALOG)
+EXPECTED_CATALOG += READINESS_CATALOG
+
 LESSON_IDS = tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind == "lesson")
-PROGRESS_IDS = tuple(
-    entry.identifier for entry in EXPECTED_CATALOG if entry.kind in {"lesson", "lab"}
+PROGRESS_IDS = (
+    tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind in {"lesson", "lab"})
+    + READINESS_IDS
 )
 FIRST_SPRINT_IDS = (
     "python-detect-duplicates",
@@ -1166,7 +1246,7 @@ DATA_EXERCISE_IDS = tuple(
 
 
 def expected_identifiers() -> tuple[str, ...]:
-    """Return the hand-curated pedagogical order."""
+    """Return the stable catalog order; learning_tracks.toml defines study routes."""
 
     return tuple(entry.identifier for entry in EXPECTED_CATALOG)
 
@@ -1178,14 +1258,16 @@ def test_catalog_is_the_complete_ordered_roadmap() -> None:
     assert tuple(item.kind for item in catalog.items) == tuple(
         entry.kind for entry in EXPECTED_CATALOG
     )
-    assert len(catalog.items) == 168
+    assert len(catalog.items) == 180
     assert len(LESSON_IDS) == 57
     assert len(FIRST_SPRINT_IDS) == 15
     assert len(LATER_PYTHON_PRACTICE_IDS) == 6
-    assert len(BACKEND_EXERCISE_IDS) == 13
-    assert len(DATA_EXERCISE_IDS) == 17
+    assert len(BACKEND_EXERCISE_IDS) == 14
+    assert len(DATA_EXERCISE_IDS) == 18
     assert tuple(item.identifier for item in catalog.items if item.kind == "project") == (
         "banking-ai-lab",
+        "ml-external-tabular",
+        "document-external-model-study",
     )
 
 
@@ -1219,7 +1301,7 @@ def test_catalog_contains_each_required_task_inventory_exactly_once() -> None:
         assert all(identifiers.count(identifier) == 1 for identifier in inventory)
 
 
-def test_five_gap_practices_do_not_expand_legacy_check_directories() -> None:
+def test_new_practices_do_not_expand_legacy_check_directories() -> None:
     catalog = Catalog.load(REPOSITORY_ROOT)
     new_ids = {
         "python-control-flow",
@@ -1227,6 +1309,7 @@ def test_five_gap_practices_do_not_expand_legacy_check_directories() -> None:
         "ml-representation-study",
         "ml-bias-slices",
         "backend-sql-foundations",
+        *READINESS_IDS,
     }
     for new_id in new_ids:
         new_tests = catalog.get(new_id).tests
@@ -1247,6 +1330,7 @@ def test_learning_cli_list_matches_the_catalog_order() -> None:
         check=False,
         capture_output=True,
         text=True,
+        encoding="utf-8",
     )
 
     assert result.returncode == 0, result.stderr

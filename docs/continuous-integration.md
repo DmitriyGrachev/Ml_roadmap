@@ -90,3 +90,17 @@ Workflow подготовлен локально. Hosted CI — **CONFIGURED / N
 — установка и sync; [синтаксис workflow](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax)
 — jobs, steps, permissions и exit status. Английский; достаточно этих разделов.
 API и ссылки просмотрены 11.10.2026; проверку реального runner они не заменяют.
+
+## Изменения маршрута ML Engineer (29.10.2026)
+
+Основная CI-проверка теперь запускается на Windows и Ubuntu. В ней устанавливается
+небольшая группа `migrations` для настоящего Alembic round trip; PyTorch остаётся
+в отдельном training job. `uv_build` входит в dev для offline wheel-практики.
+Обычный pytest допускает решения ученика. Отдельный шаг
+`uv run --no-sync python -m pytest --maintainer -m maintainer_only -q` проверяет,
+что распространяемые starters ещё не решены.
+
+CLI принудительно пишет UTF-8; subprocess-потребители должны декодировать UTF-8.
+Регрессия воспроизводит прежний сбой при `PYTHONIOENCODING=cp1252`. Тест относительных
+путей PyTorch использует временный repository root, не предполагая один Windows drive
+для checkout и temp. Актуальные результаты — [verification](ml-engineer-readiness-verification.md).

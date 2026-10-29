@@ -64,6 +64,8 @@ LATER_EXERCISES = (
     "10_asyncio/exercises/fetch_quotes/README.md",
 )
 NEUTRAL_EXERCISES = (
+    "exercises/async_lifecycle/README.md",
+    "exercises/package_delivery/README.md",
     "exercises/calendar_intervals/README.md",
     "exercises/word_index/README.md",
     "exercises/paged_stream/README.md",
@@ -116,7 +118,8 @@ def exercise_section(markdown: str) -> str:
 def module_relative_target(readme: Path, target: str) -> str:
     path_text = target.split("#", 1)[0]
     resolved = (readme.parent / path_text).resolve()
-    return resolved.relative_to(MODULE_ROOT.resolve()).as_posix()
+    # Cross-module navigation remains a relative identity and is excluded from local practice.
+    return resolved.relative_to(MODULE_ROOT.resolve(), walk_up=True).as_posix()
 
 
 @pytest.mark.parametrize("lesson", LESSONS)
@@ -206,8 +209,8 @@ def test_module_practice_map_has_the_exact_complete_inventory_once() -> None:
     assert len(CODE_REVIEW_PRACTICE) == 2
     assert len(MINI_FEATURES) == 1
     assert len(LATER_EXERCISES) == 6
-    assert len(NEUTRAL_EXERCISES) == 5
-    assert len(set(ALL_PRACTICE)) == 26
+    assert len(NEUTRAL_EXERCISES) == 7
+    assert len(set(ALL_PRACTICE)) == 28
 
     discovered = {
         path.relative_to(MODULE_ROOT).as_posix()

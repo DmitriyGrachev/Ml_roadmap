@@ -89,3 +89,18 @@ Passing template checks does not complete lessons or the student-owned exercises
 - [ ] ml-training-bridge
 - [ ] lab-pytorch
 - [ ] lab-huggingface
+
+## Новая обязательная практика: ML Engineer readiness
+
+- [ ] ml-gradient-derivations
+- [ ] ml-linear-geometry
+- [ ] ml-tree-boosting
+- [ ] data-training-stability
+- [ ] python-async-lifecycle
+- [ ] python-package-delivery
+- [ ] backend-schema-migrations
+- [ ] ml-external-tabular
+- [ ] document-external-model-study
+- [ ] rag-end-to-end-evaluation
+- [ ] production-service-lifecycle
+- [ ] ml-data-pipeline

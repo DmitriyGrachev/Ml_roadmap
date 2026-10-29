@@ -2,7 +2,6 @@
 
 import hashlib
 import json
-import os
 from importlib import import_module
 from pathlib import Path
 
@@ -116,9 +115,12 @@ def test_relative_artifact_paths_are_resolved_from_repository_root(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     payload = valid_report(tmp_path / "checkpoint.pt")
-    repository_root = Path(__file__).resolve().parents[2]
-    payload["dataset"] = os.path.relpath(str(payload["dataset"]), repository_root)
-    payload["checkpoint"] = os.path.relpath(str(payload["checkpoint"]), repository_root)
+    # Use an isolated repository root on the same volume as the fixture. GitHub's
+    # Windows runner can put its checkout on D: and pytest's temp directory on C:.
+    # Relative-path resolution is the behavior under test, not os.path.relpath.
+    monkeypatch.setattr(report, "_REPOSITORY_ROOT", tmp_path)
+    payload["dataset"] = Path(str(payload["dataset"])).relative_to(tmp_path).as_posix()
+    payload["checkpoint"] = Path(str(payload["checkpoint"])).relative_to(tmp_path).as_posix()
     path = tmp_path / "report.json"
     path.write_text(json.dumps(payload), encoding="utf-8")
     elsewhere = tmp_path / "elsewhere"

@@ -85,5 +85,5 @@ the ingestion lesson explains the extra revision metadata needed across updates.
 
 ## Done when
 
-You can run the six examples, complete eight exercises, and explain a RAG result through
+You can run the six examples, complete the cataloged module exercises, and explain a RAG result through
 its source version, ranking decisions, access policy, evidence and held-out evaluation.

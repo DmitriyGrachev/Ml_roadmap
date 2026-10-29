@@ -42,6 +42,36 @@ def checked_vectors(vectors: Any, *, rows: int, dimension: int) -> NDArray[np.fl
     return cast(NDArray[np.float64], array / norms)
 
 
+def masked_mean_pooling(hidden: Any, attention_mask: Any) -> NDArray[np.float64]:
+    """Mean over valid tokens, then L2; empty masks/zero vectors are errors.
+
+    CLS/SEP are included when their mask is one. Padding never contributes.
+    Reject nonfinite hidden states even at masked positions: corrupted model
+    output must not silently become a seemingly valid vector.
+    """
+    try:
+        states, mask = np.asarray(hidden), np.asarray(attention_mask)
+        if (
+            states.ndim != 3
+            or states.dtype.kind not in {"i", "u", "f"}
+            or mask.dtype.kind not in {"b", "i", "u", "f"}
+            or mask.shape != states.shape[:2]
+            or not 1 <= states.shape[0] <= 1000
+            or not 1 <= states.shape[1] <= 4096
+            or not 1 <= states.shape[2] <= 4096
+            or not np.isfinite(states).all()
+            or not np.isin(mask, [0, 1]).all()
+        ):
+            raise ValueError("pooling requires finite [N,T,D] states and binary [N,T] mask")
+        count = mask.sum(axis=1, keepdims=True)
+        if np.any(count == 0):
+            raise ValueError("pooling cannot represent an empty attention mask")
+        means = (states.astype(np.float64) * mask[..., None]).sum(axis=1) / count
+        return checked_vectors(means, rows=states.shape[0], dimension=states.shape[2])
+    except (TypeError, OverflowError) as exc:
+        raise ValueError("pooling requires numeric arrays") from exc
+
+
 def random_encoder_mechanics() -> dict[str, Any]:
     """Reuse HF's local random architecture; show CLS shapes, never quality ranks."""
     torch = import_module("torch")
@@ -149,14 +179,23 @@ def verified_minilm_identity(directory: Path) -> dict[str, Any]:
     }
 
 
-def encode_local_minilm(directory: Path, texts: tuple[str, ...]) -> tuple[Any, dict[str, Any]]:
-    """Explicit pretrained CLS baseline, not a solution to masked-mean student work.
+def encode_local_minilm(
+    directory: Path, texts: tuple[str, ...], *, pooling: str = "cls"
+) -> tuple[Any, dict[str, Any]]:
+    """Pinned local encoder; historical CLS default, explicit masked mean option.
 
-    This is deliberately a different representation from MiniLM's recommended
-    sentence pooling. Measure it; do not claim model-card semantic quality.
     Assets must already match the original allowlist; nothing is downloaded.
+    Both representations require measurement on the actual retrieval task.
     """
+    if pooling not in {"cls", "masked_mean"}:
+        raise ValueError("pooling must be cls or masked_mean")
     identity = verified_minilm_identity(directory)
+    if pooling == "masked_mean":
+        identity = {
+            **identity,
+            "pooling": "attention-mask-mean-last-hidden-state-l2-v1",
+            "evidence": "ACTUAL_PRETRAINED_MASKED_MEAN_REPRESENTATION",
+        }
     if (
         not texts
         or len(texts) > 1000
@@ -182,7 +221,12 @@ def encode_local_minilm(directory: Path, texts: tuple[str, ...]) -> tuple[Any, d
                 max_length=128,
                 return_tensors="pt",
             )
-            batches.append(model(**tokens).last_hidden_state[:, 0].cpu().numpy())
+            hidden = model(**tokens).last_hidden_state.cpu().numpy()
+            batches.append(
+                masked_mean_pooling(hidden, tokens["attention_mask"].cpu().numpy())
+                if pooling == "masked_mean"
+                else hidden[:, 0]
+            )
     return checked_vectors(np.concatenate(batches), rows=len(texts), dimension=384), identity
 
 
@@ -547,6 +591,7 @@ def main() -> None:
     encoder = subcommands.add_parser("encode-local", help="Explicit existing pretrained asset use")
     encoder.add_argument("--model-dir", required=True, type=Path)
     encoder.add_argument("--output", required=True, type=Path)
+    encoder.add_argument("--pooling", choices=("cls", "masked_mean"), default="cls")
     hand = subcommands.add_parser("hand-snapshot", help="No encoder/download; hand API geometry")
     hand.add_argument("--output", required=True, type=Path)
     smoke = subcommands.add_parser("qdrant-smoke", help="Explicit actual local Qdrant; no server")
@@ -580,7 +625,7 @@ def main() -> None:
         query_bytes = (FIXTURES / "queries.json").read_bytes()
         queries = json.loads(query_bytes)["queries"]
         texts = (*corpus_texts, *(row["text"] for row in queries))
-        vectors, identity = encode_local_minilm(args.model_dir, texts)
+        vectors, identity = encode_local_minilm(args.model_dir, texts, pooling=args.pooling)
         digest = write_snapshot(args.output, sources, vectors[: len(corpus_texts)], identity)
         comparison = comparison_trace(
             sources, vectors[: len(corpus_texts)], vectors[len(corpus_texts) :]
@@ -591,7 +636,11 @@ def main() -> None:
                 "snapshot_sha256": digest,
                 "judgments_sha256": hashlib.sha256(query_bytes).hexdigest(),
                 "embedding": identity,
-                "evidence": "ACTUAL_PRETRAINED_CLS_BASELINE_TEACHER_CASES_ONLY",
+                "evidence": (
+                    "ACTUAL_PRETRAINED_CLS_BASELINE_TEACHER_CASES_ONLY"
+                    if args.pooling == "cls"
+                    else "ACTUAL_PRETRAINED_MASKED_MEAN_TEACHER_CASES_ONLY"
+                ),
                 "per_query": comparison,
                 "answer_quality": "NOT_RUN",
                 "interpretation": "REQUIRES_REVIEW",

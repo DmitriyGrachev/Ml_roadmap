@@ -46,3 +46,11 @@ API/self-hosting, training/retrieval обоснован quality/latency/cost.
 Нет реальных персональных данных, секретов в логах, исполнения модельного кода
 или доверия prompt/regex как гарантии безопасности. Опасные действия требуют
 подтверждения; инструменты allowlisted и выполнение ограничено.
+
+## Независимые проекты и эксплуатационная практика
+
+Следующий обязательный уровень — [внешнее сравнение TF-IDF / frozen / adapted](external_model_study/README.md),
+[SQL data pipeline](data_pipeline/README.md) и [реальный HTTP lifecycle](production_readiness/README.md).
+Прежний A1 и авторские демонстрации остаются подготовкой; новые ID требуют собственных
+артефактов и [защиты](../../docs/readiness-assessment.md). Полный порядок —
+[учебная карта](../../docs/learning-map.md).

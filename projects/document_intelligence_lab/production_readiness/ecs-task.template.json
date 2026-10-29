@@ -1,0 +1,21 @@
+{
+  "family": "roadmap-document-service",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "REPLACE_EXECUTION_ROLE_ARN",
+  "taskRoleArn": "REPLACE_TASK_ROLE_ARN",
+  "containerDefinitions": [{
+    "name": "document-service",
+    "image": "REPLACE_ECR_IMAGE_DIGEST_URI",
+    "essential": true,
+    "portMappings": [{"containerPort": 8000, "protocol": "tcp"}],
+    "readonlyRootFilesystem": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {"awslogs-group": "/roadmap/document-service", "awslogs-region": "REPLACE_REGION",
+                  "awslogs-stream-prefix": "ecs"}
+    }
+  }]
+}

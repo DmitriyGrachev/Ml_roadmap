@@ -7,6 +7,8 @@ import subprocess
 from itertools import pairwise
 from pathlib import Path, PurePosixPath
 
+import pytest
+
 from roadmap_tools.catalog import Catalog
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -88,6 +90,16 @@ EXPECTED_MULTI_BOUNDARIES = {
 }
 
 EXPECTED_EXERCISE_BOUNDARIES = {
+    "production-service-lifecycle": {"summarize_outcomes", "run_lifecycle", "join_delayed_labels"},
+    "ml-data-pipeline": {"initialize", "snapshot", "load_increment"},
+    "rag-end-to-end-evaluation": {"pool_tokens", "answer_case"},
+    "ml-gradient-derivations": {"weighted_objective_gradient"},
+    "ml-linear-geometry": {"principal_components", "centered_ridge"},
+    "ml-tree-boosting": {"boost_predict", "best_gini_split"},
+    "data-training-stability": {"paired_accuracy_interval", "classification_sweep"},
+    "python-async-lifecycle": {"first_healthy"},
+    "python-package-delivery": {"deliver"},
+    "backend-schema-migrations": {"downgrade_database", "upgrade_database"},
     "python-control-flow": {"count_long_labels"},
     "data-experiment-design": {"bonferroni_rejections"},
     "ml-representation-study": {"reconstruct_from_components"},
@@ -223,6 +235,28 @@ EXPECTED_BANKING_BOUNDARIES = {
         "SqlAlchemyTransactionRepository.get_transaction",
         "SqlAlchemyTransactionRepository.list_transactions",
     },
+}
+
+
+EXPECTED_NESTED_AND_PROJECT_BOUNDARIES = {
+    (
+        "modules/01_python_core/exercises/package_delivery/student_project/"
+        "src/ticket_features/transform.py"
+    ): {"transform"},
+    (
+        "modules/01_python_core/exercises/package_delivery/student_project/"
+        "src/ticket_features/train.py"
+    ): {"training_matrix"},
+    (
+        "modules/01_python_core/exercises/package_delivery/student_project/"
+        "src/ticket_features/serve.py"
+    ): {"serving_vector"},
+    (
+        "modules/02_python_backend/exercises/schema_migrations/"
+        "student_migrations/versions/0002_body_length.py"
+    ): {"upgrade", "downgrade"},
+    "projects/external_tabular/starter.py": {"run_experiment"},
+    "projects/document_intelligence_lab/external_model_study/starter.py": {"run_study"},
 }
 
 
@@ -717,6 +751,7 @@ def test_hygiene_classifier_rejects_each_major_artifact_class() -> None:
     assert hygiene_violation("derived-data-notes/README.md") is None
 
 
+@pytest.mark.maintainer_only
 def test_every_cataloged_exercise_has_a_boundary_or_intentional_input() -> None:
     catalog = Catalog.load(REPOSITORY_ROOT)
     coding_exercises: set[str] = set()
@@ -744,6 +779,7 @@ def test_every_cataloged_exercise_has_a_boundary_or_intentional_input() -> None:
     assert coding_exercises == set(EXPECTED_EXERCISE_BOUNDARIES)
 
 
+@pytest.mark.maintainer_only
 def test_banking_project_keeps_all_student_owned_source_files_incomplete() -> None:
     catalog = Catalog.load(REPOSITORY_ROOT)
     assert catalog.get("banking-ai-lab").kind == "project"
@@ -757,10 +793,18 @@ def test_banking_project_keeps_all_student_owned_source_files_incomplete() -> No
         ), relative_path
 
 
+@pytest.mark.maintainer_only
 def test_every_multi_boundary_starter_keeps_each_student_function_incomplete() -> None:
     for relative_path, expected_functions in EXPECTED_MULTI_BOUNDARIES.items():
         actual_functions = set(reachable_not_implemented_functions(REPOSITORY_ROOT / relative_path))
         assert actual_functions == expected_functions, relative_path
+
+
+@pytest.mark.maintainer_only
+def test_nested_delivery_and_external_project_starters_remain_incomplete() -> None:
+    for relative_path, expected in EXPECTED_NESTED_AND_PROJECT_BOUNDARIES.items():
+        actual = set(reachable_not_implemented_functions(REPOSITORY_ROOT / relative_path))
+        assert actual == expected, relative_path
 
 
 def test_reachability_check_rejects_solved_and_dead_decoy_boundaries(tmp_path: Path) -> None:

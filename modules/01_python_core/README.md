@@ -70,3 +70,12 @@ Run all runnable examples with `uv run pytest modules/01_python_core/tests -q`.
 - [Batch a one-shot stream](exercises/paged_stream/README.md) — Medium: lazy generic iterators.
 - [Bound concurrent station fetches](exercises/bounded_fetch/README.md) — Medium: asyncio limits and cleanup.
 - [Компактные Python-вариации для интервью](exercises/interview_patterns/README.md) — поиск, top-k и обход графа.
+
+### Обязательное продолжение для ML Engineer
+
+После основ asyncio прочитайте [жизненный цикл задач](exercises/async_lifecycle/README.md):
+semaphore, ошибка дочерней задачи, timeout, внешняя отмена и cleanup.
+Это также prerequisite к прежнему `python-bounded-fetch`.
+После modules/imports и tests выполните [доставку Python-пакета](exercises/package_delivery/README.md):
+wheel в чистом окружении и общий preprocessing для обучения и API.
+Порядок и строгие зачёты — в [текущей карте](../../docs/learning-map.md).

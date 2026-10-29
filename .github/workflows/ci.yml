@@ -28,7 +28,11 @@ env:
 
 jobs:
   base:
-    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -39,10 +43,12 @@ jobs:
           version: "0.12.17"
           python-version: "3.12.14"
           enable-cache: true
-      - name: Locked light environment
-        run: uv sync --locked
+      - name: Locked base and schema-migration environment
+        run: uv sync --locked --group migrations
       - name: Repository health, not student credit
         run: uv run --no-sync python -m pytest
+      - name: Distributed starter policy (maintainers only)
+        run: uv run --no-sync python -m pytest --maintainer -m maintainer_only -q
       - name: Ruff
         run: uv run --no-sync python -m ruff check .
       - name: Formatting

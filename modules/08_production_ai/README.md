@@ -75,7 +75,7 @@ algorithms. Keep test expectations intact and explain the limitations of each po
 
 ## Done when
 
-You can run six examples, complete eight exercises, and write a small launch/runbook plan
+You can run six examples, complete the cataloged module exercises, and write a small launch/runbook plan
 covering owners, measured objectives, quotas, data access, rollout and recovery. Validate
 live infrastructure, concurrency, permissions, and real quality separately before operating
 a real service. This module makes no deployment changes.

@@ -7,11 +7,14 @@ import re
 import shutil
 import subprocess
 import sys
+from collections import Counter
 from collections.abc import Callable, Sequence
 from importlib import metadata
+from io import TextIOWrapper
 from pathlib import Path
 
 from roadmap_tools.catalog import Catalog, CatalogError
+from roadmap_tools.tracks import TrackError, load_tracks, unique_test_targets
 
 ProcessRunner = Callable[[Sequence[str]], int]
 _PROGRESS_ENTRY = re.compile(r"^- \[([ ~x])\] (.+)$")
@@ -20,6 +23,11 @@ _CORRECTIVE_COMMAND = "uv sync --locked"
 
 def main(argv: Sequence[str] | None = None, repository_root: Path | None = None) -> int:
     """Run a learning workflow command and return its process exit code."""
+    # Python on Windows may inherit cp1252 when output is redirected to a pipe.
+    # The curriculum contains Russian titles; keep console and captured output UTF-8.
+    for stream in (sys.stdout, sys.stderr):
+        if isinstance(stream, TextIOWrapper):
+            stream.reconfigure(encoding="utf-8")
     root = Path.cwd() if repository_root is None else repository_root
     arguments = sys.argv[1:] if argv is None else argv
     return _main(arguments, root, _run_process)
@@ -44,6 +52,20 @@ def _main(argv: Sequence[str], repository_root: Path, run_process: ProcessRunner
         return _list_items(catalog)
     if arguments.command == "status":
         return _show_status(root)
+    if arguments.command == "inventory":
+        counts = Counter(item.kind for item in catalog.items)
+        print(f"total: {len(catalog.items)}")
+        for kind in ("lesson", "exercise", "lab", "project"):
+            print(f"{kind}: {counts[kind]}")
+        return 0
+    if arguments.command in {"track", "check-track"}:
+        return _run_track(
+            root,
+            catalog,
+            arguments.identifier,
+            run_process,
+            check=arguments.command == "check-track",
+        )
     return _run_item_tests(
         catalog, arguments.identifier, run_process, strict=arguments.command == "check"
     )
@@ -55,6 +77,13 @@ def _build_parser() -> argparse.ArgumentParser:
     subcommands.add_parser("validate-env", help="check the local learning environment")
     subcommands.add_parser("list", help="list available curriculum items")
     subcommands.add_parser("status", help="show checklist entries from progress.md")
+    subcommands.add_parser("inventory", help="count current material from the catalog")
+    track_parser = subcommands.add_parser("track", help="show an ordered learning route")
+    track_parser.add_argument("identifier")
+    track_check_parser = subcommands.add_parser(
+        "check-track", help="strictly check a route; human review remains separate"
+    )
+    track_check_parser.add_argument("identifier")
     test_parser = subcommands.add_parser("test", help="run tests for a curriculum item")
     test_parser.add_argument("identifier")
     check_parser = subcommands.add_parser("check", help="strictly check a curriculum item")
@@ -134,3 +163,44 @@ def _run_item_tests(
 
 def _run_process(command: Sequence[str]) -> int:
     return subprocess.call(command)
+
+
+def _run_track(
+    root: Path,
+    catalog: Catalog,
+    identifier: str,
+    run_process: ProcessRunner,
+    *,
+    check: bool,
+) -> int:
+    try:
+        tracks = load_tracks(root, catalog)
+        if identifier not in tracks:
+            raise TrackError(f"Unknown track {identifier!r}; choose: {', '.join(tracks)}")
+        track = tracks[identifier]
+    except TrackError as exc:
+        print(f"Unable to load learning track: {exc}")
+        return 2
+    if not check:
+        print(f"{track.identifier}: {track.title}")
+        for number, key in enumerate(track.required, 1):
+            print(f"{number}. {key} — {catalog.get(key).title}")
+        print(f"HUMAN REVIEW REQUIRED: {track.review.relative_to(root)}")
+        return 0
+    if any(catalog.get(key).requires_training for key in track.required):
+        try:
+            metadata.version("torch")
+        except metadata.PackageNotFoundError:
+            print(
+                "Training dependency torch is unavailable. "
+                "Run: uv sync --locked --group training --group migrations"
+            )
+            return 2
+    targets = unique_test_targets(catalog, track)
+    result = run_process(
+        [sys.executable, "-m", "pytest", "-p", "roadmap_tools.strict_check", *map(str, targets)]
+    )
+    if result == 0:
+        print(f"TECHNICAL CHECKS PASSED: {identifier}")
+        print(f"HUMAN REVIEW REQUIRED: {track.review.relative_to(root)}")
+    return result

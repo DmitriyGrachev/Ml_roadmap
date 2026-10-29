@@ -1,5 +1,8 @@
 # asyncio
 
+Подробный разбор Task, cancellation, TaskGroup и Semaphore — в [теории](theory.md).
+Перед `python-bounded-fetch` выполните [async lifecycle](../exercises/async_lifecycle/README.md).
+
 ## Goal
 
 Use coroutines and `asyncio.gather` for independent I/O without confusing concurrency with CPU parallelism.

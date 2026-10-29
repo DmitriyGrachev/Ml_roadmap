@@ -104,6 +104,20 @@ PLANNED_LESSON_IDS = (
     "lab-pytorch",
     "lab-huggingface",
 )
+READINESS_IDS = (
+    "ml-gradient-derivations",
+    "ml-linear-geometry",
+    "ml-tree-boosting",
+    "data-training-stability",
+    "python-async-lifecycle",
+    "python-package-delivery",
+    "backend-schema-migrations",
+    "ml-external-tabular",
+    "document-external-model-study",
+    "rag-end-to-end-evaluation",
+    "production-service-lifecycle",
+    "ml-data-pipeline",
+)
 FINAL_MODULES = (
     "06_rag",
     "07_agents",
@@ -208,18 +222,22 @@ def test_design_spec_uses_the_canonical_transaction_columns() -> None:
     assert "`is_fraud` is a synthetic boolean fraud label" in design
 
 
-def test_sqlalchemy_guide_labels_unconfigured_alembic_commands_as_conceptual() -> None:
+def test_sqlalchemy_guide_links_to_runnable_migrations_without_redefining_orm_setup() -> None:
     lesson = SQLALCHEMY_README.read_text(encoding="utf-8")
 
     assert "conceptual production examples" in lesson
-    assert "does not include an Alembic configuration" in lesson
+    practice = REPOSITORY_ROOT / "modules/02_python_backend/exercises/schema_migrations/README.md"
+    assert practice in (
+        (SQLALCHEMY_README.parent / path).resolve()
+        for path in _relative_markdown_targets(SQLALCHEMY_README)
+    )
 
 
 def test_progress_is_an_ordered_editable_module_01_to_08_checklist() -> None:
     """Learners can update the implemented lesson sequence as they progress."""
     entries = CHECKLIST_ENTRY.findall(PROGRESS_PATH.read_text(encoding="utf-8"))
 
-    assert entries == list(PLANNED_LESSON_IDS)
+    assert entries == [*PLANNED_LESSON_IDS, *READINESS_IDS]
 
 
 def test_progress_includes_every_loaded_catalog_lesson() -> None:

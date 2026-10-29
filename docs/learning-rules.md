@@ -22,4 +22,13 @@ Update [progress.md](../progress.md) yourself with `[ ]`, `[~]`, or `[x]`. The c
 
 ## Protect the learning data
 
-Use deterministic synthetic data only. Treat decimal amounts, timezone-aware timestamps, input validation, and test isolation as normal engineering requirements rather than optional polish.
+В обычных тестах используйте детерминированные локальные данные. Обязательные
+[внешние проекты](learning-map.md) отдельно требуют публичный источник с понятной
+лицензией, сохранённым snapshot/hash и разбиением. Скачивание выполняется явно;
+default pytest не обращается в сеть. Не добавляйте исходные датасеты, модельные
+веса, клиентские/персональные данные и свои generated reports в Git.
+
+Treat decimal amounts, timezone-aware timestamps, input validation, and test isolation
+as normal engineering requirements rather than optional polish. `XFAIL` обозначает
+незавершённую работу; `PASS` теста не подтверждает происхождение эксперимента,
+обобщение модели или самостоятельность выводов. Это проверяется артефактами и защитой.

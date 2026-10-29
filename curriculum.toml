@@ -1229,3 +1229,88 @@ title = "SQL foundations: latest valid measurements"
 kind = "exercise"
 readme = "modules/02_python_backend/exercises/sql_foundations/README.md"
 tests = ["modules/02_python_backend/exercises/sql_foundations/test_starter.py"]
+
+[[items]]
+id = "ml-gradient-derivations"
+title = "Градиенты MSE/BCE, L2 и точность вычислений"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/gradient_derivations/README.md"
+tests = ["modules/04_machine_learning/exercises/gradient_derivations/test_starter.py"]
+
+[[items]]
+id = "ml-linear-geometry"
+title = "Геометрия линейной модели: ранг, Ridge, PCA"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/linear_geometry/README.md"
+tests = ["modules/04_machine_learning/exercises/linear_geometry/test_starter.py"]
+
+[[items]]
+id = "ml-tree-boosting"
+title = "Перебор порогов и остаточный бустинг"
+kind = "exercise"
+readme = "modules/04_machine_learning/exercises/tree_boosting/README.md"
+tests = ["modules/04_machine_learning/exercises/tree_boosting/test_starter.py"]
+
+[[items]]
+id = "data-training-stability"
+title = "Стабильность обучения и условный paired bootstrap"
+kind = "exercise"
+readme = "modules/03_data_foundations/exercises/training_stability/README.md"
+tests = ["modules/03_data_foundations/exercises/training_stability/test_starter.py"]
+
+[[items]]
+id = "python-async-lifecycle"
+title = "Async lifecycle: кто завершает оставшуюся работу"
+kind = "exercise"
+readme = "modules/01_python_core/exercises/async_lifecycle/README.md"
+tests = ["modules/01_python_core/exercises/async_lifecycle/test_starter.py"]
+
+[[items]]
+id = "python-package-delivery"
+title = "Доставка src-layout пакета и единый preprocessing"
+kind = "exercise"
+readme = "modules/01_python_core/exercises/package_delivery/README.md"
+tests = ["modules/01_python_core/exercises/package_delivery/test_starter.py"]
+
+[[items]]
+id = "backend-schema-migrations"
+title = "Alembic: заполненная база, backfill и возврат схемы"
+kind = "exercise"
+readme = "modules/02_python_backend/exercises/schema_migrations/README.md"
+tests = ["modules/02_python_backend/exercises/schema_migrations/test_starter.py"]
+
+[[items]]
+id = "ml-external-tabular"
+title = "Независимый проект: качество вина на внешних tabular данных"
+kind = "project"
+readme = "projects/external_tabular/README.md"
+tests = ["projects/external_tabular/test_submission.py"]
+
+[[items]]
+id = "document-external-model-study"
+title = "Независимый проект: TF-IDF, frozen и adapted pretrained encoder"
+kind = "project"
+readme = "projects/document_intelligence_lab/external_model_study/README.md"
+tests = ["projects/document_intelligence_lab/external_model_study/test_submission.py"]
+requires_training = true
+
+[[items]]
+id = "rag-end-to-end-evaluation"
+title = "Dense retrieval → local generator → независимая оценка"
+kind = "exercise"
+readme = "labs/03_real_rag/end_to_end/README.md"
+tests = ["labs/03_real_rag/end_to_end/test_starter.py", "labs/03_real_rag/end_to_end/test_evidence.py"]
+
+[[items]]
+id = "production-service-lifecycle"
+title = "Production readiness: настоящий HTTP lifecycle"
+kind = "exercise"
+readme = "projects/document_intelligence_lab/production_readiness/README.md"
+tests = ["projects/document_intelligence_lab/production_readiness/test_starter.py"]
+
+[[items]]
+id = "ml-data-pipeline"
+title = "ML data pipeline: SQL, increment, idempotency, replay"
+kind = "exercise"
+readme = "projects/document_intelligence_lab/data_pipeline/README.md"
+tests = ["projects/document_intelligence_lab/data_pipeline/test_starter.py"]

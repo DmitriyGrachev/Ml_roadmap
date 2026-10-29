@@ -16,10 +16,11 @@ Start from the repository root. Each exercise README names its focused test comm
 `uv run python scripts/learn.py test python-collections` delegates only to catalog-owned test
 targets. Use `uv run pytest` to check overall repository health.
 
-The full suite also contains maintainer checks that require the distributed starter template to
-remain unsolved (`tests/integration/test_repository_hygiene.py`). Once you implement a starter,
-those particular assertions can fail by design. Judge your answer using the focused task command,
-not by restoring `NotImplementedError` to satisfy template hygiene.
+Проверки, требующие незаполненного шаблона, теперь исключены из обычного запуска.
+`uv run pytest` можно запускать и после решения задач. Авторы курса отдельно
+проверяют исходные шаблоны командой `uv run pytest --maintainer -m maintainer_only`.
+Она намеренно отклоняет решённые starters. Проверки случайно добавленных секретов,
+баз данных и generated artifacts остаются в обычной проверке репозитория.
 
 For neutral practice in every module, see the [Medium exercise map](neutral-practice.md).
 Modules 04–08 examples run locally; provider doubles test LLM application contracts, not the
@@ -52,6 +53,30 @@ ML evaluation измеряет обобщение на конкретных да
 predictions, но не воспроизводит inference из checkpoint. Новые experiment checks
 должны пересчитать inference/trace из сохранённых bytes и сопоставить row IDs.
 Любое текстовое объяснение остаётся `REQUIRES_REVIEW` до проверки человеком.
+
+## Полный маршрут и независимые проекты
+
+```powershell
+uv run python scripts/learn.py inventory
+uv run python scripts/learn.py track ml-engineer
+uv run python scripts/learn.py track applied-ai
+uv run python scripts/learn.py check-track ml-engineer
+```
+
+`track` показывает упорядоченные обязательные ID из `learning_tracks.toml`.
+`check-track` запускает объединение их существующих test targets со строгим
+плагином, без повторного запуска вложенных директорий. Он не меняет `progress.md`.
+Неустановленная обязательная группа, required skip, отсутствующий отчёт или xfail
+не дают технического зачёта. Для полного маршрута заранее прочитайте инструкции
+к PostgreSQL, external data, pretrained models и локальному HTTP lifecycle.
+Один только `uv sync --locked` не создаёт эти артефакты и сервисы.
+
+Для подготовленных задач миграций: `uv sync --locked --group migrations`.
+Для совместного training-маршрута: `uv sync --locked --group training --group migrations`.
+CPU-модели загружаются отдельно по инструкции HF; тесты сами не ходят в сеть.
+После `TECHNICAL CHECKS PASSED` остаётся `HUMAN REVIEW REQUIRED` по
+[рубрике](readiness-assessment.md). Зачёт авторского demo не является зачётом
+внешнего проекта. Новые независимые ID не расширяют старые `check ID`.
 
 ## When a test fails
 

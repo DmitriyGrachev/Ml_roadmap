@@ -1,5 +1,10 @@
 # Roadmap
 
+**Текущий маршрут:** [учебная карта](learning-map.md). Она связывает prerequisites,
+теорию, обязательные задания, внешние проекты и защиту. Команды `inventory` и
+`track ml-engineer` показывают актуальный каталог. Ниже сохранён контекст прошлых волн;
+планы и журналы фиксируют состояние на свою дату.
+
 Дополнение 28.10.2026: [пять сохранённых пробелов объяснения и практики](wave2-coverage.md#coverage-gaps-20261028)
 получили [теорию, демонстрации и пять отдельных упражнений](five-gaps-verification.md).
 PostgreSQL/container runtime остаётся NOT_RUN; освоение не отмечено.
@@ -58,8 +63,8 @@ preprocessing, regression и evaluation → [короткий мост](../modul
 
 | Маршрут | Порядок после общей базы | Приоритет / готовность |
 | --- | --- | --- |
-| Applied AI | [PyTorch foundations](../labs/01_pytorch_foundations/README.md) → [HF models](../labs/02_huggingface_models/README.md) → modules05/06 → Module 07 bounded workflows → Module 08 эксплуатационные основы | первые две labs CORE/READY; modules05–08 локальные; real RAG/deployment — будущие PLANNED ветки |
-| ML Engineering | PyTorch → HF + небольшой encoder adaptation → experiments → SFT/LoRA → lifecycle | PyTorch/HF CORE, adaptation ML-DEPTH; tracking/SFT/lifecycle PLANNED |
+| Applied AI | [PyTorch foundations](../labs/01_pytorch_foundations/README.md) → [HF models](../labs/02_huggingface_models/README.md) → modules05/06 → Module 07 bounded workflows → Module 08 эксплуатационные основы | базовые labs и modules05–08 подготовлены; real RAG/serving имеют материалы и отдельные реальные проверки, см. текущую карту |
+| ML Engineering | PyTorch → HF + небольшой encoder adaptation → experiments → SFT/LoRA → lifecycle | PyTorch/HF и adaptation подготовлены; tracking/SFT/lifecycle имеют локальные материалы, реальные/непроведённые запуски см. журнал |
 | Backend/API | module02 можно проходить параллельно с data/ML | CORE для serving, не блокирует первое обучение модели |
 
 Будущие real RAG и deployment не являются обязательными prerequisites для
@@ -81,8 +86,7 @@ VERIFIED применяется только с [записью среды, ко
 
 [Карта фактического покрытия](wave2-coverage.md) перечисляет 14 новых exercise ID
 с точными README/prerequisites. С учётом последующего A1-практикума текущий каталог:
-163 материала, включая 103 exercises,
-57 lessons, две labs и один project. Материалы READY; свежие результаты технической
+см. `uv run python scripts/learn.py inventory`; прежние числа в wave-отчётах — исторические snapshots. Материалы READY; свежие результаты технической
 проверки — в [журнале](wave2-verification.md). TODO ученика не выполнены,
 его эксперименты NOT_RUN, содержательная защита REQUIRES_REVIEW.
 
@@ -101,8 +105,8 @@ PyTorch/gradient bridge; `production-product-study` после framing/evaluatio
 перед будущим real RAG; `ml-forecasting-intro` после temporal split и ML evaluation.
 `python-interview-patterns` и `backend-analytics-sql` проходят параллельно после
 своих Python/SQL prerequisites. Полные ranking/recommendations/time-series
-специализации остаются PLANNED. Выбирайте exercise через `list`/README;
-ручной progress по прежним урокам и labs сохранён.
+специализации остаются PLANNED. Выбирайте exercise через `list`/`track`/README; старые отметки progress сохранены,
+новые обязательные блоки добавлены незаполненными.
 
 ## Существующие модули (пути и порядок сохранены)
 
@@ -129,9 +133,10 @@ and Agents has eight, including each module's original standalone Medium task
 and three additional neutral exercises. Across all eight modules, 24 new standalone tasks add
 practice without replacing existing exercises or changing the lesson sequence.
 
-No required lesson calls a paid model, downloads embeddings, deploys a cloud resource, or needs a
-vector database. Local framework examples use the locked dependencies. Optional live extensions
-require separate credentials, provider documentation, representative data and operational review.
+Основные lesson tests работают offline. Внешние проекты требуют отдельного скачивания
+публичных данных/pretrained моделей и выполнения экспериментов; это не происходит при
+обычном pytest. Платный cloud/GPU не является обязательным: локальные routes и
+ограничения описаны в текущей карте. Credentials и данные не коммитятся.
 
 ## Banking AI Lab
 

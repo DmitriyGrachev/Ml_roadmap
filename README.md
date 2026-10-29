@@ -5,8 +5,11 @@ An active-learning roadmap for an experienced Java and Spring backend engineer m
 ## Current scope
 
 The foundation, learning workflow, all eight modules, and the progressive Banking AI Lab are ready.
-Modules 01–08 are implemented, with 57 lessons, 102 exercises, and one progressive project.
-Two model-training labs extend that foundation; later labs are explicitly PLANNED.
+Modules 01–08 are implemented. Актуальный состав: `uv run python scripts/learn.py inventory`.
+Начинайте с [единой учебной карты](docs/learning-map.md): prerequisites, обязательная практика,
+два внешних проекта и критерии защиты. [Сравнение с вакансиями](docs/job-market-comparison-2026-10-29.md)
+объясняет приоритеты ML Engineer и Applied AI. Материалы real RAG, fine-tuning, serving и lifecycle
+уже существуют; фактические запуски перечислены в [журнале проверок](docs/ml-engineer-readiness-verification.md).
 All eight modules include neutral-theme Medium practice. Implemented courseware includes examples
 and deliberately unsolved student tasks; it does not mean those tasks are already completed.
 
@@ -73,6 +76,9 @@ uv sync --locked
 uv run python scripts/learn.py validate-env
 uv run python scripts/learn.py list
 uv run python scripts/learn.py status
+uv run python scripts/learn.py inventory
+uv run python scripts/learn.py track ml-engineer
+uv run python scripts/learn.py check-track ml-engineer
 uv run python scripts/learn.py test python-collections
 uv run pytest
 uv run pytest modules/01_python_core
@@ -124,16 +130,16 @@ Pretrained quality, cloud и hosted CI не проверены; vLLM отлож�
 
 ## Вторая волна: практика и самостоятельные контроли
 
-Во второй волне добавлены 14 exercise ID; после отдельного A1-практикума текущий
-каталог содержит 163 материала (57 lessons, 103 exercises, 2 labs, 1 project).
+Историческая вторая волна добавила 14 exercise ID; её отчёты относятся к состоянию
+на дату проверки. Текущий каталог и маршрут доступны через `inventory` и `track`.
 [Карта второй волны](docs/wave2-coverage.md) даёт ссылки и
 prerequisites для каждого нового задания; [порядок прохождения](docs/roadmap.md)
 связывает статистику, kNN/tabular, продолжения PyTorch/HF и четыре открытых контроля.
 Ranking и forecasting — короткие боковые ветки; глубокие специализации PLANNED.
 Материалы READY; [проверенные команды и ограничения](docs/wave2-verification.md)
 относятся к инфраструктуре. Реализации ученика остаются TODO, его эксперименты
-NOT_RUN, содержательная защита REQUIRES_REVIEW. Новые упражнения выбираются через
-`list` и README; прежний ручной progress с уроками/labs не расширен.
+NOT_RUN, содержательная защита REQUIRES_REVIEW. Новые упражнения выбираются через `list`, `track` и README; старые отметки progress
+сохранены, новые обязательные блоки добавлены незаполненными.
 
 ```powershell
 .venv/Scripts/python.exe scripts/learn.py list
@@ -166,9 +172,11 @@ modules use separate focused exercises; they do not silently add a completed AI 
 ## Principles
 
 Learn by changing starter code, keeping test expectations intact, and recording your own progress.
-Examples use synthetic banking, payment, document, library, weather, and LLM-style data; no real
-customer or financial-account data belongs here. ML uses local synthetic datasets; LLM applications
-use offline doubles. LangGraph/MCP examples run locally. Production exercises simulate release,
-budget, privacy and rollout policies; they do not deploy services or prove live model quality.
+Основные тесты используют локальные учебные данные и doubles; внешние ML-проекты
+требуют явного скачивания публичного датасета, проверки лицензии и сохранения hash.
+Клиентские данные и секреты не добавляются в Git. Реальные model/RAG/TCP эксперименты
+запускаются отдельно и фиксируются честно; один offline PASS не доказывает качество
+модели или эксплуатацию в облаке. [Режимы проверки](docs/testing-exercises.md) отделяют
+учебные задачи от maintainer-политики незаполненных шаблонов.
 
 See [LICENSE](LICENSE) for the MIT license.

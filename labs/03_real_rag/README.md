@@ -75,3 +75,12 @@ model assets и сохраняет версии, SHA-256, ID/score и actual tim
 включает настоящий local disk client. [Фактические результаты](verification.md)
 не доказывают pretrained семантику, LLM quality или production ANN свойства.
 Новый exercise ID не добавляется: старые student TODO и progress сохранены.
+
+## Полный dense → generator маршрут
+
+[End-to-end evaluation](end_to_end/README.md) добавляет явный masked-mean pooling,
+сравнение с прежним CLS, dev/holdout, отдельные retrieval/answer метрики и случаи
+no-answer, ambiguity, stale и ACL. Новый ID `rag-end-to-end-evaluation` требует
+самостоятельной реализации и реального локального evidence; старые CLS-отчёты
+сохраняют свои подписи. Offline doubles не подтверждают качество генератора.
+Порядок прохождения — [текущая карта](../../docs/learning-map.md).
