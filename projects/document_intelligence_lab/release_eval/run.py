@@ -334,7 +334,13 @@ def main(argv: list[str] | None = None) -> int:
         report["otlp_exported"] = bool(args.otlp_endpoint)
         report["traces_sha256"] = digest(traces)
         (out / "report.json").write_bytes(encode(report))
-        print(json.dumps({"passed": report["passed"], "violations": report["violations"]}))
+        summary = {
+            "passed": report["passed"],
+            "violations": report["violations"],
+            "baseline": report["baseline"]["metrics"],
+            "candidate": report["candidate"]["metrics"],
+        }
+        print(json.dumps(summary))
         return 0 if report["passed"] else 1
     except (ValueError, OSError, KeyError, TypeError, AttributeError, HTTPException) as exc:
         # Provider/OS error text can contain request data; keep raw messages out of evidence.
