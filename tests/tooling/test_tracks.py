@@ -143,3 +143,10 @@ def test_applied_tool_routes_keep_prerequisites_and_specialization_scope() -> No
     assert not any(key.startswith("agents-") for key in tracks["applied-nlp"].required)
     assert "lab-sft-lora" not in tracks["ml-engineer"].required
     assert "lab-sft-lora" in tracks["applied-nlp"].required
+
+
+def test_release_eval_follows_service_practice_and_cloud_is_elective() -> None:
+    tracks = load_tracks(Path(__file__).resolve().parents[2])
+    route = tracks["applied-ai"].required
+    assert route.index("production-service-lifecycle") < route.index("document-release-eval")
+    assert all("document-cloud-rollback" not in track.required for track in tracks.values())

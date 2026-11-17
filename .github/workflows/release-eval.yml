@@ -1,0 +1,125 @@
+name: Document release evaluation
+
+on:
+  pull_request:
+    paths:
+      - 'projects/document_intelligence_lab/release_eval/**'
+      - 'labs/03_real_rag/fixtures/*.json'
+      - 'modules/06_rag/05_grounded_answers/example.py'
+      - '.github/workflows/release-eval.yml'
+      - 'conftest.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+  push:
+    branches: ['**']
+    paths:
+      - 'projects/document_intelligence_lab/release_eval/**'
+      - 'labs/03_real_rag/fixtures/*.json'
+      - 'modules/06_rag/05_grounded_answers/example.py'
+      - '.github/workflows/release-eval.yml'
+      - 'conftest.py'
+      - 'pyproject.toml'
+      - 'uv.lock'
+  workflow_dispatch:
+    inputs:
+      local_model:
+        description: Also evaluate a pinned 398 MB model on the default branch
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-eval-${{ github.event_name }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  offline:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.12.17'
+          python-version: '3.12.14'
+          enable-cache: false
+      - name: Check the release harness against its fixtures
+        run: uv run --locked python -m pytest projects/document_intelligence_lab/release_eval -q
+      - name: Gate the offline candidate
+        id: gate
+        run: >-
+          uv run --no-sync python -m projects.document_intelligence_lab.release_eval.run
+          --output-dir "$RUNNER_TEMP/offline-eval"
+      - name: Keep the quality report and case traces
+        if: ${{ !cancelled() && (steps.gate.outcome == 'success' || steps.gate.outcome == 'failure') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-eval-offline
+          path: |
+            ${{ runner.temp }}/offline-eval/report.json
+            ${{ runner.temp }}/offline-eval/failure.json
+            ${{ runner.temp }}/offline-eval/traces.json
+          if-no-files-found: error
+          retention-days: 7
+
+  local-model:
+    # Before this workflow reaches the default branch, opt in via a matching curriculum push.
+    if: >-
+      ${{ (github.event_name == 'workflow_dispatch' && inputs.local_model &&
+      github.ref == format('refs/heads/{0}', github.event.repository.default_branch)) ||
+      (github.event_name == 'push' && github.repository == 'DmitriyGrachev/Ml_roadmap' &&
+      github.ref == 'refs/heads/namepfchekcoutbranch-extended-pa1' &&
+      contains(github.event.head_commit.message, '[run-live-release-eval]')) }}
+    needs: offline
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Download and verify the CPU server and model weights
+        working-directory: ${{ runner.temp }}
+        env:
+          SERVER_URL: https://github.com/ggml-org/llama.cpp/releases/download/b11865/llama-b11865-bin-ubuntu-x64.tar.gz
+          MODEL_URL: https://huggingface.co/bartowski/Qwen2.5-0.5B-Instruct-GGUF/resolve/a5f758267d6599f03006d1e909676f2e2671fb0f/Qwen2.5-0.5B-Instruct-Q4_K_M.gguf
+        run: |
+          curl --fail --silent --show-error --location --retry 2 --max-time 180 "$SERVER_URL" -o server.tar.gz
+          curl --fail --silent --show-error --location --retry 2 --max-time 300 "$MODEL_URL" -o model.gguf
+          sha256sum --check <<'HASHES'
+          b59572aebe7df4de33b87d58a84a183d4ee0be4d5c8fe82df77b68ea65bc8bd6  server.tar.gz
+          b6b3cd19f6e76f178028a34f937a8a08ba8521a37e035638eec3a5dc5a33a564  model.gguf
+          HASHES
+          tar -xzf server.tar.gz
+      - name: Run both release variants against the loopback model
+        id: gate
+        run: |
+          "$RUNNER_TEMP/llama-b11865/llama-server" --model "$RUNNER_TEMP/model.gguf" \
+            --alias qwen2.5-0.5b-instruct --host 127.0.0.1 --port 18080 \
+            --ctx-size 2048 --parallel 1 --threads 2 --n-gpu-layers 0 >/dev/null 2>&1 &
+          server_pid=$!
+          trap 'kill "$server_pid" 2>/dev/null || true' EXIT
+          if ! curl --fail --silent --retry 60 --retry-connrefused --retry-delay 1 \
+            --retry-max-time 90 --max-time 3 http://127.0.0.1:18080/health >/dev/null; then
+            echo 'The pinned local server did not become ready.' >&2
+            exit 2
+          fi
+          python3.12 -m projects.document_intelligence_lab.release_eval.run \
+            --mode local --endpoint http://127.0.0.1:18080/v1/chat/completions \
+            --model qwen2.5-0.5b-instruct --model-revision a5f758267d6599f03006d1e909676f2e2671fb0f \
+            --output-dir "$RUNNER_TEMP/local-eval"
+      - name: Keep the measured quality report and case traces
+        if: ${{ !cancelled() && (steps.gate.outcome == 'success' || steps.gate.outcome == 'failure') }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: release-eval-local
+          path: |
+            ${{ runner.temp }}/local-eval/report.json
+            ${{ runner.temp }}/local-eval/failure.json
+            ${{ runner.temp }}/local-eval/traces.json
+          if-no-files-found: error
+          retention-days: 7

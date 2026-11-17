@@ -330,6 +330,7 @@ required = [
     "ml-data-pipeline",
     "production-service-lifecycle",
     "lab-vllm-measurements",
+    "document-release-eval",
 ]
 
 [[tracks]]

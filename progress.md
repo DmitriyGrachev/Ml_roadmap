@@ -118,3 +118,10 @@ Passing template checks does not complete lessons or the student-owned exercises
 - [ ] rag-embedding-adaptation
 - [ ] ml-experiment-management
 - [ ] lab-vllm-measurements
+
+## Защита релиза Document Intelligence Lab
+
+- [ ] document-release-eval
+- [ ] document-cloud-rollback
+
+Облачная практика выполняется по выбору. Отметь её после собственного запуска, проверки отката и удаления учебных ресурсов.

@@ -1283,12 +1283,29 @@ EXTENDED_CATALOG = (
 )
 EXTENDED_IDS = tuple(entry.identifier for entry in EXTENDED_CATALOG)
 EXPECTED_CATALOG += EXTENDED_CATALOG
+DELIVERY_CATALOG = (
+    item(
+        "document-release-eval",
+        "project",
+        "projects/document_intelligence_lab/release_eval/README.md",
+        "projects/document_intelligence_lab/release_eval/test_submission.py",
+    ),
+    item(
+        "document-cloud-rollback",
+        "project",
+        "projects/document_intelligence_lab/cloud_rollback/README.md",
+        "projects/document_intelligence_lab/cloud_rollback/test_submission.py",
+    ),
+)
+DELIVERY_IDS = tuple(entry.identifier for entry in DELIVERY_CATALOG)
+EXPECTED_CATALOG += DELIVERY_CATALOG
 
 LESSON_IDS = tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind == "lesson")
 PROGRESS_IDS = (
     tuple(entry.identifier for entry in EXPECTED_CATALOG if entry.kind in {"lesson", "lab"})
     + READINESS_IDS
     + EXTENDED_IDS
+    + DELIVERY_IDS
 )
 FIRST_SPRINT_IDS = (
     "python-detect-duplicates",
@@ -1340,7 +1357,7 @@ def test_catalog_is_the_complete_ordered_roadmap() -> None:
     assert tuple(item.kind for item in catalog.items) == tuple(
         entry.kind for entry in EXPECTED_CATALOG
     )
-    assert len(catalog.items) == 191
+    assert len(catalog.items) == 193
     assert len(LESSON_IDS) == 57
     assert len(FIRST_SPRINT_IDS) == 15
     assert len(LATER_PYTHON_PRACTICE_IDS) == 6
@@ -1350,6 +1367,8 @@ def test_catalog_is_the_complete_ordered_roadmap() -> None:
         "banking-ai-lab",
         "ml-external-tabular",
         "document-external-model-study",
+        "document-release-eval",
+        "document-cloud-rollback",
     )
 
 
@@ -1393,6 +1412,7 @@ def test_new_practices_do_not_expand_legacy_check_directories() -> None:
         "backend-sql-foundations",
         *READINESS_IDS,
         *EXTENDED_IDS,
+        *DELIVERY_IDS,
     }
     for new_id in new_ids:
         new_tests = catalog.get(new_id).tests

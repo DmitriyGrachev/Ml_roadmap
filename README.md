@@ -11,6 +11,10 @@ Modules 01–08 are implemented. Актуальный состав: `uv run pyth
 объясняет приоритеты ML Engineer и Applied AI. Материалы real RAG, fine-tuning, serving и lifecycle
 уже существуют. Новое углубление: [практика основных инструментов и Applied NLP](docs/applied-tools-practice.md);
 фактические проверки и ограничения — [журнал PA1](docs/applied-tools-verification.md).
+В конце Applied AI сравни две версии сервиса на своих вопросах, измерь качество и разбери
+один ответ по трассировке. Затем при желании разверни сервис в AWS и проверь восстановление
+первой версии. [Проверка релиза](projects/document_intelligence_lab/release_eval/README.md) ·
+[Практика AWS](projects/document_intelligence_lab/cloud_rollback/README.md).
 All eight modules include neutral-theme Medium practice. Implemented courseware includes examples
 and deliberately unsolved student tasks; it does not mean those tasks are already completed.
 

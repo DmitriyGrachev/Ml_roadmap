@@ -61,6 +61,8 @@ uv run python scripts/learn.py track applied-nlp
 | Retrieval → полный ответ | [End-to-end RAG](../labs/03_real_rag/end_to_end/README.md) | `rag-end-to-end-evaluation`: dense masked mean pooling + generator, dev/holdout и no-answer/ambiguous/stale/ACL случаи |
 | RAG → bounded workflows | [Модуль 07](../modules/07_agents/README.md) | Ограничения tools/loops, checkpoints, approvals и измеримые traces |
 | Application → эксплуатация | [Модуль 08](../modules/08_production_ai/README.md) | Reliability/budget/privacy/rollout, затем общий TCP lifecycle и ручная защита |
+| Выпуск новой версии | [Проверка качества AI-сервиса](../projects/document_intelligence_lab/release_eval/README.md) | `document-release-eval` — на одном наборе вопросов сравни две версии, проверь ответы и отказы, найди причину конкретного результата по trace и обоснуй решение о выпуске. |
+| Облачная практика по выбору | [Деплой и откат в ECS](../projects/document_intelligence_lab/cloud_rollback/README.md) | `document-cloud-rollback` — на работающем сервисе проверь версии A → B → A по ответам приложения, сохрани свидетельства и удали ресурсы. Для этого этапа нужен свой AWS-аккаунт и бюджет. |
 
 Оффлайн provider doubles проверяют wiring и политики. Для заявления о качестве
 pretrained модели или RAG нужен реальный запуск с зафиксированными моделями,

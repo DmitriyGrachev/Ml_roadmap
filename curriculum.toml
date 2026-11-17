@@ -1400,3 +1400,17 @@ title = "Самостоятельные измерения vLLM и провер�
 kind = "exercise"
 readme = "labs/05_model_serving/assessment/README.md"
 tests = ["labs/05_model_serving/assessment/test_starter.py", "labs/05_model_serving/assessment/test_evidence.py"]
+
+[[items]]
+id = "document-release-eval"
+title = "Проверка качества AI-сервиса перед релизом"
+kind = "project"
+readme = "projects/document_intelligence_lab/release_eval/README.md"
+tests = ["projects/document_intelligence_lab/release_eval/test_submission.py"]
+
+[[items]]
+id = "document-cloud-rollback"
+title = "Деплой и проверка отката в AWS ECS"
+kind = "project"
+readme = "projects/document_intelligence_lab/cloud_rollback/README.md"
+tests = ["projects/document_intelligence_lab/cloud_rollback/test_submission.py"]
