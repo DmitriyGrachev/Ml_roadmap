@@ -37,7 +37,7 @@ jobs:
         run: |
           lab=projects/document_intelligence_lab
           run="$RUNNER_TEMP/evidence"
-          uv run --locked --no-default-groups python -m projects.document_intelligence_lab.part_a1.demo --output "$RUNNER_TEMP/source"
+          uv run --locked python -m projects.document_intelligence_lab.part_a1.demo --output "$RUNNER_TEMP/source"
           uv run --no-sync python -m projects.document_intelligence_lab.cloud_rollback.prepare "$RUNNER_TEMP/source/rules" "$run" cirollbackprobe square
           docker buildx build --builder default --platform linux/amd64 --provenance=false --sbom=false --load -f "$lab/service/Dockerfile" -t document-service:local .
           for release in a b; do
