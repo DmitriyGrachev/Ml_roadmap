@@ -1,0 +1,73 @@
+name: Document rollback containers
+
+on:
+  push:
+    paths: &inputs
+      - '.github/workflows/document-rollback-containers.yml'
+      - '.dockerignore'
+      - 'pyproject.toml'
+      - 'uv.lock'
+      - 'src/roadmap_tools/experiment_evidence.py'
+      - 'projects/document_intelligence_lab/*.py'
+      - 'projects/document_intelligence_lab/part_a1/**'
+      - 'projects/document_intelligence_lab/service/**'
+      - 'projects/document_intelligence_lab/production_readiness/Dockerfile'
+      - 'projects/document_intelligence_lab/cloud_rollback/**'
+  pull_request:
+    paths: *inputs
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  rollback:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@c771a70e6277c0a99b617c7a806ffedaca235ff9 # v9.0.0
+        with:
+          version: '0.12.17'
+          python-version: '3.12.14'
+          enable-cache: false
+      - name: Prepare the two bundles and build the practical's images
+        run: |
+          lab=projects/document_intelligence_lab
+          run="$RUNNER_TEMP/evidence"
+          uv run --locked --no-default-groups python -m projects.document_intelligence_lab.part_a1.demo --output "$RUNNER_TEMP/source"
+          uv run --no-sync python -m projects.document_intelligence_lab.cloud_rollback.prepare "$RUNNER_TEMP/source/rules" "$run" cirollbackprobe square
+          docker buildx build --builder default --platform linux/amd64 --provenance=false --sbom=false --load -f "$lab/service/Dockerfile" -t document-service:local .
+          for release in a b; do
+            docker buildx build --builder default --platform linux/amd64 --provenance=false --sbom=false --load -f "$lab/production_readiness/Dockerfile" -t "document-rollback:$release" "$run/$release"
+          done
+      - name: Replace A with B and restore the original A
+        run: |
+          run="$RUNNER_TEMP/evidence"
+          a_image=$(docker image inspect -f '{{.Id}}' document-rollback:a)
+          b_image=$(docker image inspect -f '{{.Id}}' document-rollback:b)
+          jq -e '.a.predicted_label == "circle" and .b.predicted_label == "square" and .a.bundle_sha256 != .b.bundle_sha256' "$run/expect.json"
+          probe() {
+            local stage=$1 key=$2 image=$3
+            docker run --detach --network none --name rollback-service --health-interval=2s "$image"
+            for attempt in {1..30}; do
+              if [[ $(docker inspect -f '{{.State.Health.Status}}' rollback-service) == healthy ]]; then break; fi
+              sleep 1
+            done
+            if [[ $(docker inspect -f '{{.State.Health.Status}}' rollback-service) != healthy ]]; then
+              docker logs rollback-service
+              return 1
+            fi
+            docker exec -i -e PROBE_TOKEN=cirollbackprobe rollback-service python - \
+              < projects/document_intelligence_lab/cloud_rollback/probe.py > "$run/$stage.json"
+            jq -e --slurpfile expected "$run/expect.json" --arg key "$key" \
+              '.probe == $expected[0].probe and .ready.ready and .ready.bundle_sha256 == $expected[0][$key].bundle_sha256 and .prediction == $expected[0][$key]' "$run/$stage.json"
+            jq -c --arg stage "$stage" --arg image "$image" '{stage: $stage, image: $image, prediction}' "$run/$stage.json"
+            docker rm -f rollback-service >/dev/null
+          }
+          trap 'docker rm -f rollback-service >/dev/null 2>&1 || true' EXIT
+          probe first a "$a_image"
+          probe second b "$b_image"
+          probe restored a "$a_image"
